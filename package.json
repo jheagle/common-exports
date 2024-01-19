@@ -1,0 +1,69 @@
+{
+  "name": "common-exports",
+  "version": "1.0.0",
+  "description": "Convert ES Module to CommonJS.",
+  "main": "index.js",
+  "scripts": {
+    "build": "gulp build",
+    "htmldocs": "jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs",
+    "readme": "gulp readme",
+    "test": "gulp testFull"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jheagle/common-exports.git"
+  },
+  "keywords": [
+    "CommonJS",
+    "ES6",
+    "Modules",
+    "bundle",
+    "build"
+  ],
+  "author": "Joshua Heagle",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/jheagle/common-exports/issues"
+  },
+  "homepage": "https://github.com/jheagle/common-exports#readme",
+  "dependencies": {
+    "@babel/core": "^7.23.7",
+    "@babel/plugin-proposal-throw-expressions": "^7.23.3",
+    "@babel/plugin-transform-modules-commonjs": "^7.23.3",
+    "@babel/preset-env": "^7.23.8",
+    "@babel/preset-typescript": "^7.23.3",
+    "@babel/runtime-corejs3": "^7.23.8",
+    "core-js": "^3.35.0",
+    "fs": "^0.0.1-security",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "regenerator-runtime": "^0.14.1",
+    "through2": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/gulp": "^4.0.17",
+    "@types/gulp-babel": "^6.1.33",
+    "@types/through2": "^2.0.41",
+    "babel-jest": "^29.7.0",
+    "browserify": "^17.0.0",
+    "glob": "^10.3.10",
+    "gulp-imagemin": "^9.0.0",
+    "gulp-rename": "^2.0.0",
+    "gulp-standard": "^14.0.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
+    "gulp-uglify-es": "^3.0.0",
+    "jest": "^29.7.0",
+    "jsdoc-to-markdown": "^8.0.0",
+    "merge2": "^1.4.1",
+    "test-filesystem": "^1.1.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=10.2.1"
+  },
+  "files": [
+    "browser",
+    "dist",
+    "gulpfile.js"
+  ]
+}

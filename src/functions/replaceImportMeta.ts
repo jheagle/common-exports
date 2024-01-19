@@ -1,0 +1,10 @@
+/**
+ * Find usages of import.meta and replace it with CommonJs compatible substitute.
+ * @function
+ * @param {string} content
+ * @returns {string}
+ */
+export const replaceImportMeta = (content: string): string =>
+  content.replace('import\.meta\.url', 'require(\'url\').pathToFileURL(__filename).toString()')
+
+export default replaceImportMeta

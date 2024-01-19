@@ -1,0 +1,1 @@
+import makeCommon from"./functions/makeCommon";export let commonExports={makeCommon:makeCommon};export default commonExports;this?this.commonExports=commonExports:"undefined"!=typeof window&&(window.commonExports=commonExports);
