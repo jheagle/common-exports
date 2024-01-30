@@ -1,0 +1,1 @@
+import resolveMainFile from"./resolveMainFile.mjs";import resolveModule from"./resolveModule.mjs";export const makeModuleInfo=(e,o)=>resolveModule(e,o).map((e=>({module:o,path:e,file:resolveMainFile(e)})));export default makeModuleInfo;

@@ -8,7 +8,8 @@ export type ModuleInfo = {
 }
 
 /**
- *
+ * Create the Module Info object to store the name, path, and file.
+ * @function
  * @param {string} dirPath
  * @param {string} moduleName
  * @returns {string}

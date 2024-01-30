@@ -1,0 +1,1 @@
+import{cpSync}from"fs";export const copyResources=(c,e={})=>{e.hasOwnProperty("copyResources")&&e.copyResources.hasOwnProperty(c)&&e.copyResources[c].forEach((c=>cpSync(c.src,c.dest,{recursive:!0})))};export default copyResources;

@@ -37,4 +37,18 @@ describe('isCommonModule', () => {
     }
     expect(isCommonModule(moduleInfo)).toBeTruthy()
   })
+
+  test('will detect import as non-common module', () => {
+    mkdirSync(modulesPath, { recursive: true })
+    const moduleName = 'imagemin-mozjpeg'
+    const modulePath = `${moduleName}/node_modules/execa/lib`
+    const copyModules = [moduleName]
+    copyModules.forEach(module => cpSync(`./node_modules/${modulePath}`, `${modulesPath}/${modulePath}`, { recursive: true }))
+    const moduleInfo = {
+      module: moduleName,
+      path: `${modulesPath}/${modulePath}`,
+      file: `${modulesPath}/${modulePath}/error.js`
+    }
+    expect(isCommonModule(moduleInfo)).toBeFalsy()
+  })
 })

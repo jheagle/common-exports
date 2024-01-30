@@ -1,8 +1,8 @@
 import findImports from './findImports'
-import strAfter from './strAfter'
+import strAfter from '../utilities/strAfter'
 import makeFilepath from './makeFilepath'
 import isCommonModule from './isCommonModule'
-import { makeModuleInfo, ModuleInfo } from './makeModuleInfo'
+import makeModuleInfo, { ModuleInfo } from './makeModuleInfo'
 
 export type Stats = {
   dev: number,
@@ -43,23 +43,21 @@ export type StreamFile = {
  */
 export function resolveImports (file: StreamFile): Array<ModuleInfo> {
   const dirPath = makeFilepath(strAfter(file.base, file.cwd))
-  const fileContents = file.contents.toString()
-  const foundImports = findImports(fileContents)
-  return foundImports.reduce(
-    (modules: ModuleInfo[], moduleName: string): ModuleInfo[] => {
-      const moduleResolutions = makeModuleInfo(dirPath, moduleName)
-      if (moduleResolutions.every(isCommonModule)) {
-        return modules
-      }
-      moduleResolutions.forEach(
-        (moduleInfo: ModuleInfo): void => {
-          modules.push(moduleInfo)
+  return findImports(file.contents.toString())
+    .reduce(
+      (modules: ModuleInfo[], moduleName: string): ModuleInfo[] => {
+        const moduleResolutions = makeModuleInfo(dirPath, moduleName)
+        if (moduleResolutions.every(isCommonModule)) {
+          // CommonJs modules don't need to be updated, keep them as-is
+          return modules
         }
-      )
-      return modules
-    },
-    []
-  )
+        moduleResolutions.forEach(
+          (moduleInfo: ModuleInfo): number => modules.push(moduleInfo)
+        )
+        return modules
+      },
+      []
+    )
 }
 
 export default resolveImports

@@ -1,0 +1,1 @@
+import strBefore from"../utilities/strBefore";import strAfter from"../utilities/strAfter";export const makeRelativePath=(t,e)=>{let r=e,s=t,o=strBefore(s,"/");for(;o&&r.startsWith(o);)r=strAfter(r,`${o}/`),s=strAfter(s,`${o}/`),o=strBefore(s,"/");let f="";const i=s.split("/");i.length<2&&(f="./");for(let t=1;t<i.length;++t)f+="../";return f+r};export default makeRelativePath;

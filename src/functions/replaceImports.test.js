@@ -51,34 +51,15 @@ describe('replaceImports', () => {
     const srcPath = 'test-replace-imports/node_modules/gulp-imagemin/index.js'
     const destPath = 'test-replace-imports/external-modules/gulp-imagemin'
     const file = {
-      base: '/home/jheagle/Sites/joshuaheagle.local/projects/common-exports/test-replace-imports/node_modules/gulp-imagemin',
+      base: '/common-exports/test-replace-imports/node_modules/gulp-imagemin',
       contents: Buffer.from(fileContents),
-      cwd: '/home/jheagle/Sites/joshuaheagle.local/projects/common-exports',
+      cwd: '/common-exports',
       history: [
-        '/home/jheagle/Sites/joshuaheagle.local/projects/common-exports/test-replace-imports/node_modules/gulp-imagemin/index.js'
+        '/common-exports/test-replace-imports/node_modules/gulp-imagemin/index.js'
       ],
       isVinyl: undefined,
-      path: '/home/jheagle/Sites/joshuaheagle.local/projects/common-exports/test-replace-imports/node_modules/gulp-imagemin/index.js',
-      stat: {
-        dev: 2080,
-        mode: 33188,
-        nlink: 1,
-        uid: 1000,
-        gid: 1000,
-        rdev: 0,
-        blksize: 4096,
-        ino: 833581,
-        size: 3137,
-        blocks: 8,
-        atimeMs: 1705590511064.3093,
-        mtimeMs: 1705590510984.3093,
-        ctimeMs: 1705590510984.3093,
-        birthtimeMs: 1705590510984.3093,
-        atime: '2024-01-18T15:08:31.064Z',
-        mtime: '2024-01-18T15:08:30.984Z',
-        ctime: '2024-01-18T15:08:30.984Z',
-        birthtime: '2024-01-18T15:08:30.984Z'
-      }
+      path: '/common-exports/test-replace-imports/node_modules/gulp-imagemin/index.js',
+      stat: {}
     }
     const importFiles = [
       {
@@ -152,34 +133,15 @@ describe('replaceImports', () => {
     const srcPath = 'test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/index.js'
     const destPath = 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa'
     const file = {
-      base: '/home/jheagle/Sites/joshuaheagle.local/projects/common-exports/test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa',
+      base: '/common-exports/test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa',
       contents: Buffer.from(anotherFile),
-      cwd: '/home/jheagle/Sites/joshuaheagle.local/projects/common-exports',
+      cwd: '/common-exports',
       history: [
-        '/home/jheagle/Sites/joshuaheagle.local/projects/common-exports/test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/index.js'
+        '/common-exports/test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/index.js'
       ],
       isVinyl: undefined,
-      path: '/home/jheagle/Sites/joshuaheagle.local/projects/common-exports/test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/index.js',
-      stat: {
-        dev: 2080,
-        mode: 33188,
-        nlink: 1,
-        uid: 1000,
-        gid: 1000,
-        rdev: 0,
-        blksize: 4096,
-        ino: 833581,
-        size: 3137,
-        blocks: 8,
-        atimeMs: 1705590511064.3093,
-        mtimeMs: 1705590510984.3093,
-        ctimeMs: 1705590510984.3093,
-        birthtimeMs: 1705590510984.3093,
-        atime: '2024-01-18T15:08:31.064Z',
-        mtime: '2024-01-18T15:08:30.984Z',
-        ctime: '2024-01-18T15:08:30.984Z',
-        birthtime: '2024-01-18T15:08:30.984Z'
-      }
+      path: '/common-exports/test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/index.js',
+      stat: {}
     }
     const importFiles = [
       {
@@ -260,15 +222,15 @@ describe('replaceImports', () => {
     expect(countMatches(result, 'import {joinCommand, parseCommand, getEscapedCommand} from \'./lib/command.js\'')).toBe(1)
 
     expect(makeCommon).toBeCalledTimes(9)
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/strip-final-newline/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/strip-final-newline')
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/npm-run-path/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/npm-run-path')
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/onetime/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/onetime')
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/error.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib')
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stdio.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib')
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/kill.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib')
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stream.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib')
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/promise.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib')
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/command.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib')
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/strip-final-newline/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/strip-final-newline', {})
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/npm-run-path/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/npm-run-path', {})
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/onetime/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/onetime', {})
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/error.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stdio.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/kill.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stream.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/promise.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/command.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
 
   })
 })

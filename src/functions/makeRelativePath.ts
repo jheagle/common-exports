@@ -1,5 +1,5 @@
-import strBefore from './strBefore'
-import strAfter from './strAfter'
+import strBefore from '../utilities/strBefore'
+import strAfter from '../utilities/strAfter'
 
 export const makeRelativePath = (fromFile: string, toFile: string): string => {
   let relativePath = toFile

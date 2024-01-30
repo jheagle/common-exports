@@ -1,4 +1,4 @@
-import strBeforeLast from './strBeforeLast'
+import strBeforeLast from '../utilities/strBeforeLast'
 
 /**
  * Format the given path so that it does not have trailing slashes and also correctly appends a path.

@@ -13,21 +13,23 @@ const { appendFileSync } = require('fs')
 const jsdoc2md = require('jsdoc-to-markdown')
 const { globSync } = require('glob')
 const merge = require('merge2')  // Requires separate installation
-const { removeDirectory } = require('test-filesystem/dist/cjs/functions/removeDirectory')
 const rename = require('gulp-rename')
 const { runCLI } = require('jest')
 const standard = require('gulp-standard')
+const through = require('through2')
 const ts = require('gulp-typescript')
 const { default: uglify } = require('gulp-uglify-es')
+const { removeDirectory } = require('test-filesystem/dist/functions/removeDirectory')
 
-const cleanFolders = ['dist', 'browser']
+const cleanFolders = ['dist']
+const distMain = 'dist/main'
 const distSearch = 'dist/**/*js'
 const distPath = 'dist'
 const srcSearch = 'src/**/*.ts'
 const readmeTemplate = 'MAIN.md'
 const readmeFile = 'README.md'
 const readmePath = './'
-const readmeSearch = 'dist/cjs/**/*.js'
+const readmeSearch = 'dist/**/*.js'
 const readmeOptions = 'utf8'
 const testPath = ['src']
 const testOptions = {
@@ -41,13 +43,22 @@ const testOptions = {
   watch: false,
   watchAll: false,
 }
-const tsConfig = './tsconfig.json'
-const cjsPath = `${distPath}/cjs`
-const tsPath = `${distPath}/mjs`
-const tsSearch = `${distPath}/mjs/**/*.mjs`
+const tsSearch = `${distPath}/**/*.mjs`
 
 /**
- * Deletes all the distribution and browser files (used before create a new build).
+ * Replace parts of the import statements.
+ * @function
+ * @param {string} contents
+ * @param {string} replaceWith
+ * @return {string}
+ */
+const importReplace = (contents, replaceWith) => {
+  const regexImport = new RegExp('(export|import) (.+) from ([\'"])(\./[a-zA-Z-_/]+)(\.[a-z]{2,3})?[\'"]', 'g')
+  return contents.replaceAll(regexImport, replaceWith)
+}
+
+/**
+ * Deletes all the distribution files (used before create a new build).
  * Configure array of directories to remove with 'cleanPaths'.
  * @function
  * @returns {Promise<string[]> | *}
@@ -72,22 +83,38 @@ const typescript = () => {
       module: 'es2020'
     }))
   return merge([
-    tsResult.dts.pipe(dest(tsPath)),
-    tsResult.js.pipe(rename({ extname: '.mjs' })).pipe(dest(tsPath))
+    tsResult.dts.pipe(dest(distPath)),
+    tsResult.js
+      .pipe(through.obj(function (file, enc, cb) {
+        file.contents = Buffer.from(importReplace(file.contents.toString(), '$1 $2 from $3$4.mjs$3'))
+        this.push(file)
+        cb()
+      }))
+      .pipe(rename({ extname: '.mjs' }))
+      .pipe(dest(distPath))
   ])
 }
+
+/**
+ * Convert to babel files.
+ * @function
+ * @return {stream.Stream}
+ */
+const dist = () => src(tsSearch)
+  .pipe(through.obj(function (file, enc, cb) {
+    file.contents = Buffer.from(importReplace(file.contents.toString(), '$1 $2 from $3$4$3'))
+    this.push(file)
+    cb()
+  }))
+  .pipe(babel())
+  .pipe(dest(distPath))
 
 /**
  * When using TypeScript, ensure that we process the ts first then run babel (dist)
  * @function
  * @returns {function(null=): stream.Stream}
  */
-const distSeries = (done = null) => {
-  const dist = () => src(tsSearch)
-    .pipe(babel())
-    .pipe(dest(cjsPath))
-  return series(typescript, dist)(done)
-}
+const distSeries = (done = null) => series(typescript, dist)(done)
 
 /**
  * Applies Standard code style linting to distribution files.
@@ -115,6 +142,16 @@ const distMinify = () => src(distSearch)
     }
   }))
   .pipe(dest(distPath))
+
+/**
+ * Work in-progress, need to create a way for converting current project not just a package from node_modules
+ * @function
+ * @return {*}
+ */
+const convertToCommon = () => {
+  const { makeCommon } = require('./dist/functions/makeCommon')
+  return makeCommon(`${distMain}.mjs`, `${distPath}/cjs`)
+}
 
 /**
  * Copy a readme template into the README.md file.
@@ -157,11 +194,13 @@ const build = (done = null) => parallel(
     clean,
     distSeries,
     parallel(distLint, distMinify),
-    buildReadme,
+    // convertToCommon,
+    buildReadme
   ),
   testFull
 )(done)
 
+// exports.convertCommon = convertToCommon
 exports.dist = distSeries
 exports.build = build
 exports.readme = buildReadme

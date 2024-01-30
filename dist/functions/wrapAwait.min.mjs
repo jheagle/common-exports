@@ -1,0 +1,1 @@
+import kabobToTitleCase from"../utilities/kabobToTitleCase";export const wrapAwait=(t,e="module-namespace")=>{if(!/await/g.test(t))return t;const a=`export${kabobToTitleCase(e)}`;return`async function ${a} () {\n  ${t}\n}\n\n${a}()`};export default wrapAwait;

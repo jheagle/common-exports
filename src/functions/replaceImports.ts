@@ -1,5 +1,5 @@
 import { StreamFile } from './resolveImports'
-import strBeforeLast from './strBeforeLast'
+import strBeforeLast from '../utilities/strBeforeLast'
 import makeFilepath from './makeFilepath'
 import fileExists from './fileExists'
 import makeCommon from './makeCommon'
@@ -22,16 +22,18 @@ export type reduceImports = (content: string, importFile: ModuleInfo) => string
  * @param {string} srcPath
  * @param {string} destPath
  * @param {Object} file
+ * @param {Object<string, Object.<string, *>>} [config={}]
  * @returns {reduceImports}
  */
-export const replaceImports = (srcPath: string, destPath: string, file: StreamFile): reduceImports =>
+export const replaceImports = (srcPath: string, destPath: string, file: StreamFile, config: {
+  [key: string]: { [key: string]: any }
+} = {}): reduceImports =>
   (content: string, importFile: ModuleInfo): string => {
     if (!importFile.file) {
       console.error('Unable to find module', srcPath, importFile)
       return content
     }
     let relativePath = makeRelativePath(srcPath, importFile.file)
-    console.log('src', srcPath, 'file', importFile.file, 'relative', relativePath)
     let newDest = destPath
     if (newDest.endsWith('.js') || newDest.endsWith('.mjs')) {
       newDest = strBeforeLast(newDest, '/')
@@ -41,7 +43,7 @@ export const replaceImports = (srcPath: string, destPath: string, file: StreamFi
       if (modulePath.endsWith('.js') || modulePath.endsWith('.mjs')) {
         modulePath = strBeforeLast(modulePath, '/')
       }
-      makeCommon(importFile.file, modulePath)
+      makeCommon(importFile.file, modulePath, config)
     }
     const moduleName = regexEscape(importFile.module)
     const moduleMatch = new RegExp(`(['"\`])${moduleName}['"\`]`)

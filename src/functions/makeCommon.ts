@@ -4,43 +4,39 @@ import { dest, src } from 'gulp'
 import babel from 'gulp-babel'
 // @ts-ignore
 import through, { TransformCallback } from 'through2'
-import strAfterLast from './strAfterLast'
-import kabobToTitleCase from './kabobToTitleCase'
+import strAfterLast from '../utilities/strAfterLast'
 import resolveImports, { StreamFile } from './resolveImports'
 import replaceImports from './replaceImports'
-import { logObject } from 'test-filesystem'
 import replaceImportMeta from './replaceImportMeta'
+import wrapAwait from './wrapAwait'
+import copyResources from './copyResources'
 
 /**
  * Apply babel to source files and output with commonJs compatibility.
  * @param {string|array} srcPath
  * @param {string} destPath
+ * @param {Object<string, Object.<string, *>>} [config={}]
  * @return {stream.Stream}
  */
-export const makeCommon = (srcPath: string, destPath: string): stream.Stream => src(srcPath)
+export const makeCommon = (srcPath: string, destPath: string, config: {
+  [key: string]: { [key: string]: any }
+} = {}): stream.Stream => src(srcPath)
   .pipe(through.obj(function (file: StreamFile, enc: BufferEncoding, callback: TransformCallback): void {
-    const importFiles = resolveImports(file)
-    logObject(importFiles, 'importFiles')
-    const fileContents = importFiles.reduce(
-      replaceImports(srcPath, destPath, file),
-      file.contents.toString()
-    )
+    const fileContents = resolveImports(file)
+      .reduce(
+        replaceImports(srcPath, destPath, file, config),
+        file.contents.toString()
+      )
+    copyResources(srcPath, config)
     file.contents = Buffer.from(fileContents)
     this.push(file)
     callback()
   }))
   .pipe(babel())
   .pipe(through.obj(function (file: StreamFile, enc: BufferEncoding, callback: TransformCallback): void {
-    const fileName = strAfterLast(file.base, '/')
     let fileContents = file.contents.toString()
     fileContents = replaceImportMeta(fileContents)
-    const exportModuleName = `export${kabobToTitleCase(fileName)}`
-    // Wrap the contents in an async function so that any await used will be valid
-    const wrappedContents = `async function ${exportModuleName} () {
-  ${fileContents}
-}
-
-${exportModuleName}()`
+    const wrappedContents = wrapAwait(fileContents, strAfterLast(file.base, '/'))
     file.contents = Buffer.from(wrappedContents)
     this.push(file)
     callback()

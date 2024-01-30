@@ -1,0 +1,1 @@
+import"core-js/stable";const strBefore=(e,r)=>{const t=e.indexOf(r);return-1===t?"":e.slice(0,t)};export default strBefore;

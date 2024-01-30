@@ -1,1 +1,0 @@
-import{dest,src}from"gulp";const babel=require("gulp-babel");export const makeCommon=(e,o)=>src(e).pipe(babel()).pipe(dest(o));export default makeCommon;
