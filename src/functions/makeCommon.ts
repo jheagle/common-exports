@@ -22,7 +22,9 @@ export const makeCommon = (srcPath: string, destPath: string, config: {
   [key: string]: { [key: string]: any }
 } = {}): stream.Stream => src(srcPath)
   .pipe(through.obj(function (file: StreamFile, enc: BufferEncoding, callback: TransformCallback): void {
-    const fileContents = resolveImports(file)
+    const rootPath = typeof config.rootPath === 'undefined' ? srcPath : config.rootPath
+    // @ts-ignore
+    const fileContents = resolveImports(file, rootPath)
       .reduce(
         replaceImports(srcPath, destPath, file, config),
         file.contents.toString()

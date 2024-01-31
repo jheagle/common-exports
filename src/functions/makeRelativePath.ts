@@ -1,6 +1,12 @@
 import strBefore from '../utilities/strBefore'
 import strAfter from '../utilities/strAfter'
 
+/**
+ * Compare two file paths and simplify them to a relative path.
+ * @param {string} fromFile
+ * @param {string} toFile
+ * @return {string}
+ */
 export const makeRelativePath = (fromFile: string, toFile: string): string => {
   let relativePath = toFile
   let nextPart = fromFile

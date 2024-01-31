@@ -7,6 +7,12 @@ exports.makeRelativePath = exports.default = void 0
 var _strBefore = _interopRequireDefault(require('../utilities/strBefore'))
 var _strAfter = _interopRequireDefault(require('../utilities/strAfter'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
+/**
+ * Compare two file paths and simplify them to a relative path.
+ * @param {string} fromFile
+ * @param {string} toFile
+ * @return {string}
+ */
 const makeRelativePath = (fromFile, toFile) => {
   let relativePath = toFile
   let nextPart = fromFile

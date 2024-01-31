@@ -5,10 +5,10 @@ export type ModuleInfo = {
 };
 /**
  * Create the Module Info object to store the name, path, and file.
- * @function
  * @param {string} dirPath
  * @param {string} moduleName
+ * @param {string} rootPath
  * @returns {string}
  */
-export declare const makeModuleInfo: (dirPath: string, moduleName: string) => ModuleInfo[];
+export declare const makeModuleInfo: (dirPath: string, moduleName: string, rootPath?: string | null) => ModuleInfo[];
 export default makeModuleInfo;

@@ -6,7 +6,6 @@ Object.defineProperty(exports, '__esModule', {
 exports.regexEscape = exports.default = void 0
 /**
  * Take a string and escape the regex characters.
- * @function
  * @param {string} str
  * @returns {string}
  */

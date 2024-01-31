@@ -5,15 +5,16 @@ import isCommonModule from './isCommonModule.mjs'
 import makeModuleInfo from './makeModuleInfo.mjs'
 /**
  * Given a file with buffer contents, identify all the imports it has and find their full paths.
- * @function
  * @param {Object} file
+ * @param {string|null} [rootPath=null]
  * @returns {Array<string, Object>}
  */
-export function resolveImports (file) {
+export function resolveImports (file, rootPath = null) {
   const dirPath = makeFilepath(strAfter(file.base, file.cwd))
+  const useRoot = rootPath || dirPath
   return findImports(file.contents.toString())
     .reduce((modules, moduleName) => {
-      const moduleResolutions = makeModuleInfo(dirPath, moduleName)
+      const moduleResolutions = makeModuleInfo(dirPath, moduleName, useRoot)
       if (moduleResolutions.every(isCommonModule)) {
         // CommonJs modules don't need to be updated, keep them as-is
         return modules

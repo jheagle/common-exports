@@ -29,7 +29,9 @@ function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { d
  * @return {stream.Stream}
  */
 const makeCommon = (srcPath, destPath, config = {}) => (0, _gulp.src)(srcPath).pipe(_through.default.obj(function (file, enc, callback) {
-  const fileContents = (0, _resolveImports.default)(file).reduce((0, _replaceImports.default)(srcPath, destPath, file, config), file.contents.toString());
+  const rootPath = typeof config.rootPath === 'undefined' ? srcPath : config.rootPath
+  // @ts-ignore
+  const fileContents = (0, _resolveImports.default)(file, rootPath).reduce((0, _replaceImports.default)(srcPath, destPath, file, config), file.contents.toString());
   (0, _copyResources.default)(srcPath, config)
   file.contents = Buffer.from(fileContents)
   this.push(file)

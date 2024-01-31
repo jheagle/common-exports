@@ -20,14 +20,15 @@ var _makeModuleInfo = _interopRequireDefault(require('./makeModuleInfo'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Given a file with buffer contents, identify all the imports it has and find their full paths.
- * @function
  * @param {Object} file
+ * @param {string|null} [rootPath=null]
  * @returns {Array<string, Object>}
  */
-function resolveImports (file) {
+function resolveImports (file, rootPath = null) {
   const dirPath = (0, _makeFilepath.default)((0, _strAfter.default)(file.base, file.cwd))
+  const useRoot = rootPath || dirPath
   return (0, _findImports.default)(file.contents.toString()).reduce((modules, moduleName) => {
-    const moduleResolutions = (0, _makeModuleInfo.default)(dirPath, moduleName)
+    const moduleResolutions = (0, _makeModuleInfo.default)(dirPath, moduleName, useRoot)
     if (moduleResolutions.every(_isCommonModule.default)) {
       // CommonJs modules don't need to be updated, keep them as-is
       return modules

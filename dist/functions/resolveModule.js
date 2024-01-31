@@ -19,16 +19,12 @@ function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { d
 const modulesDirectory = 'node_modules'
 /**
  * Search for the given module and return the full path.
- * @function
  * @param {string} root
  * @param {string} moduleName
  * @param {string} current
  * @returns {Array<string>}
  */
 const resolveModule = (root, moduleName, current = '') => {
-  if (current === root) {
-    return null
-  }
   root = (0, _makeFilepath.default)(root)
   if (!current) {
     current = root
@@ -60,11 +56,15 @@ const resolveModule = (root, moduleName, current = '') => {
   }
   if ((0, _strAfterLast.default)(current, '/') === modulesDirectory) {
     current = (0, _makeFilepath.default)(current, '../../')
-    if (current === root || !current) {
+    if (!current) {
       return []
     }
   }
-  return resolveModule(root, moduleName, (0, _makeFilepath.default)(current, modulesDirectory))
+  const next = (0, _makeFilepath.default)(current, modulesDirectory)
+  if (next === root || !next) {
+    return []
+  }
+  return resolveModule(root, moduleName, next)
 }
 exports.resolveModule = resolveModule
 var _default = exports.default = resolveModule

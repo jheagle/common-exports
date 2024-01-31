@@ -1,6 +1,5 @@
 /**
  * Based on configured 'copyResources', if we are in the corresponding based path copy each src to dest.
- * @function
  * @param {string} baseFilePath
  * @param {Object<'copyResources', Object<string, Array<Object<'src'|'dest', string>>>>} [config={}]
  * @returns {undefined}

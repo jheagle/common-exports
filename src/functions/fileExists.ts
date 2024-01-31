@@ -2,7 +2,6 @@ import { accessSync, constants } from 'fs'
 
 /**
  * Detect if a file exists and is usable.
- * @function
  * @param {string} filePath
  * @returns {boolean}
  */

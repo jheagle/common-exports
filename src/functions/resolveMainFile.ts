@@ -4,12 +4,12 @@ import fileExists from './fileExists'
 
 /**
  * Given a module path, find the file which should be used as main, based on module import.
- * @function
  * @param {string} modulePath
  * @returns {string|null}
  */
 export const resolveMainFile = (modulePath: string): string | null => {
   if (!fileExists(modulePath)) {
+    // the path might be a direct file but missing the file extension, so, try some file extensions
     const jsModule = `${modulePath}.js`
     if (fileExists(jsModule)) {
       return jsModule
@@ -22,6 +22,7 @@ export const resolveMainFile = (modulePath: string): string | null => {
   }
 
   if (modulePath.endsWith('.js') || modulePath.endsWith('.mjs')) {
+    // if it has a file extension, then the search ends here, we have found the main file
     return modulePath
   }
 
@@ -35,6 +36,7 @@ export const resolveMainFile = (modulePath: string): string | null => {
     return mjsFile
   }
 
+  // Check if there is a package.json and search there for the specified main file
   const packagePath = makeFilepath(modulePath, 'package.json')
   if (fileExists(packagePath)) {
     const packageData = JSON.parse(readFileSync(packagePath).toString())

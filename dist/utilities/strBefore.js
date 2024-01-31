@@ -8,7 +8,7 @@ require('core-js/stable')
 /**
  * Retrieve the string part before the search match.
  * Original source from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strBefore.ts Sí, funciona}
- * @function
+
  * @param {string} str
  * @param {string} search
  * @returns {string}

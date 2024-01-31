@@ -69,7 +69,7 @@ describe('resolveImports', () => {
     expect(makeFilepath).toHaveBeenCalledWith(`/${basePath}/node_modules/gulp-imagemin`)
     expect(findImports).toHaveBeenCalledWith(fileContents)
     expect(makeModuleInfo).toHaveBeenCalledTimes(foundModules.length)
-    foundModules.forEach(moduleName => expect(makeModuleInfo).toHaveBeenCalledWith(dirPath, moduleName))
+    foundModules.forEach(moduleName => expect(makeModuleInfo).toHaveBeenCalledWith(dirPath, moduleName, dirPath))
     expect(isCommonModule).toHaveBeenCalledTimes(foundModules.length)
   })
 })

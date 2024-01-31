@@ -11,7 +11,6 @@ var _importRegex = _interopRequireDefault(require('./importRegex'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Attempt to detect if the current module is a common js module.
- * @function
  * @param {Object} moduleInfo
  * @returns {boolean}
  */

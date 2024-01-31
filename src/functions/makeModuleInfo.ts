@@ -9,18 +9,23 @@ export type ModuleInfo = {
 
 /**
  * Create the Module Info object to store the name, path, and file.
- * @function
  * @param {string} dirPath
  * @param {string} moduleName
+ * @param {string} rootPath
  * @returns {string}
  */
-export const makeModuleInfo = (dirPath: string, moduleName: string): ModuleInfo[] => resolveModule(dirPath, moduleName)
-  .map(
-    (path: string): ModuleInfo => ({
-      module: moduleName,
-      path: path,
-      file: resolveMainFile(path),
-    })
-  )
+export const makeModuleInfo = (dirPath: string, moduleName: string, rootPath: string | null = null): ModuleInfo[] => {
+  if (!rootPath) {
+    rootPath = dirPath
+  }
+  return resolveModule(rootPath, moduleName, dirPath)
+    .map(
+      (path: string): ModuleInfo => ({
+        module: moduleName,
+        path: path,
+        file: resolveMainFile(path),
+      })
+    )
+}
 
 export default makeModuleInfo

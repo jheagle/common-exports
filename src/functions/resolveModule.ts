@@ -9,16 +9,12 @@ const modulesDirectory: string = 'node_modules'
 
 /**
  * Search for the given module and return the full path.
- * @function
  * @param {string} root
  * @param {string} moduleName
  * @param {string} current
  * @returns {Array<string>}
  */
 export const resolveModule = (root: string, moduleName: string, current: string = ''): string[] => {
-  if (current === root) {
-    return null
-  }
   root = makeFilepath(root)
   if (!current) {
     current = root
@@ -52,11 +48,15 @@ export const resolveModule = (root: string, moduleName: string, current: string 
   }
   if (strAfterLast(current, '/') === modulesDirectory) {
     current = makeFilepath(current, '../../')
-    if (current === root || !current) {
+    if (!current) {
       return []
     }
   }
-  return resolveModule(root, moduleName, makeFilepath(current, modulesDirectory))
+  const next = makeFilepath(current, modulesDirectory)
+  if (next === root || !next) {
+    return []
+  }
+  return resolveModule(root, moduleName, next)
 }
 
 export default resolveModule

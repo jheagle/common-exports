@@ -10,12 +10,12 @@ var _fileExists = _interopRequireDefault(require('./fileExists'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Given a module path, find the file which should be used as main, based on module import.
- * @function
  * @param {string} modulePath
  * @returns {string|null}
  */
 const resolveMainFile = modulePath => {
   if (!(0, _fileExists.default)(modulePath)) {
+    // the path might be a direct file but missing the file extension, so, try some file extensions
     const jsModule = `${modulePath}.js`
     if ((0, _fileExists.default)(jsModule)) {
       return jsModule
@@ -27,6 +27,7 @@ const resolveMainFile = modulePath => {
     return null
   }
   if (modulePath.endsWith('.js') || modulePath.endsWith('.mjs')) {
+    // if it has a file extension, then the search ends here, we have found the main file
     return modulePath
   }
   const jsFile = (0, _makeFilepath.default)(`${modulePath}.js`)
@@ -37,6 +38,7 @@ const resolveMainFile = modulePath => {
   if ((0, _fileExists.default)(mjsFile)) {
     return mjsFile
   }
+  // Check if there is a package.json and search there for the specified main file
   const packagePath = (0, _makeFilepath.default)(modulePath, 'package.json')
   if ((0, _fileExists.default)(packagePath)) {
     const packageData = JSON.parse((0, _fs.readFileSync)(packagePath).toString())

@@ -41,7 +41,7 @@ Original source concepts from <a href="https://github.com/jheagle/si-funciona/bl
 <dt><a href="#resolveMainFile">resolveMainFile(modulePath)</a> ⇒ <code>string</code> | <code>null</code></dt>
 <dd><p>Given a module path, find the file which should be used as main, based on module import.</p>
 </dd>
-<dt><a href="#resolveImports">resolveImports(file)</a> ⇒ <code>Array.&lt;string, Object&gt;</code></dt>
+<dt><a href="#resolveImports">resolveImports(file, [rootPath])</a> ⇒ <code>Array.&lt;string, Object&gt;</code></dt>
 <dd><p>Given a file with buffer contents, identify all the imports it has and find their full paths.</p>
 </dd>
 <dt><a href="#replaceImports">replaceImports(srcPath, destPath, file, [config])</a> ⇒ <code>reduceImports</code></dt>
@@ -53,7 +53,10 @@ Original source concepts from <a href="https://github.com/jheagle/si-funciona/bl
 <dt><a href="#regexEscape">regexEscape(str)</a> ⇒ <code>string</code></dt>
 <dd><p>Take a string and escape the regex characters.</p>
 </dd>
-<dt><a href="#makeModuleInfo">makeModuleInfo(dirPath, moduleName)</a> ⇒ <code>string</code></dt>
+<dt><a href="#makeRelativePath">makeRelativePath(fromFile, toFile)</a> ⇒ <code>string</code></dt>
+<dd><p>Compare two file paths and simplify them to a relative path.</p>
+</dd>
+<dt><a href="#makeModuleInfo">makeModuleInfo(dirPath, moduleName, rootPath)</a> ⇒ <code>string</code></dt>
 <dd><p>Create the Module Info object to store the name, path, and file.</p>
 </dd>
 <dt><a href="#makeFilepath">makeFilepath(root, [append])</a> ⇒ <code>string</code></dt>
@@ -188,14 +191,15 @@ Given a module path, find the file which should be used as main, based on module
 
 <a name="resolveImports"></a>
 
-## resolveImports(file) ⇒ <code>Array.&lt;string, Object&gt;</code>
+## resolveImports(file, [rootPath]) ⇒ <code>Array.&lt;string, Object&gt;</code>
 Given a file with buffer contents, identify all the imports it has and find their full paths.
 
 **Kind**: global function  
 
-| Param | Type |
-| --- | --- |
-| file | <code>Object</code> | 
+| Param | Type | Default |
+| --- | --- | --- |
+| file | <code>Object</code> |  | 
+| [rootPath] | <code>string</code> \| <code>null</code> | <code>null</code> | 
 
 <a name="replaceImports"></a>
 
@@ -233,17 +237,30 @@ Take a string and escape the regex characters.
 | --- | --- |
 | str | <code>string</code> | 
 
-<a name="makeModuleInfo"></a>
+<a name="makeRelativePath"></a>
 
-## makeModuleInfo(dirPath, moduleName) ⇒ <code>string</code>
-Create the Module Info object to store the name, path, and file.
+## makeRelativePath(fromFile, toFile) ⇒ <code>string</code>
+Compare two file paths and simplify them to a relative path.
 
 **Kind**: global function  
 
 | Param | Type |
 | --- | --- |
-| dirPath | <code>string</code> | 
-| moduleName | <code>string</code> | 
+| fromFile | <code>string</code> | 
+| toFile | <code>string</code> | 
+
+<a name="makeModuleInfo"></a>
+
+## makeModuleInfo(dirPath, moduleName, rootPath) ⇒ <code>string</code>
+Create the Module Info object to store the name, path, and file.
+
+**Kind**: global function  
+
+| Param | Type | Default |
+| --- | --- | --- |
+| dirPath | <code>string</code> |  | 
+| moduleName | <code>string</code> |  | 
+| rootPath | <code>string</code> | <code>null</code> | 
 
 <a name="makeFilepath"></a>
 

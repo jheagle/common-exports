@@ -2,7 +2,6 @@ import importRegex from './importRegex'
 
 /**
  * Retrieve all the module names from imports.
- * @function
  * @param {string} fileContents
  * @returns {Array}
  */

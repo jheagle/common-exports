@@ -18,7 +18,9 @@ import copyResources from './copyResources.mjs'
  */
 export const makeCommon = (srcPath, destPath, config = {}) => src(srcPath)
   .pipe(through.obj(function (file, enc, callback) {
-    const fileContents = resolveImports(file)
+    const rootPath = typeof config.rootPath === 'undefined' ? srcPath : config.rootPath
+    // @ts-ignore
+    const fileContents = resolveImports(file, rootPath)
       .reduce(replaceImports(srcPath, destPath, file, config), file.contents.toString())
     copyResources(srcPath, config)
     file.contents = Buffer.from(fileContents)

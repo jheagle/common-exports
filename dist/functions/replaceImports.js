@@ -13,7 +13,6 @@ var _makeRelativePath = _interopRequireDefault(require('./makeRelativePath'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
- * @function
  * @param {string} srcPath
  * @param {string} destPath
  * @param {Object} file

@@ -1,9 +1,10 @@
 import resolveModule from './resolveModule'
-import { cpSync, mkdirSync } from 'fs'
+import { cpSync, mkdirSync, writeFileSync } from 'fs'
 import { setUp } from 'test-filesystem'
 
 const tempDir = 'test-resolve-module/'
 const modulesPath = `${tempDir}node_modules`
+const srcPath = `${tempDir}src`
 
 setUp.setDefaults(tempDir)
 
@@ -16,7 +17,7 @@ beforeEach(() => setUp.beforeEach()
 afterEach(setUp.afterEach)
 
 describe('resolveModule', () => {
-  test('resolves path to module main file', () => {
+  test('resolves path to module', () => {
     const moduleName = 'test-filesystem'
     const modulePath = `${modulesPath}/${moduleName}`
     mkdirSync(modulePath, { recursive: true })
@@ -122,5 +123,14 @@ describe('resolveModule', () => {
     expect(foundModulePath).toEqual([`${modulesPath}/imagemin-mozjpeg/node_modules/execa/lib/promise.js`])
     foundModulePath = resolveModule(`${modulesPath}/imagemin-mozjpeg/node_modules/execa`, './lib/command.js')
     expect(foundModulePath).toEqual([`${modulesPath}/imagemin-mozjpeg/node_modules/execa/lib/command.js`])
+  })
+
+  test('resolves down to root path', () => {
+    mkdirSync(srcPath, { recursive: true })
+    const moduleName = 'test-filesystem'
+    const modulePath = `${modulesPath}/${moduleName}`
+    mkdirSync(modulePath, { recursive: true })
+    const foundModulePath = resolveModule(tempDir, moduleName, srcPath)
+    expect(foundModulePath).toEqual([`${modulesPath}/${moduleName}`])
   })
 })

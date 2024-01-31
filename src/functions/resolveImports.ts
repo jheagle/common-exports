@@ -37,16 +37,17 @@ export type StreamFile = {
 
 /**
  * Given a file with buffer contents, identify all the imports it has and find their full paths.
- * @function
  * @param {Object} file
+ * @param {string|null} [rootPath=null]
  * @returns {Array<string, Object>}
  */
-export function resolveImports (file: StreamFile): Array<ModuleInfo> {
+export function resolveImports (file: StreamFile, rootPath: string | null = null): Array<ModuleInfo> {
   const dirPath = makeFilepath(strAfter(file.base, file.cwd))
+  const useRoot = rootPath ? rootPath : dirPath
   return findImports(file.contents.toString())
     .reduce(
       (modules: ModuleInfo[], moduleName: string): ModuleInfo[] => {
-        const moduleResolutions = makeModuleInfo(dirPath, moduleName)
+        const moduleResolutions = makeModuleInfo(dirPath, moduleName, useRoot)
         if (moduleResolutions.every(isCommonModule)) {
           // CommonJs modules don't need to be updated, keep them as-is
           return modules

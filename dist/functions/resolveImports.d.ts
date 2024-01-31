@@ -31,9 +31,9 @@ export type StreamFile = {
 };
 /**
  * Given a file with buffer contents, identify all the imports it has and find their full paths.
- * @function
  * @param {Object} file
+ * @param {string|null} [rootPath=null]
  * @returns {Array<string, Object>}
  */
-export declare function resolveImports(file: StreamFile): Array<ModuleInfo>;
+export declare function resolveImports(file: StreamFile, rootPath?: string | null): Array<ModuleInfo>;
 export default resolveImports;

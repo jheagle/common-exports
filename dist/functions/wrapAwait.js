@@ -8,7 +8,6 @@ var _kabobToTitleCase = _interopRequireDefault(require('../utilities/kabobToTitl
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Some import / export conversions use await which must be wrapped in an async function.
- * @function
  * @param {string} fileContents
  * @param {string} fileName
  * @returns {string}

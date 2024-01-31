@@ -7,7 +7,6 @@ exports.fileExists = exports.default = void 0
 var _fs = require('fs')
 /**
  * Detect if a file exists and is usable.
- * @function
  * @param {string} filePath
  * @returns {boolean}
  */

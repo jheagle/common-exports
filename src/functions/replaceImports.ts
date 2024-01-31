@@ -18,7 +18,6 @@ export type reduceImports = (content: string, importFile: ModuleInfo) => string
 
 /**
  * Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
- * @function
  * @param {string} srcPath
  * @param {string} destPath
  * @param {Object} file

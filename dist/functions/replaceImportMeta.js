@@ -6,7 +6,6 @@ Object.defineProperty(exports, '__esModule', {
 exports.replaceImportMeta = exports.default = void 0
 /**
  * Find usages of import.meta and replace it with CommonJs compatible substitute.
- * @function
  * @param {string} content
  * @returns {string}
  */

@@ -1,6 +1,5 @@
 /**
  * Search for the given module and return the full path.
- * @function
  * @param {string} root
  * @param {string} moduleName
  * @param {string} current
