@@ -1,7 +1,6 @@
-import { setUp } from 'test-filesystem'
+import { fileExists, setUp } from 'test-filesystem'
 import { cpSync, mkdirSync } from 'fs'
 import copyResources from './copyResources'
-import fileExists from './fileExists'
 
 const tempDir = 'test-copy-resources/'
 const modulesPath = `${tempDir}node_modules`

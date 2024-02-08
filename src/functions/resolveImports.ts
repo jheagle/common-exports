@@ -1,6 +1,6 @@
 import findImports from './findImports'
 import strAfter from '../utilities/strAfter'
-import makeFilepath from './makeFilepath'
+import makeFilepath from '../utilities/makeFilepath'
 import isCommonModule from './isCommonModule'
 import makeModuleInfo, { ModuleInfo } from './makeModuleInfo'
 

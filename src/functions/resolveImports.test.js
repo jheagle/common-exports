@@ -1,6 +1,6 @@
 import findImports from './findImports'
 import isCommonModule from './isCommonModule'
-import makeFilepath from './makeFilepath'
+import makeFilepath from '../utilities/makeFilepath'
 import makeModuleInfo from './makeModuleInfo'
 import resolveImports from './resolveImports'
 
@@ -14,7 +14,7 @@ const foundModules = [
   'imagemin-${pluginName}'
 ]
 const dirPath = 'test-resolve-imports/node_modules/gulp-imagemin'
-jest.mock('./makeFilepath', () => jest.fn(() => dirPath))
+jest.mock('../utilities/makeFilepath', () => jest.fn(() => dirPath))
 jest.mock('./findImports', () => jest.fn(() => foundModules))
 jest.mock('./makeModuleInfo', () => jest.fn((path, moduleName) => [
   {

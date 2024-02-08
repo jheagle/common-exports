@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs'
-import makeFilepath from './makeFilepath'
-import fileExists from './fileExists'
+import makeFilepath from '../utilities/makeFilepath'
+import { fileExists } from 'test-filesystem'
 
 /**
  * Given a module path, find the file which should be used as main, based on module import.

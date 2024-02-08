@@ -11,11 +11,11 @@ require('core-js/modules/esnext.iterator.filter.js')
 require('core-js/modules/esnext.iterator.map.js')
 var _fs = require('fs')
 var _strAfterLast = _interopRequireDefault(require('../utilities/strAfterLast'))
-var _makeFilepath = _interopRequireDefault(require('./makeFilepath'))
-var _fileExists = _interopRequireDefault(require('./fileExists'))
-var _regexEscape = _interopRequireDefault(require('./regexEscape'))
+var _makeFilepath = _interopRequireDefault(require('../utilities/makeFilepath'))
+var _testFilesystem = require('test-filesystem')
+var _regexEscape = _interopRequireDefault(require('../utilities/regexEscape'))
 var _strBeforeLast = _interopRequireDefault(require('../utilities/strBeforeLast'))
-var _makeRelativePath = _interopRequireDefault(require('./makeRelativePath'))
+var _makeRelativePath = _interopRequireDefault(require('../utilities/makeRelativePath'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 const modulesDirectory = 'node_modules'
 /**
@@ -49,7 +49,7 @@ const resolveModule = (root, moduleName, current = '') => {
     moduleName = (0, _makeRelativePath.default)(root, moduleName)
   }
   const tempCurrent = (0, _makeFilepath.default)(current, (0, _strBeforeLast.default)(moduleName, '/'))
-  if ((0, _fileExists.default)(tempCurrent)) {
+  if ((0, _testFilesystem.fileExists)(tempCurrent)) {
     let tempName = moduleName.includes('/') ? (0, _strAfterLast.default)(moduleName, '/') : moduleName
     tempName = (0, _makeFilepath.default)(tempName)
     tempName = (0, _regexEscape.default)(tempName)
@@ -60,7 +60,7 @@ const resolveModule = (root, moduleName, current = '') => {
     const moduleRegex = new RegExp(`^${tempName}$`)
     const foundFiles = (0, _fs.readdirSync)(tempCurrent).filter(filePath => moduleRegex.test(filePath))
     if (foundFiles.length) {
-      return foundFiles.map(found => (0, _makeFilepath.default)(tempCurrent, found)).filter(_fileExists.default)
+      return foundFiles.map(found => (0, _makeFilepath.default)(tempCurrent, found)).filter(_testFilesystem.fileExists)
     }
   }
   if (current === modulesDirectory) {

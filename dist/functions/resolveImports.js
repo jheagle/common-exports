@@ -14,7 +14,7 @@ require('core-js/modules/esnext.iterator.for-each.js')
 require('core-js/modules/esnext.iterator.reduce.js')
 var _findImports = _interopRequireDefault(require('./findImports'))
 var _strAfter = _interopRequireDefault(require('../utilities/strAfter'))
-var _makeFilepath = _interopRequireDefault(require('./makeFilepath'))
+var _makeFilepath = _interopRequireDefault(require('../utilities/makeFilepath'))
 var _isCommonModule = _interopRequireDefault(require('./isCommonModule'))
 var _makeModuleInfo = _interopRequireDefault(require('./makeModuleInfo'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }

@@ -1,10 +1,10 @@
 import { StreamFile } from './resolveImports'
 import strBeforeLast from '../utilities/strBeforeLast'
-import makeFilepath from './makeFilepath'
-import fileExists from './fileExists'
+import makeFilepath from '../utilities/makeFilepath'
+import { fileExists } from 'test-filesystem'
 import makeCommon from './makeCommon'
-import regexEscape from './regexEscape'
-import makeRelativePath from './makeRelativePath'
+import regexEscape from '../utilities/regexEscape'
+import makeRelativePath from '../utilities/makeRelativePath'
 import { ModuleInfo } from './makeModuleInfo'
 
 /**

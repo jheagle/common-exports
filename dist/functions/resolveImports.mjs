@@ -1,6 +1,6 @@
 import findImports from './findImports.mjs'
 import strAfter from '../utilities/strAfter'
-import makeFilepath from './makeFilepath.mjs'
+import makeFilepath from '../utilities/makeFilepath'
 import isCommonModule from './isCommonModule.mjs'
 import makeModuleInfo from './makeModuleInfo.mjs'
 /**

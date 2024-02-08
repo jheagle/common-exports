@@ -5,11 +5,11 @@ Object.defineProperty(exports, '__esModule', {
 })
 exports.replaceImports = exports.default = void 0
 var _strBeforeLast = _interopRequireDefault(require('../utilities/strBeforeLast'))
-var _makeFilepath = _interopRequireDefault(require('./makeFilepath'))
-var _fileExists = _interopRequireDefault(require('./fileExists'))
+var _makeFilepath = _interopRequireDefault(require('../utilities/makeFilepath'))
+var _testFilesystem = require('test-filesystem')
 var _makeCommon = _interopRequireDefault(require('./makeCommon'))
-var _regexEscape = _interopRequireDefault(require('./regexEscape'))
-var _makeRelativePath = _interopRequireDefault(require('./makeRelativePath'))
+var _regexEscape = _interopRequireDefault(require('../utilities/regexEscape'))
+var _makeRelativePath = _interopRequireDefault(require('../utilities/makeRelativePath'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
@@ -33,7 +33,7 @@ const replaceImports = (srcPath, destPath, file, config = {}) => (content, impor
   if (modulePath.endsWith('.mjs')) {
     modulePath = (0, _strBeforeLast.default)(modulePath, '.mjs') + '.js'
   }
-  if (!(0, _fileExists.default)(modulePath)) {
+  if (!(0, _testFilesystem.fileExists)(modulePath)) {
     if (modulePath.endsWith('.js') || modulePath.endsWith('.mjs')) {
       modulePath = (0, _strBeforeLast.default)(modulePath, '/')
     }

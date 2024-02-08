@@ -1,10 +1,10 @@
 import { readdirSync } from 'fs'
 import strAfterLast from '../utilities/strAfterLast'
-import makeFilepath from './makeFilepath.mjs'
-import fileExists from './fileExists.mjs'
-import regexEscape from './regexEscape.mjs'
+import makeFilepath from '../utilities/makeFilepath'
+import { fileExists } from 'test-filesystem'
+import regexEscape from '../utilities/regexEscape'
 import strBeforeLast from '../utilities/strBeforeLast'
-import makeRelativePath from './makeRelativePath.mjs'
+import makeRelativePath from '../utilities/makeRelativePath'
 const modulesDirectory = 'node_modules'
 /**
  * Search for the given module and return the full path.

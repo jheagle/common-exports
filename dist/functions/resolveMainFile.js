@@ -5,8 +5,8 @@ Object.defineProperty(exports, '__esModule', {
 })
 exports.resolveMainFile = exports.default = void 0
 var _fs = require('fs')
-var _makeFilepath = _interopRequireDefault(require('./makeFilepath'))
-var _fileExists = _interopRequireDefault(require('./fileExists'))
+var _makeFilepath = _interopRequireDefault(require('../utilities/makeFilepath'))
+var _testFilesystem = require('test-filesystem')
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Given a module path, find the file which should be used as main, based on module import.
@@ -14,14 +14,14 @@ function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { d
  * @returns {string|null}
  */
 const resolveMainFile = modulePath => {
-  if (!(0, _fileExists.default)(modulePath)) {
+  if (!(0, _testFilesystem.fileExists)(modulePath)) {
     // the path might be a direct file but missing the file extension, so, try some file extensions
     const jsModule = `${modulePath}.js`
-    if ((0, _fileExists.default)(jsModule)) {
+    if ((0, _testFilesystem.fileExists)(jsModule)) {
       return jsModule
     }
     const mjsModule = `${modulePath}.mjs`
-    if ((0, _fileExists.default)(mjsModule)) {
+    if ((0, _testFilesystem.fileExists)(mjsModule)) {
       return mjsModule
     }
     return null
@@ -31,16 +31,16 @@ const resolveMainFile = modulePath => {
     return modulePath
   }
   const jsFile = (0, _makeFilepath.default)(`${modulePath}.js`)
-  if ((0, _fileExists.default)(jsFile)) {
+  if ((0, _testFilesystem.fileExists)(jsFile)) {
     return jsFile
   }
   const mjsFile = (0, _makeFilepath.default)(`${modulePath}.mjs`)
-  if ((0, _fileExists.default)(mjsFile)) {
+  if ((0, _testFilesystem.fileExists)(mjsFile)) {
     return mjsFile
   }
   // Check if there is a package.json and search there for the specified main file
   const packagePath = (0, _makeFilepath.default)(modulePath, 'package.json')
-  if ((0, _fileExists.default)(packagePath)) {
+  if ((0, _testFilesystem.fileExists)(packagePath)) {
     const packageData = JSON.parse((0, _fs.readFileSync)(packagePath).toString())
     if (packageData.exports) {
       if (typeof packageData.exports === 'string') {
@@ -53,11 +53,11 @@ const resolveMainFile = modulePath => {
     }
   }
   const jsPath = (0, _makeFilepath.default)(modulePath, 'index.js')
-  if ((0, _fileExists.default)(jsPath)) {
+  if ((0, _testFilesystem.fileExists)(jsPath)) {
     return jsPath
   }
   const mjsPath = (0, _makeFilepath.default)(modulePath, 'index.mjs')
-  if ((0, _fileExists.default)(mjsPath)) {
+  if ((0, _testFilesystem.fileExists)(mjsPath)) {
     return mjsPath
   }
   return null

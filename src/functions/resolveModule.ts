@@ -1,10 +1,10 @@
 import { readdirSync } from 'fs'
 import strAfterLast from '../utilities/strAfterLast'
-import makeFilepath from './makeFilepath'
-import fileExists from './fileExists'
-import regexEscape from './regexEscape'
+import makeFilepath from '../utilities/makeFilepath'
+import { fileExists } from 'test-filesystem'
+import regexEscape from '../utilities/regexEscape'
 import strBeforeLast from '../utilities/strBeforeLast'
-import makeRelativePath from './makeRelativePath'
+import makeRelativePath from '../utilities/makeRelativePath'
 
 const modulesDirectory: string = 'node_modules'
 

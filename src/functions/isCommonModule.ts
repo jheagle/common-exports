@@ -1,5 +1,5 @@
-import makeFilepath from './makeFilepath'
-import fileExists from './fileExists'
+import makeFilepath from '../utilities/makeFilepath'
+import { fileExists } from 'test-filesystem'
 import { readFileSync } from 'fs'
 import { ModuleInfo } from './makeModuleInfo'
 import importRegex from './importRegex'
