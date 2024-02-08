@@ -150,7 +150,8 @@ const distMinify = () => src(distSearch)
  */
 const convertToCommon = () => {
   const { makeCommon } = require('./dist/functions/makeCommon')
-  return makeCommon(`${distMain}.mjs`, `${distPath}/cjs`)
+  const mainFile = `${distMain}.mjs`
+  return makeCommon(mainFile, `${distPath}/cjs`, { rootPath: './' })
 }
 
 /**
@@ -194,13 +195,12 @@ const build = (done = null) => parallel(
     clean,
     distSeries,
     parallel(distLint, distMinify),
-    // convertToCommon,
     buildReadme
   ),
   testFull
 )(done)
 
-// exports.convertCommon = convertToCommon
+exports.convertCommon = convertToCommon
 exports.dist = distSeries
 exports.build = build
 exports.readme = buildReadme

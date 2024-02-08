@@ -11,10 +11,16 @@ export const makeRelativePath = (fromFile: string, toFile: string): string => {
   let relativePath = toFile
   let nextPart = fromFile
   let firstPart = strBefore(nextPart, '/')
+  let hasMatches = false
   while (firstPart && relativePath.startsWith(firstPart)) {
     relativePath = strAfter(relativePath, `${firstPart}/`)
     nextPart = strAfter(nextPart, `${firstPart}/`)
     firstPart = strBefore(nextPart, '/')
+    hasMatches = true
+  }
+  if (!hasMatches) {
+    // No similar base paths, use the path as-is
+    return relativePath
   }
   let relativePrefix = ''
   const nextParts = nextPart.split('/')

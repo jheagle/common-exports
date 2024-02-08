@@ -30,6 +30,9 @@ const replaceImports = (srcPath, destPath, file, config = {}) => (content, impor
     newDest = (0, _strBeforeLast.default)(newDest, '/')
   }
   let modulePath = (0, _makeFilepath.default)(newDest, relativePath)
+  if (modulePath.endsWith('.mjs')) {
+    modulePath = (0, _strBeforeLast.default)(modulePath, '.mjs') + '.js'
+  }
   if (!(0, _fileExists.default)(modulePath)) {
     if (modulePath.endsWith('.js') || modulePath.endsWith('.mjs')) {
       modulePath = (0, _strBeforeLast.default)(modulePath, '/')

@@ -1,5 +1,5 @@
 import resolveModule from './resolveModule'
-import { cpSync, mkdirSync, writeFileSync } from 'fs'
+import { cpSync, mkdirSync } from 'fs'
 import { setUp } from 'test-filesystem'
 
 const tempDir = 'test-resolve-module/'
@@ -132,5 +132,16 @@ describe('resolveModule', () => {
     mkdirSync(modulePath, { recursive: true })
     const foundModulePath = resolveModule(tempDir, moduleName, srcPath)
     expect(foundModulePath).toEqual([`${modulesPath}/${moduleName}`])
+  })
+
+  test('resolves down to root deeper root path', () => {
+    mkdirSync(srcPath, { recursive: true })
+    const moduleName = 'test-filesystem'
+    const modulePath = `${modulesPath}/${moduleName}`
+    mkdirSync(modulePath, { recursive: true })
+    const rootPath = './'
+    const dirPath = 'src'
+    const foundModulePath = resolveModule(rootPath, moduleName, dirPath)
+    expect(foundModulePath).toEqual([`node_modules/${moduleName}`])
   })
 })

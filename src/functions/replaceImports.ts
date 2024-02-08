@@ -38,6 +38,9 @@ export const replaceImports = (srcPath: string, destPath: string, file: StreamFi
       newDest = strBeforeLast(newDest, '/')
     }
     let modulePath = makeFilepath(newDest, relativePath)
+    if (modulePath.endsWith('.mjs')) {
+      modulePath = strBeforeLast(modulePath, '.mjs') + '.js'
+    }
     if (!fileExists(modulePath)) {
       if (modulePath.endsWith('.js') || modulePath.endsWith('.mjs')) {
         modulePath = strBeforeLast(modulePath, '/')

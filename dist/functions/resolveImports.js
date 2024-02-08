@@ -5,13 +5,13 @@ Object.defineProperty(exports, '__esModule', {
 })
 exports.default = void 0
 exports.resolveImports = resolveImports
+require('core-js/modules/esnext.async-iterator.every.js')
+require('core-js/modules/esnext.async-iterator.for-each.js')
 require('core-js/modules/esnext.async-iterator.reduce.js')
 require('core-js/modules/esnext.iterator.constructor.js')
-require('core-js/modules/esnext.iterator.reduce.js')
-require('core-js/modules/esnext.async-iterator.every.js')
 require('core-js/modules/esnext.iterator.every.js')
-require('core-js/modules/esnext.async-iterator.for-each.js')
 require('core-js/modules/esnext.iterator.for-each.js')
+require('core-js/modules/esnext.iterator.reduce.js')
 var _findImports = _interopRequireDefault(require('./findImports'))
 var _strAfter = _interopRequireDefault(require('../utilities/strAfter'))
 var _makeFilepath = _interopRequireDefault(require('./makeFilepath'))

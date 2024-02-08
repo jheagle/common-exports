@@ -4,6 +4,7 @@ import makeFilepath from './makeFilepath'
 import fileExists from './fileExists'
 import regexEscape from './regexEscape'
 import strBeforeLast from '../utilities/strBeforeLast'
+import makeRelativePath from './makeRelativePath'
 
 const modulesDirectory: string = 'node_modules'
 
@@ -19,15 +20,23 @@ export const resolveModule = (root: string, moduleName: string, current: string 
   if (!current) {
     current = root
   }
+  let hasFullPath = true
   if (moduleName.startsWith('#')) {
     moduleName = moduleName.slice(1)
     current = makeFilepath(current, 'vendor')
+    hasFullPath = false
   }
   if (moduleName.startsWith('./')) {
     moduleName = moduleName.slice(2)
+    hasFullPath = false
   }
   if (moduleName.startsWith('../')) {
     moduleName = moduleName.slice(3)
+    hasFullPath = false
+  }
+  if (hasFullPath) {
+    // Given longer paths, reduce them to relative parts
+    moduleName = makeRelativePath(root, moduleName)
   }
   let tempCurrent = makeFilepath(current, strBeforeLast(moduleName, '/'))
   if (fileExists(tempCurrent)) {
@@ -46,11 +55,11 @@ export const resolveModule = (root: string, moduleName: string, current: string 
         .filter(fileExists)
     }
   }
+  if (current === modulesDirectory) {
+    return []
+  }
   if (strAfterLast(current, '/') === modulesDirectory) {
     current = makeFilepath(current, '../../')
-    if (!current) {
-      return []
-    }
   }
   const next = makeFilepath(current, modulesDirectory)
   if (next === root || !next) {
