@@ -8,8 +8,9 @@ var _kabobToTitleCase = _interopRequireDefault(require('../utilities/kabobToTitl
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Some import / export conversions use await which must be wrapped in an async function.
- * @param {string} fileContents
- * @param {string} fileName
+ * @memberof module:common-exports
+ * @param {string} fileContents - The string content of the file for updating.
+ * @param {string} fileName - The name of the file we are doing changes for.
  * @returns {string}
  */
 const wrapAwait = (fileContents, fileName = 'module-namespace') => {

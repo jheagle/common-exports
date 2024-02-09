@@ -2,8 +2,9 @@ import kabobToTitleCase from '../utilities/kabobToTitleCase'
 
 /**
  * Some import / export conversions use await which must be wrapped in an async function.
- * @param {string} fileContents
- * @param {string} fileName
+ * @memberof module:common-exports
+ * @param {string} fileContents - The string content of the file for updating.
+ * @param {string} fileName - The name of the file we are doing changes for.
  * @returns {string}
  */
 export const wrapAwait = (fileContents: string, fileName: string = 'module-namespace'): string => {

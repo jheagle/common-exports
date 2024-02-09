@@ -10,7 +10,8 @@ var _testFilesystem = require('test-filesystem')
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Given a module path, find the file which should be used as main, based on module import.
- * @param {string} modulePath
+ * @memberof module:common-exports
+ * @param {string} modulePath - The relative path used to locate the module.
  * @returns {string|null}
  */
 const resolveMainFile = modulePath => {

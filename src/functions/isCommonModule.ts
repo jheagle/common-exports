@@ -6,7 +6,8 @@ import importRegex from './importRegex'
 
 /**
  * Attempt to detect if the current module is a common js module.
- * @param {Object} moduleInfo
+ * @memberof module:common-exports
+ * @param {Object<module|path|file, string|null>} moduleInfo - An object containing the module, path, and file strings.
  * @returns {boolean}
  */
 export const isCommonModule = (moduleInfo: ModuleInfo): boolean => {
@@ -17,7 +18,10 @@ export const isCommonModule = (moduleInfo: ModuleInfo): boolean => {
       return false
     }
   }
-
+  if (!fileExists(moduleInfo.file)) {
+    // Some native modules don't exist, hope for the best.
+    return true
+  }
   const mainContents = readFileSync(moduleInfo.file).toString()
   return /require\(['`"].+['`"]\)/.test(mainContents) && !importRegex().test(mainContents)
 }

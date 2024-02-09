@@ -5,9 +5,10 @@ import isCommonModule from './isCommonModule.mjs'
 import makeModuleInfo from './makeModuleInfo.mjs'
 /**
  * Given a file with buffer contents, identify all the imports it has and find their full paths.
- * @param {Object} file
- * @param {string|null} [rootPath=null]
- * @returns {Array<string, Object>}
+ * @memberof module:common-exports
+ * @param {StreamFile} file - The in-memory fetched file object.
+ * @param {string|null} [rootPath=null] - The root path to use when resolving imports.
+ * @returns {Array<ModuleInfo>}
  */
 export function resolveImports (file, rootPath = null) {
   const dirPath = makeFilepath(strAfter(file.base, file.cwd))

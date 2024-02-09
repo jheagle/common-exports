@@ -21,14 +21,14 @@ of `node_modules/.bin/gulp`.
 In your `gulpfile.js` add the following:
 
 ```js
-const convertToCommon = () => {
+const convertCommon = () => {
   const { makeCommon } = require('common-exports')
   const mainFile = 'path to the main file you wish to convert'
   const vendorPath = 'path to the directory where your exported file (and dependencies) should go'
   return makeCommon(mainFile, vendorPath, { rootPath: './' })
 }
 
-exports.convertCommon = convertToCommon
+exports.convertCommon = convertCommon
 ```
 
 Make sure to use the correct main file you wish to start conversion at and also the output directory for the conversion.

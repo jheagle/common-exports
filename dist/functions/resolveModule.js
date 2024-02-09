@@ -20,9 +20,10 @@ function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { d
 const modulesDirectory = 'node_modules'
 /**
  * Search for the given module and return the full path.
- * @param {string} root
- * @param {string} moduleName
- * @param {string} current
+ * @memberof module:common-exports
+ * @param {string} root - The base path for searching.
+ * @param {string} moduleName - The import name used for retrieving the module.
+ * @param {string} current - The current directory we are checking for module matches.
  * @returns {Array<string>}
  */
 const resolveModule = (root, moduleName, current = '') => {

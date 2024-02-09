@@ -2,7 +2,7 @@ import { StreamFile } from './resolveImports'
 import strBeforeLast from '../utilities/strBeforeLast'
 import makeFilepath from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
-import makeCommon from './makeCommon'
+import makeCommon, { makeCommonConfig } from '../main'
 import regexEscape from '../utilities/regexEscape'
 import makeRelativePath from '../utilities/makeRelativePath'
 import { ModuleInfo } from './makeModuleInfo'
@@ -10,23 +10,22 @@ import { ModuleInfo } from './makeModuleInfo'
 /**
  * Build the content replacements with a reduce function.
  * @callback reduceImports
- * @param {string} content
- * @param {Object} importFile
+ * @param {string} content - The string of file contents to find and replace imports within.
+ * @param {ModuleInfo} importFile - Module location info object for the original name and path.
  * @returns {string}
  */
 export type reduceImports = (content: string, importFile: ModuleInfo) => string
 
 /**
  * Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
- * @param {string} srcPath
- * @param {string} destPath
- * @param {Object} file
- * @param {Object<string, Object.<string, *>>} [config={}]
+ * @memberof module:common-exports
+ * @param {string} srcPath - The original path of the file to be updated.
+ * @param {string} destPath - The outgoing path of the file once updated.
+ * @param {StreamFile} file - The in-memory fetched file object.
+ * @param {Object<string, Object<string, *>>} [config={}] - Additional configuration options.
  * @returns {reduceImports}
  */
-export const replaceImports = (srcPath: string, destPath: string, file: StreamFile, config: {
-  [key: string]: { [key: string]: any }
-} = {}): reduceImports =>
+export const replaceImports = (srcPath: string, destPath: string, file: StreamFile, config: makeCommonConfig = {}): reduceImports =>
   (content: string, importFile: ModuleInfo): string => {
     if (!importFile.file) {
       console.error('Unable to find module', srcPath, importFile)
@@ -53,6 +52,10 @@ export const replaceImports = (srcPath: string, destPath: string, file: StreamFi
       const replaceName = moduleName.replace(/(\\\$\\{.+\\})+/g, '.+')
       const replaceFor = new RegExp(`(.+\/)(${replaceName})(\/.+)`, 'g')
       relativePath = relativePath.replace(replaceFor, '$1' + importFile.module + '$3')
+    }
+    if (relativePath.endsWith('.mjs')) {
+      // Handle wrong ending conversion from .mjs to .js file extension
+      relativePath = strBeforeLast(relativePath, '.mjs') + '.js'
     }
     return content.replace(moduleMatch, `$1${relativePath}$1`)
   }

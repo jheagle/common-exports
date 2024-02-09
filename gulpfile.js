@@ -1,12 +1,3 @@
-// const makeCommon = require('./src/makeCommon')
-
-// TODO: replace these with valid implementations for building owned and vendor common js files
-// const common = () => makeCommon()
-// const commonVendor = () => common()
-//
-// exports.common = common
-// exports.commonVendor = commonVendor
-
 const babel = require('gulp-babel')
 const { dest, parallel, series, src } = require('gulp')
 const { appendFileSync } = require('fs')
@@ -29,7 +20,7 @@ const srcSearch = 'src/**/*.ts'
 const readmeTemplate = 'MAIN.md'
 const readmeFile = 'README.md'
 const readmePath = './'
-const readmeSearch = 'dist/**/*.js'
+const readmeSearch = ['dist/main.js', 'dist/functions/*.js']
 const readmeOptions = 'utf8'
 const testPath = ['src']
 const testOptions = {
@@ -144,17 +135,6 @@ const distMinify = () => src(distSearch)
   .pipe(dest(distPath))
 
 /**
- * Work in-progress, need to create a way for converting current project not just a package from node_modules
- * @function
- * @return {*}
- */
-const convertToCommon = () => {
-  const { makeCommon } = require('./dist/functions/makeCommon')
-  const mainFile = `${distMain}.mjs`
-  return makeCommon(mainFile, `${distPath}/cjs`, { rootPath: './' })
-}
-
-/**
  * Copy a readme template into the README.md file.
  * @function
  * @returns {*}
@@ -200,7 +180,12 @@ const build = (done = null) => parallel(
   testFull
 )(done)
 
-exports.convertCommon = convertToCommon
+const convertCommon = () => {
+  const { makeCommon } = require('./dist/main')
+  return makeCommon(`${distMain}.mjs`, `${distPath}/cjs`, { rootPath: './' })
+}
+
+exports.convertCommon = convertCommon
 exports.dist = distSeries
 exports.build = build
 exports.readme = buildReadme

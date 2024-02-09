@@ -1,8 +1,8 @@
 import replaceImports from './replaceImports'
 import { countMatches } from 'test-filesystem'
-import makeCommon from './makeCommon'
+import makeCommon from '../main'
 
-jest.mock('./makeCommon', () => jest.fn())
+jest.mock('../main', () => jest.fn())
 
 const fileContents = 'import path from \'node:path\';\n' +
   'import process from \'node:process\';\n' +
@@ -204,7 +204,6 @@ describe('replaceImports', () => {
     expect(countMatches(bufferedContents, 'import {spawnedKill, spawnedCancel, setupTimeout, validateTimeout, setExitHandler} from \'./lib/kill.js\'')).toBe(1)
     expect(countMatches(bufferedContents, 'import {handleInput, getSpawnedResult, makeAllStream, validateInputSync} from \'./lib/stream.js\'')).toBe(1)
     expect(countMatches(bufferedContents, 'import {joinCommand, parseCommand, getEscapedCommand} from \'./lib/command.js\'')).toBe(1)
-
 
     const result = importFiles.reduce(replaceImports(srcPath, destPath, file), bufferedContents)
     expect(countMatches(result, 'import {Buffer} from \'node:buffer\'')).toBe(1)

@@ -2,7 +2,7 @@
   "name": "common-exports",
   "version": "1.0.0",
   "description": "Convert ES Module to CommonJS.",
-  "main": "index.js",
+  "main": "dist/main.js",
   "scripts": {
     "build": "gulp build",
     "htmldocs": "jsdoc -R MAIN.md -c ./.jsdoc.conf.js -d docs",
@@ -62,8 +62,6 @@
     "node": ">=10.2.1"
   },
   "files": [
-    "browser",
-    "dist",
-    "gulpfile.js"
+    "dist"
   ]
 }

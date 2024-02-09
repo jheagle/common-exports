@@ -1,15 +1,16 @@
 import strBeforeLast from '../utilities/strBeforeLast'
 import makeFilepath from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
-import makeCommon from './makeCommon.mjs'
+import makeCommon from '../main'
 import regexEscape from '../utilities/regexEscape'
 import makeRelativePath from '../utilities/makeRelativePath'
 /**
  * Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
- * @param {string} srcPath
- * @param {string} destPath
- * @param {Object} file
- * @param {Object<string, Object.<string, *>>} [config={}]
+ * @memberof module:common-exports
+ * @param {string} srcPath - The original path of the file to be updated.
+ * @param {string} destPath - The outgoing path of the file once updated.
+ * @param {StreamFile} file - The in-memory fetched file object.
+ * @param {Object<string, Object<string, *>>} [config={}] - Additional configuration options.
  * @returns {reduceImports}
  */
 export const replaceImports = (srcPath, destPath, file, config = {}) => (content, importFile) => {
@@ -38,6 +39,10 @@ export const replaceImports = (srcPath, destPath, file, config = {}) => (content
     const replaceName = moduleName.replace(/(\\\$\\{.+\\})+/g, '.+')
     const replaceFor = new RegExp(`(.+\/)(${replaceName})(\/.+)`, 'g')
     relativePath = relativePath.replace(replaceFor, '$1' + importFile.module + '$3')
+  }
+  if (relativePath.endsWith('.mjs')) {
+    // Handle wrong ending conversion from .mjs to .js file extension
+    relativePath = strBeforeLast(relativePath, '.mjs') + '.js'
   }
   return content.replace(moduleMatch, `$1${relativePath}$1`)
 }

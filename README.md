@@ -21,98 +21,17 @@ of `node_modules/.bin/gulp`.
 In your `gulpfile.js` add the following:
 
 ```js
-const convertToCommon = () => {
+const convertCommon = () => {
   const { makeCommon } = require('common-exports')
   const mainFile = 'path to the main file you wish to convert'
   const vendorPath = 'path to the directory where your exported file (and dependencies) should go'
   return makeCommon(mainFile, vendorPath, { rootPath: './' })
 }
 
-exports.convertCommon = convertToCommon
+exports.convertCommon = convertCommon
 ```
 
 Make sure to use the correct main file you wish to start conversion at and also the output directory for the conversion.
-
-## Modules
-
-<dl>
-<dt><a href="#module_common-exports">common-exports</a></dt>
-<dd><p>Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.</p>
-</dd>
-</dl>
-
-## Functions
-
-<dl>
-<dt><a href="#strBeforeLast">strBeforeLast(str, search)</a> ⇒ <code>string</code></dt>
-<dd><p>Retrieve the string part after the last search match.
-Original source from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strBeforeLast.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#strBefore">strBefore(str, search)</a> ⇒ <code>string</code></dt>
-<dd><p>Retrieve the string part before the search match.
-Original source from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strBefore.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#strAfterLast">strAfterLast(str, search)</a> ⇒ <code>string</code></dt>
-<dd><p>Retrieve the string part after the last search match.
-Original source from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strAfterLast.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#strAfter">strAfter(str, search)</a> ⇒ <code>string</code></dt>
-<dd><p>Retrieve the string part after the search match.
-Original source from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strAfter.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#regexEscape">regexEscape(str)</a> ⇒ <code>string</code></dt>
-<dd><p>Take a string and escape the regex characters.
-Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/regexEscape.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#makeRelativePath">makeRelativePath(fromFile, toFile)</a> ⇒ <code>string</code></dt>
-<dd><p>Compare two file paths and simplify them to a relative path.
-Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeRelativePath.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#makeFilepath">makeFilepath(root, [append])</a> ⇒ <code>string</code></dt>
-<dd><p>Format the given path so that it does not have trailing slashes and also correctly appends a path.
-Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeFilePath.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#kabobToTitleCase">kabobToTitleCase(str)</a> ⇒ <code>string</code></dt>
-<dd><p>Given a string in kebab-case convert to TitleCase (camelCase with a starting capital letter).
-Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/camelCase.ts">Sí, funciona</a></p>
-</dd>
-<dt><a href="#wrapAwait">wrapAwait(fileContents, fileName)</a> ⇒ <code>string</code></dt>
-<dd><p>Some import / export conversions use await which must be wrapped in an async function.</p>
-</dd>
-<dt><a href="#resolveModule">resolveModule(root, moduleName, current)</a> ⇒ <code>Array.&lt;string&gt;</code></dt>
-<dd><p>Search for the given module and return the full path.</p>
-</dd>
-<dt><a href="#resolveMainFile">resolveMainFile(modulePath)</a> ⇒ <code>string</code> | <code>null</code></dt>
-<dd><p>Given a module path, find the file which should be used as main, based on module import.</p>
-</dd>
-<dt><a href="#resolveImports">resolveImports(file, [rootPath])</a> ⇒ <code>Array.&lt;string, Object&gt;</code></dt>
-<dd><p>Given a file with buffer contents, identify all the imports it has and find their full paths.</p>
-</dd>
-<dt><a href="#replaceImports">replaceImports(srcPath, destPath, file, [config])</a> ⇒ <code>reduceImports</code></dt>
-<dd><p>Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.</p>
-</dd>
-<dt><a href="#replaceImportMeta">replaceImportMeta(content)</a> ⇒ <code>string</code></dt>
-<dd><p>Find usages of import.meta and replace it with CommonJs compatible substitute.</p>
-</dd>
-<dt><a href="#makeModuleInfo">makeModuleInfo(dirPath, moduleName, rootPath)</a> ⇒ <code>string</code></dt>
-<dd><p>Create the Module Info object to store the name, path, and file.</p>
-</dd>
-<dt><a href="#makeCommon">makeCommon(srcPath, destPath, [config])</a> ⇒ <code>stream.Stream</code></dt>
-<dd><p>Apply babel to source files and output with commonJs compatibility.</p>
-</dd>
-<dt><a href="#isCommonModule">isCommonModule(moduleInfo)</a> ⇒ <code>boolean</code></dt>
-<dd><p>Attempt to detect if the current module is a common js module.</p>
-</dd>
-<dt><a href="#importRegex">importRegex()</a> ⇒ <code>string</code></dt>
-<dd><p>Get the regex for detecting ES6 import statements.</p>
-</dd>
-<dt><a href="#findImports">findImports(fileContents)</a> ⇒ <code>Array</code></dt>
-<dd><p>Retrieve all the module names from imports.</p>
-</dd>
-<dt><a href="#copyResources">copyResources(baseFilePath, [config])</a> ⇒ <code>undefined</code></dt>
-<dd><p>Based on configured &#39;copyResources&#39;, if we are in the corresponding based path copy each src to dest.</p>
-</dd>
-</dl>
 
 <a name="module_common-exports"></a>
 
@@ -121,244 +40,159 @@ Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
 
 **Version**: 1.0.0  
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
-<a name="strBeforeLast"></a>
 
-## strBeforeLast(str, search) ⇒ <code>string</code>
-Retrieve the string part after the last search match.
-Original source from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strBeforeLast.ts)
+* [common-exports](#module_common-exports)
+    * [.makeCommon(srcPath, destPath, [config])](#module_common-exports.makeCommon) ⇒ <code>stream.Stream</code>
+    * [.wrapAwait(fileContents, fileName)](#module_common-exports.wrapAwait) ⇒ <code>string</code>
+    * [.resolveModule(root, moduleName, current)](#module_common-exports.resolveModule) ⇒ <code>Array.&lt;string&gt;</code>
+    * [.resolveMainFile(modulePath)](#module_common-exports.resolveMainFile) ⇒ <code>string</code> \| <code>null</code>
+    * [.resolveImports(file, [rootPath])](#module_common-exports.resolveImports) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
+    * [.replaceImports(srcPath, destPath, file, [config])](#module_common-exports.replaceImports) ⇒ <code>reduceImports</code>
+    * [.replaceImportMeta(content)](#module_common-exports.replaceImportMeta) ⇒ <code>string</code>
+    * [.makeModuleInfo(dirPath, moduleName, rootPath)](#module_common-exports.makeModuleInfo) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
+    * [.isCommonModule(moduleInfo)](#module_common-exports.isCommonModule) ⇒ <code>boolean</code>
+    * [.importRegex()](#module_common-exports.importRegex) ⇒ <code>string</code>
+    * [.findImports(fileContents)](#module_common-exports.findImports) ⇒ <code>Array</code>
+    * [.copyResources(baseFilePath, [config])](#module_common-exports.copyResources) ⇒ <code>undefined</code>
 
-**Kind**: global function  
+<a name="module_common-exports.makeCommon"></a>
 
-| Param | Type |
-| --- | --- |
-| str | <code>string</code> | 
-| search | <code>string</code> | 
-
-<a name="strBefore"></a>
-
-## strBefore(str, search) ⇒ <code>string</code>
-Retrieve the string part before the search match.
-Original source from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strBefore.ts)
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| str | <code>string</code> | 
-| search | <code>string</code> | 
-
-<a name="strAfterLast"></a>
-
-## strAfterLast(str, search) ⇒ <code>string</code>
-Retrieve the string part after the last search match.
-Original source from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strAfterLast.ts)
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| str | <code>string</code> | 
-| search | <code>string</code> | 
-
-<a name="strAfter"></a>
-
-## strAfter(str, search) ⇒ <code>string</code>
-Retrieve the string part after the search match.
-Original source from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strAfter.ts)
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| str | <code>string</code> | 
-| search | <code>string</code> | 
-
-<a name="regexEscape"></a>
-
-## regexEscape(str) ⇒ <code>string</code>
-Take a string and escape the regex characters.
-Original source concepts from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/regexEscape.ts)
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| str | <code>string</code> | 
-
-<a name="makeRelativePath"></a>
-
-## makeRelativePath(fromFile, toFile) ⇒ <code>string</code>
-Compare two file paths and simplify them to a relative path.
-Original source concepts from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeRelativePath.ts)
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| fromFile | <code>string</code> | 
-| toFile | <code>string</code> | 
-
-<a name="makeFilepath"></a>
-
-## makeFilepath(root, [append]) ⇒ <code>string</code>
-Format the given path so that it does not have trailing slashes and also correctly appends a path.
-Original source concepts from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeFilePath.ts)
-
-**Kind**: global function  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| root | <code>string</code> |  | 
-| [append] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | 
-
-<a name="kabobToTitleCase"></a>
-
-## kabobToTitleCase(str) ⇒ <code>string</code>
-Given a string in kebab-case convert to TitleCase (camelCase with a starting capital letter).
-Original source concepts from [Sí, funciona](https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/camelCase.ts)
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| str | <code>string</code> | 
-
-<a name="wrapAwait"></a>
-
-## wrapAwait(fileContents, fileName) ⇒ <code>string</code>
-Some import / export conversions use await which must be wrapped in an async function.
-
-**Kind**: global function  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| fileContents | <code>string</code> |  | 
-| fileName | <code>string</code> | <code>&quot;module-namespace&quot;</code> | 
-
-<a name="resolveModule"></a>
-
-## resolveModule(root, moduleName, current) ⇒ <code>Array.&lt;string&gt;</code>
-Search for the given module and return the full path.
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| root | <code>string</code> | 
-| moduleName | <code>string</code> | 
-| current | <code>string</code> | 
-
-<a name="resolveMainFile"></a>
-
-## resolveMainFile(modulePath) ⇒ <code>string</code> \| <code>null</code>
-Given a module path, find the file which should be used as main, based on module import.
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| modulePath | <code>string</code> | 
-
-<a name="resolveImports"></a>
-
-## resolveImports(file, [rootPath]) ⇒ <code>Array.&lt;string, Object&gt;</code>
-Given a file with buffer contents, identify all the imports it has and find their full paths.
-
-**Kind**: global function  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| file | <code>Object</code> |  | 
-| [rootPath] | <code>string</code> \| <code>null</code> | <code>null</code> | 
-
-<a name="replaceImports"></a>
-
-## replaceImports(srcPath, destPath, file, [config]) ⇒ <code>reduceImports</code>
-Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
-
-**Kind**: global function  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| srcPath | <code>string</code> |  | 
-| destPath | <code>string</code> |  | 
-| file | <code>Object</code> |  | 
-| [config] | <code>Object.&lt;string, Object.&lt;string, \*&gt;&gt;</code> | <code>{}</code> | 
-
-<a name="replaceImportMeta"></a>
-
-## replaceImportMeta(content) ⇒ <code>string</code>
-Find usages of import.meta and replace it with CommonJs compatible substitute.
-
-**Kind**: global function  
-
-| Param | Type |
-| --- | --- |
-| content | <code>string</code> | 
-
-<a name="makeModuleInfo"></a>
-
-## makeModuleInfo(dirPath, moduleName, rootPath) ⇒ <code>string</code>
-Create the Module Info object to store the name, path, and file.
-
-**Kind**: global function  
-
-| Param | Type | Default |
-| --- | --- | --- |
-| dirPath | <code>string</code> |  | 
-| moduleName | <code>string</code> |  | 
-| rootPath | <code>string</code> | <code>null</code> | 
-
-<a name="makeCommon"></a>
-
-## makeCommon(srcPath, destPath, [config]) ⇒ <code>stream.Stream</code>
+### common-exports.makeCommon(srcPath, destPath, [config]) ⇒ <code>stream.Stream</code>
 Apply babel to source files and output with commonJs compatibility.
 
-**Kind**: global function  
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
 
-| Param | Type | Default |
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| srcPath | <code>string</code> \| <code>array</code> |  | The relative path to the file to convert |
+| destPath | <code>string</code> |  | The relative path to the output directory |
+| [config] | <code>Object.&lt;string, \*&gt;</code> | <code>{}</code> | Add additional instructions to the process |
+| [config.copyResources] | <code>Object.&lt;string, Array.&lt;Object.&lt;(src\|dest), string&gt;&gt;&gt;</code> | <code>{}</code> | Add custom files to copy for found modules |
+| [config.rootPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | Specify the root to use, this helps identify where to stop |
+
+<a name="module_common-exports.wrapAwait"></a>
+
+### common-exports.wrapAwait(fileContents, fileName) ⇒ <code>string</code>
+Some import / export conversions use await which must be wrapped in an async function.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| fileContents | <code>string</code> |  | The string content of the file for updating. |
+| fileName | <code>string</code> | <code>&quot;module-namespace&quot;</code> | The name of the file we are doing changes for. |
+
+<a name="module_common-exports.resolveModule"></a>
+
+### common-exports.resolveModule(root, moduleName, current) ⇒ <code>Array.&lt;string&gt;</code>
+Search for the given module and return the full path.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Description |
 | --- | --- | --- |
-| srcPath | <code>string</code> \| <code>array</code> |  | 
-| destPath | <code>string</code> |  | 
-| [config] | <code>Object.&lt;string, Object.&lt;string, \*&gt;&gt;</code> | <code>{}</code> | 
+| root | <code>string</code> | The base path for searching. |
+| moduleName | <code>string</code> | The import name used for retrieving the module. |
+| current | <code>string</code> | The current directory we are checking for module matches. |
 
-<a name="isCommonModule"></a>
+<a name="module_common-exports.resolveMainFile"></a>
 
-## isCommonModule(moduleInfo) ⇒ <code>boolean</code>
+### common-exports.resolveMainFile(modulePath) ⇒ <code>string</code> \| <code>null</code>
+Given a module path, find the file which should be used as main, based on module import.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| modulePath | <code>string</code> | The relative path used to locate the module. |
+
+<a name="module_common-exports.resolveImports"></a>
+
+### common-exports.resolveImports(file, [rootPath]) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
+Given a file with buffer contents, identify all the imports it has and find their full paths.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| file | <code>StreamFile</code> |  | The in-memory fetched file object. |
+| [rootPath] | <code>string</code> \| <code>null</code> | <code>null</code> | The root path to use when resolving imports. |
+
+<a name="module_common-exports.replaceImports"></a>
+
+### common-exports.replaceImports(srcPath, destPath, file, [config]) ⇒ <code>reduceImports</code>
+Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| srcPath | <code>string</code> |  | The original path of the file to be updated. |
+| destPath | <code>string</code> |  | The outgoing path of the file once updated. |
+| file | <code>StreamFile</code> |  | The in-memory fetched file object. |
+| [config] | <code>Object.&lt;string, Object.&lt;string, \*&gt;&gt;</code> | <code>{}</code> | Additional configuration options. |
+
+<a name="module_common-exports.replaceImportMeta"></a>
+
+### common-exports.replaceImportMeta(content) ⇒ <code>string</code>
+Find usages of import.meta and replace it with CommonJs compatible substitute.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| content | <code>string</code> | String of file contents to search for import.meta usage. |
+
+<a name="module_common-exports.makeModuleInfo"></a>
+
+### common-exports.makeModuleInfo(dirPath, moduleName, rootPath) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
+Create the Module Info object to store the name, path, and file for each matching module.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| dirPath | <code>string</code> |  | Current relative directory to search. |
+| moduleName | <code>string</code> |  | Path used in the import for the module. |
+| rootPath | <code>string</code> | <code>null</code> | The lowest path to search within for the module. |
+
+<a name="module_common-exports.isCommonModule"></a>
+
+### common-exports.isCommonModule(moduleInfo) ⇒ <code>boolean</code>
 Attempt to detect if the current module is a common js module.
 
-**Kind**: global function  
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
 
-| Param | Type |
-| --- | --- |
-| moduleInfo | <code>Object</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| moduleInfo | <code>Object.&lt;(module\|path\|file), (string\|null)&gt;</code> | An object containing the module, path, and file strings. |
 
-<a name="importRegex"></a>
+<a name="module_common-exports.importRegex"></a>
 
-## importRegex() ⇒ <code>string</code>
+### common-exports.importRegex() ⇒ <code>string</code>
 Get the regex for detecting ES6 import statements.
 
-**Kind**: global function  
-<a name="findImports"></a>
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+<a name="module_common-exports.findImports"></a>
 
-## findImports(fileContents) ⇒ <code>Array</code>
+### common-exports.findImports(fileContents) ⇒ <code>Array</code>
 Retrieve all the module names from imports.
 
-**Kind**: global function  
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
 
-| Param | Type |
-| --- | --- |
-| fileContents | <code>string</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| fileContents | <code>string</code> | The string of contents to parse for import matches. |
 
-<a name="copyResources"></a>
+<a name="module_common-exports.copyResources"></a>
 
-## copyResources(baseFilePath, [config]) ⇒ <code>undefined</code>
+### common-exports.copyResources(baseFilePath, [config]) ⇒ <code>undefined</code>
 Based on configured 'copyResources', if we are in the corresponding based path copy each src to dest.
 
-**Kind**: global function  
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
 
-| Param | Type | Default |
-| --- | --- | --- |
-| baseFilePath | <code>string</code> |  | 
-| [config] | <code>Object.&lt;&#x27;copyResources&#x27;, Object.&lt;string, Array.&lt;Object.&lt;(&#x27;src&#x27;\|&#x27;dest&#x27;), string&gt;&gt;&gt;&gt;</code> | <code>{}</code> | 
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| baseFilePath | <code>string</code> |  | The source / module path to process. |
+| [config] | <code>Object.&lt;&#x27;copyResources&#x27;, Object.&lt;string, Array.&lt;Object.&lt;(&#x27;src&#x27;\|&#x27;dest&#x27;), string&gt;&gt;&gt;&gt;</code> | <code>{}</code> | The copyResources config may be present and if it has the source path as a property, then the src and dest will be used to copy resources. |
 

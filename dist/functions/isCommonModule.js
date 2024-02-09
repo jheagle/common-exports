@@ -11,7 +11,8 @@ var _importRegex = _interopRequireDefault(require('./importRegex'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Attempt to detect if the current module is a common js module.
- * @param {Object} moduleInfo
+ * @memberof module:common-exports
+ * @param {Object<module|path|file, string|null>} moduleInfo - An object containing the module, path, and file strings.
  * @returns {boolean}
  */
 const isCommonModule = moduleInfo => {
@@ -21,6 +22,10 @@ const isCommonModule = moduleInfo => {
     if (packageData.type && packageData.type === 'module') {
       return false
     }
+  }
+  if (!(0, _testFilesystem.fileExists)(moduleInfo.file)) {
+    // Some native modules don't exist, hope for the best.
+    return true
   }
   const mainContents = (0, _fs.readFileSync)(moduleInfo.file).toString()
   return /require\(['`"].+['`"]\)/.test(mainContents) && !(0, _importRegex.default)().test(mainContents)

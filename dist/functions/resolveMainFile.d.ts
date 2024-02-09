@@ -1,6 +1,7 @@
 /**
  * Given a module path, find the file which should be used as main, based on module import.
- * @param {string} modulePath
+ * @memberof module:common-exports
+ * @param {string} modulePath - The relative path used to locate the module.
  * @returns {string|null}
  */
 export declare const resolveMainFile: (modulePath: string) => string | null;

@@ -11,7 +11,8 @@ var _importRegex = _interopRequireDefault(require('./importRegex'))
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
  * Retrieve all the module names from imports.
- * @param {string} fileContents
+ * @memberof module:common-exports
+ * @param {string} fileContents - The string of contents to parse for import matches.
  * @returns {Array}
  */
 const findImports = fileContents => Array.from(fileContents.matchAll((0, _importRegex.default)())).reduce((foundImports, matches) => {
