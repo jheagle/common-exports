@@ -7,4 +7,3 @@
  * @returns {Array<string>}
  */
 export declare const resolveModule: (root: string, moduleName: string, current?: string) => string[];
-export default resolveModule;

@@ -1,4 +1,4 @@
-import strBeforeLast from './strBeforeLast'
+import { strBeforeLast } from './strBeforeLast'
 
 /**
  * Format the given path so that it does not have trailing slashes and also correctly appends a path.
@@ -39,5 +39,3 @@ export const makeFilepath = (root: string, append: string = ''): string => {
   }
   return append ? `${root}/${append}` : root
 }
-
-export default makeFilepath

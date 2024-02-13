@@ -1,4 +1,4 @@
-import importRegex from './importRegex'
+import { importRegex } from './importRegex'
 
 const sampleContent = 'import ansiStyles from \'#ansi-styles\';\n' +
   'import supportsColor from \'#supports-color\';\n' +

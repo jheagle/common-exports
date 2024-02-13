@@ -1,8 +1,8 @@
-import findImports from './findImports'
-import isCommonModule from './isCommonModule'
-import makeFilepath from '../utilities/makeFilepath'
-import makeModuleInfo from './makeModuleInfo'
-import resolveImports from './resolveImports'
+import { findImports } from './findImports'
+import { isCommonModule } from './isCommonModule'
+import { makeFilepath } from '../utilities/makeFilepath'
+import { makeModuleInfo } from './makeModuleInfo'
+import { resolveImports } from './resolveImports'
 
 const basePath = 'test-resolve-imports'
 const foundModules = [
@@ -14,16 +14,18 @@ const foundModules = [
   'imagemin-${pluginName}'
 ]
 const dirPath = 'test-resolve-imports/node_modules/gulp-imagemin'
-jest.mock('../utilities/makeFilepath', () => jest.fn(() => dirPath))
-jest.mock('./findImports', () => jest.fn(() => foundModules))
-jest.mock('./makeModuleInfo', () => jest.fn((path, moduleName) => [
-  {
-    module: moduleName,
-    path: '',
-    file: '',
-  }
-]))
-jest.mock('./isCommonModule', () => jest.fn((moduleInfo) => moduleInfo.module === 'gulp-plugin-extras'))
+jest.mock('../utilities/makeFilepath', () => ({ makeFilepath: jest.fn(() => dirPath) }))
+jest.mock('./findImports', () => ({ findImports: jest.fn(() => foundModules) }))
+jest.mock('./makeModuleInfo', () => ({
+  makeModuleInfo: jest.fn((path, moduleName) => [
+    {
+      module: moduleName,
+      path: '',
+      file: '',
+    }
+  ])
+}))
+jest.mock('./isCommonModule', () => ({ isCommonModule: jest.fn((moduleInfo) => moduleInfo.module === 'gulp-plugin-extras') }))
 
 const fileContents = 'import path from \'node:path\';\n' +
   'import process from \'node:process\';\n' +

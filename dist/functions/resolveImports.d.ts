@@ -90,4 +90,3 @@ export type StreamFile = {
  * @returns {Array<ModuleInfo>}
  */
 export declare function resolveImports(file: StreamFile, rootPath?: string | null): Array<ModuleInfo>;
-export default resolveImports;

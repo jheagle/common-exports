@@ -5,4 +5,3 @@
  * @returns {string}
  */
 export const regexEscape = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-export default regexEscape

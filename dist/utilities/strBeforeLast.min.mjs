@@ -1,1 +1,1 @@
-import"core-js/stable";export const strBeforeLast=(t,e)=>{const r=t.lastIndexOf(e);return-1===r?"":t.substring(0,r)};export default strBeforeLast;
+export const strBeforeLast=(t,s)=>{const r=t.lastIndexOf(s);return-1===r?"":t.substring(0,r)};

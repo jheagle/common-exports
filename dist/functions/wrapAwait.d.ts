@@ -6,4 +6,3 @@
  * @returns {string}
  */
 export declare const wrapAwait: (fileContents: string, fileName?: string) => string;
-export default wrapAwait;

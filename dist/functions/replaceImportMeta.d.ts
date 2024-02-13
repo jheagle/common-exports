@@ -5,4 +5,3 @@
  * @returns {string}
  */
 export declare const replaceImportMeta: (content: string) => string;
-export default replaceImportMeta;

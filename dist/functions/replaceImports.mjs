@@ -1,9 +1,9 @@
-import strBeforeLast from '../utilities/strBeforeLast'
-import makeFilepath from '../utilities/makeFilepath'
+import { strBeforeLast } from '../utilities/strBeforeLast'
+import { makeFilepath } from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
-import makeCommon from '../main'
-import regexEscape from '../utilities/regexEscape'
-import makeRelativePath from '../utilities/makeRelativePath'
+import { makeCommon } from '../main'
+import { regexEscape } from '../utilities/regexEscape'
+import { makeRelativePath } from '../utilities/makeRelativePath'
 /**
  * Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
  * @memberof module:common-exports
@@ -46,4 +46,3 @@ export const replaceImports = (srcPath, destPath, file, config = {}) => (content
   }
   return content.replace(moduleMatch, `$1${relativePath}$1`)
 }
-export default replaceImports

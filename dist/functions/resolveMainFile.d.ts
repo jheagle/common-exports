@@ -5,4 +5,3 @@
  * @returns {string|null}
  */
 export declare const resolveMainFile: (modulePath: string) => string | null;
-export default resolveMainFile;

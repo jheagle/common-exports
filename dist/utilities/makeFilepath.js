@@ -3,9 +3,8 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
-exports.makeFilepath = exports.default = void 0
-var _strBeforeLast = _interopRequireDefault(require('./strBeforeLast'))
-function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
+exports.makeFilepath = void 0
+var _strBeforeLast = require('./strBeforeLast')
 /**
  * Format the given path so that it does not have trailing slashes and also correctly appends a path.
  * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeFilePath.ts Sí, funciona}
@@ -34,7 +33,7 @@ const makeFilepath = (root, append = '') => {
       return append.endsWith('/') ? append.slice(0, -1) : append
     }
     append = append.slice(3)
-    root = (0, _strBeforeLast.default)(root, '/')
+    root = (0, _strBeforeLast.strBeforeLast)(root, '/')
     return makeFilepath(root, append)
   }
   if (append.endsWith('/')) {
@@ -46,4 +45,3 @@ const makeFilepath = (root, append = '') => {
   return append ? `${root}/${append}` : root
 }
 exports.makeFilepath = makeFilepath
-var _default = exports.default = makeFilepath

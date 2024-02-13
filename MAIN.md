@@ -31,5 +31,9 @@ const convertCommon = () => {
 exports.convertCommon = convertCommon
 ```
 
+If you are copying packages from `node_modules`,
+ensure that you update your .gitignore
+to allow for `node_modules` in subdirectories to be included if you need them bundled.
+
 Make sure to use the correct main file you wish to start conversion at and also the output directory for the conversion.
 

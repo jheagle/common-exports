@@ -1,10 +1,10 @@
 import { StreamFile } from './resolveImports'
-import strBeforeLast from '../utilities/strBeforeLast'
-import makeFilepath from '../utilities/makeFilepath'
+import { strBeforeLast } from '../utilities/strBeforeLast'
+import { makeFilepath } from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
-import makeCommon, { makeCommonConfig } from '../main'
-import regexEscape from '../utilities/regexEscape'
-import makeRelativePath from '../utilities/makeRelativePath'
+import { makeCommon, makeCommonConfig } from '../main'
+import { regexEscape } from '../utilities/regexEscape'
+import { makeRelativePath } from '../utilities/makeRelativePath'
 import { ModuleInfo } from './makeModuleInfo'
 
 /**
@@ -59,5 +59,3 @@ export const replaceImports = (srcPath: string, destPath: string, file: StreamFi
     }
     return content.replace(moduleMatch, `$1${relativePath}$1`)
   }
-
-export default replaceImports

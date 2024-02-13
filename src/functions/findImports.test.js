@@ -1,4 +1,4 @@
-import findImports from './findImports'
+import { findImports } from './findImports'
 
 const multilineImport = 'import ansiStyles from \'#ansi-styles\';\n' +
   'import supportsColor from \'#supports-color\';\n' +

@@ -3,14 +3,13 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
-exports.replaceImports = exports.default = void 0
-var _strBeforeLast = _interopRequireDefault(require('../utilities/strBeforeLast'))
-var _makeFilepath = _interopRequireDefault(require('../utilities/makeFilepath'))
+exports.replaceImports = void 0
+var _strBeforeLast = require('../utilities/strBeforeLast')
+var _makeFilepath = require('../utilities/makeFilepath')
 var _testFilesystem = require('test-filesystem')
-var _main = _interopRequireDefault(require('../main'))
-var _regexEscape = _interopRequireDefault(require('../utilities/regexEscape'))
-var _makeRelativePath = _interopRequireDefault(require('../utilities/makeRelativePath'))
-function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
+var _main = require('../main')
+var _regexEscape = require('../utilities/regexEscape')
+var _makeRelativePath = require('../utilities/makeRelativePath')
 /**
  * Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
  * @memberof module:common-exports
@@ -25,22 +24,22 @@ const replaceImports = (srcPath, destPath, file, config = {}) => (content, impor
     console.error('Unable to find module', srcPath, importFile)
     return content
   }
-  let relativePath = (0, _makeRelativePath.default)(srcPath, importFile.file)
+  let relativePath = (0, _makeRelativePath.makeRelativePath)(srcPath, importFile.file)
   let newDest = destPath
   if (newDest.endsWith('.js') || newDest.endsWith('.mjs')) {
-    newDest = (0, _strBeforeLast.default)(newDest, '/')
+    newDest = (0, _strBeforeLast.strBeforeLast)(newDest, '/')
   }
-  let modulePath = (0, _makeFilepath.default)(newDest, relativePath)
+  let modulePath = (0, _makeFilepath.makeFilepath)(newDest, relativePath)
   if (modulePath.endsWith('.mjs')) {
-    modulePath = (0, _strBeforeLast.default)(modulePath, '.mjs') + '.js'
+    modulePath = (0, _strBeforeLast.strBeforeLast)(modulePath, '.mjs') + '.js'
   }
   if (!(0, _testFilesystem.fileExists)(modulePath)) {
     if (modulePath.endsWith('.js') || modulePath.endsWith('.mjs')) {
-      modulePath = (0, _strBeforeLast.default)(modulePath, '/')
+      modulePath = (0, _strBeforeLast.strBeforeLast)(modulePath, '/')
     }
-    (0, _main.default)(importFile.file, modulePath, config)
+    (0, _main.makeCommon)(importFile.file, modulePath, config)
   }
-  const moduleName = (0, _regexEscape.default)(importFile.module)
+  const moduleName = (0, _regexEscape.regexEscape)(importFile.module)
   const moduleMatch = new RegExp(`(['"\`])${moduleName}['"\`]`)
   if (importFile.module.includes('${')) {
     const replaceName = moduleName.replace(/(\\\$\\{.+\\})+/g, '.+')
@@ -49,9 +48,8 @@ const replaceImports = (srcPath, destPath, file, config = {}) => (content, impor
   }
   if (relativePath.endsWith('.mjs')) {
     // Handle wrong ending conversion from .mjs to .js file extension
-    relativePath = (0, _strBeforeLast.default)(relativePath, '.mjs') + '.js'
+    relativePath = (0, _strBeforeLast.strBeforeLast)(relativePath, '.mjs') + '.js'
   }
   return content.replace(moduleMatch, `$1${relativePath}$1`)
 }
 exports.replaceImports = replaceImports
-var _default = exports.default = replaceImports

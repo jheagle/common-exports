@@ -4,4 +4,3 @@
  * @returns {string}
  */
 export declare const importRegex: () => RegExp;
-export default importRegex;

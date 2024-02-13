@@ -1,11 +1,22 @@
 import { countMatches } from 'test-filesystem'
-import wrapAwait from './wrapAwait'
+import { wrapAwait } from './wrapAwait'
 
-const noWrapContent = 'const sayHello = () => console.log(\'hello\')\n' +
+const noWrapContent = 'const imageminMozjpeg = options => async buffer => {\n' +
+  '\tconst {stdout} = await execa(mozjpeg, args, {\n' +
+  '\t\tencoding: null,\n' +
+  '\t\tinput: buffer,\n' +
+  '\t\tmaxBuffer: Number.POSITIVE_INFINITY,\n' +
+  '\t});\n' +
   '\n' +
-  'export default sayHello'
+  '\treturn stdout;\n' +
+  '};\n' +
+  '\n' +
+  'export default imageminMozjpeg;'
 
-const wrapContent = 'await import(\'./sayHello\')\n'
+const wrapContent = 'export default function gulpImagemin(plugins, options) {\n' +
+  '}\n' +
+  '\n' +
+  'export const mozjpeg = await exposePlugin(\'mozjpeg\');'
 
 describe('wrapAwait', () => {
   test('does not wrap if not needed', () => {

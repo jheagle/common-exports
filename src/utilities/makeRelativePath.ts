@@ -1,5 +1,5 @@
-import strBefore from './strBefore'
-import strAfter from './strAfter'
+import { strBefore } from './strBefore'
+import { strAfter } from './strAfter'
 
 /**
  * Compare two file paths and simplify them to a relative path.
@@ -33,5 +33,3 @@ export const makeRelativePath = (fromFile: string, toFile: string): string => {
   }
   return relativePrefix + relativePath
 }
-
-export default makeRelativePath

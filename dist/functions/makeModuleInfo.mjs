@@ -1,5 +1,5 @@
-import resolveMainFile from './resolveMainFile.mjs'
-import resolveModule from './resolveModule.mjs'
+import { resolveMainFile } from './resolveMainFile.mjs'
+import { resolveModule } from './resolveModule.mjs'
 /**
  * Create the Module Info object to store the name, path, and file for each matching module.
  * @memberof module:common-exports
@@ -20,4 +20,3 @@ export const makeModuleInfo = (dirPath, moduleName, rootPath = null) => {
       file: resolveMainFile(path)
     }))
 }
-export default makeModuleInfo

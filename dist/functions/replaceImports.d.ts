@@ -19,4 +19,3 @@ export type reduceImports = (content: string, importFile: ModuleInfo) => string;
  * @returns {reduceImports}
  */
 export declare const replaceImports: (srcPath: string, destPath: string, file: StreamFile, config?: makeCommonConfig) => reduceImports;
-export default replaceImports;

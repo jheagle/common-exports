@@ -1,8 +1,8 @@
-import findImports from './findImports.mjs'
-import strAfter from '../utilities/strAfter'
-import makeFilepath from '../utilities/makeFilepath'
-import isCommonModule from './isCommonModule.mjs'
-import makeModuleInfo from './makeModuleInfo.mjs'
+import { findImports } from './findImports.mjs'
+import { strAfter } from '../utilities/strAfter'
+import { makeFilepath } from '../utilities/makeFilepath'
+import { isCommonModule } from './isCommonModule.mjs'
+import { makeModuleInfo } from './makeModuleInfo.mjs'
 /**
  * Given a file with buffer contents, identify all the imports it has and find their full paths.
  * @memberof module:common-exports
@@ -24,4 +24,3 @@ export function resolveImports (file, rootPath = null) {
       return modules
     }, [])
 }
-export default resolveImports

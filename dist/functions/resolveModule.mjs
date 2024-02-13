@@ -1,10 +1,10 @@
 import { readdirSync } from 'fs'
-import strAfterLast from '../utilities/strAfterLast'
-import makeFilepath from '../utilities/makeFilepath'
+import { strAfterLast } from '../utilities/strAfterLast'
+import { makeFilepath } from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
-import regexEscape from '../utilities/regexEscape'
-import strBeforeLast from '../utilities/strBeforeLast'
-import makeRelativePath from '../utilities/makeRelativePath'
+import { regexEscape } from '../utilities/regexEscape'
+import { strBeforeLast } from '../utilities/strBeforeLast'
+import { makeRelativePath } from '../utilities/makeRelativePath'
 const modulesDirectory = 'node_modules'
 /**
  * Search for the given module and return the full path.
@@ -66,4 +66,3 @@ export const resolveModule = (root, moduleName, current = '') => {
   }
   return resolveModule(root, moduleName, next)
 }
-export default resolveModule

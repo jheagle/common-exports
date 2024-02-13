@@ -1,6 +1,6 @@
 import { cpSync, mkdirSync } from 'fs'
 import { setUp } from 'test-filesystem'
-import isCommonModule from './isCommonModule'
+import { isCommonModule } from './isCommonModule'
 
 const tempDir = 'test-is-common-module/'
 const modulesPath = `${tempDir}node_modules`

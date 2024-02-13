@@ -3,10 +3,9 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
-exports.makeRelativePath = exports.default = void 0
-var _strBefore = _interopRequireDefault(require('./strBefore'))
-var _strAfter = _interopRequireDefault(require('./strAfter'))
-function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
+exports.makeRelativePath = void 0
+var _strBefore = require('./strBefore')
+var _strAfter = require('./strAfter')
 /**
  * Compare two file paths and simplify them to a relative path.
  * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeRelativePath.ts Sí, funciona}
@@ -17,12 +16,12 @@ function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { d
 const makeRelativePath = (fromFile, toFile) => {
   let relativePath = toFile
   let nextPart = fromFile
-  let firstPart = (0, _strBefore.default)(nextPart, '/')
+  let firstPart = (0, _strBefore.strBefore)(nextPart, '/')
   let hasMatches = false
   while (firstPart && relativePath.startsWith(firstPart)) {
-    relativePath = (0, _strAfter.default)(relativePath, `${firstPart}/`)
-    nextPart = (0, _strAfter.default)(nextPart, `${firstPart}/`)
-    firstPart = (0, _strBefore.default)(nextPart, '/')
+    relativePath = (0, _strAfter.strAfter)(relativePath, `${firstPart}/`)
+    nextPart = (0, _strAfter.strAfter)(nextPart, `${firstPart}/`)
+    firstPart = (0, _strBefore.strBefore)(nextPart, '/')
     hasMatches = true
   }
   if (!hasMatches) {
@@ -40,4 +39,3 @@ const makeRelativePath = (fromFile, toFile) => {
   return relativePrefix + relativePath
 }
 exports.makeRelativePath = makeRelativePath
-var _default = exports.default = makeRelativePath

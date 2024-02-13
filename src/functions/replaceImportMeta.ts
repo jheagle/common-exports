@@ -8,5 +8,3 @@ export const replaceImportMeta = (content: string): string => content.replace(
   /import\.meta\.url/g,
   'require(\'url\').pathToFileURL(__filename).toString()'
 )
-
-export default replaceImportMeta

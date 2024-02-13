@@ -1,4 +1,4 @@
-import importRegex from './importRegex.mjs'
+import { importRegex } from './importRegex.mjs'
 /**
  * Retrieve all the module names from imports.
  * @memberof module:common-exports
@@ -13,4 +13,3 @@ export const findImports = (fileContents) => Array.from(fileContents.matchAll(im
     }
     return foundImports
   }, [])
-export default findImports

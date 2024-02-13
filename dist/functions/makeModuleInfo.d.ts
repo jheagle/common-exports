@@ -19,4 +19,3 @@ export type ModuleInfo = {
  * @returns {Array<ModuleInfo>}
  */
 export declare const makeModuleInfo: (dirPath: string, moduleName: string, rootPath?: string | null) => ModuleInfo[];
-export default makeModuleInfo;

@@ -1,5 +1,5 @@
-import resolveMainFile from './resolveMainFile'
-import resolveModule from './resolveModule'
+import { resolveMainFile } from './resolveMainFile'
+import { resolveModule } from './resolveModule'
 
 /**
  * Module info stores the location data for a module found through imports.
@@ -36,5 +36,3 @@ export const makeModuleInfo = (dirPath: string, moduleName: string, rootPath: st
       })
     )
 }
-
-export default makeModuleInfo

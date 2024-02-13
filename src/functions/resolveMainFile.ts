@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import makeFilepath from '../utilities/makeFilepath'
+import { makeFilepath } from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
 
 /**
@@ -61,5 +61,3 @@ export const resolveMainFile = (modulePath: string): string | null => {
   }
   return null
 }
-
-export default resolveMainFile

@@ -6,4 +6,3 @@ import { ModuleInfo } from './makeModuleInfo';
  * @returns {boolean}
  */
 export declare const isCommonModule: (moduleInfo: ModuleInfo) => boolean;
-export default isCommonModule;

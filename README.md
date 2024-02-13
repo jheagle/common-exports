@@ -31,6 +31,10 @@ const convertCommon = () => {
 exports.convertCommon = convertCommon
 ```
 
+If you are copying packages from `node_modules`,
+ensure that you update your .gitignore
+to allow for `node_modules` in subdirectories to be included if you need them bundled.
+
 Make sure to use the correct main file you wish to start conversion at and also the output directory for the conversion.
 
 <a name="module_common-exports"></a>
@@ -53,6 +57,7 @@ Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
     * [.isCommonModule(moduleInfo)](#module_common-exports.isCommonModule) ⇒ <code>boolean</code>
     * [.importRegex()](#module_common-exports.importRegex) ⇒ <code>string</code>
     * [.findImports(fileContents)](#module_common-exports.findImports) ⇒ <code>Array</code>
+    * [.customChanges(baseFilePath, content, [config])](#module_common-exports.customChanges) ⇒ <code>string</code>
     * [.copyResources(baseFilePath, [config])](#module_common-exports.copyResources) ⇒ <code>undefined</code>
 
 <a name="module_common-exports.makeCommon"></a>
@@ -64,11 +69,12 @@ Apply babel to source files and output with commonJs compatibility.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| srcPath | <code>string</code> \| <code>array</code> |  | The relative path to the file to convert |
-| destPath | <code>string</code> |  | The relative path to the output directory |
-| [config] | <code>Object.&lt;string, \*&gt;</code> | <code>{}</code> | Add additional instructions to the process |
-| [config.copyResources] | <code>Object.&lt;string, Array.&lt;Object.&lt;(src\|dest), string&gt;&gt;&gt;</code> | <code>{}</code> | Add custom files to copy for found modules |
-| [config.rootPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | Specify the root to use, this helps identify where to stop |
+| srcPath | <code>string</code> \| <code>array</code> |  | The relative path to the file to convert. |
+| destPath | <code>string</code> |  | The relative path to the output directory. |
+| [config] | <code>Object.&lt;string, \*&gt;</code> | <code>{}</code> | Add additional instructions to the process. |
+| [config.copyResources] | <code>Object.&lt;string, Array.&lt;Object.&lt;(src\|dest\|updateContent), (string\|function())&gt;&gt;&gt;</code> | <code>{}</code> | Add custom files to copy for found modules. |
+| [config.customChanges] | <code>Object.&lt;string, Array.&lt;Object.&lt;updateContent, function()&gt;&gt;&gt;</code> | <code>{}</code> | Add custom content changes to the content used. |
+| [config.rootPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | Specify the root to use, this helps identify where to stop. |
 
 <a name="module_common-exports.wrapAwait"></a>
 
@@ -184,6 +190,19 @@ Retrieve all the module names from imports.
 | --- | --- | --- |
 | fileContents | <code>string</code> | The string of contents to parse for import matches. |
 
+<a name="module_common-exports.customChanges"></a>
+
+### common-exports.customChanges(baseFilePath, content, [config]) ⇒ <code>string</code>
+Based on configured 'customChanges', if we are in the corresponding based path, apply the change function to the content.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| baseFilePath | <code>string</code> |  | The source / module path to process. |
+| content | <code>string</code> |  | The file content which will receive changes. |
+| [config] | <code>Object.&lt;&#x27;customChanges&#x27;, Object.&lt;string, Array.&lt;Object.&lt;&#x27;updateContent&#x27;, function()&gt;&gt;&gt;&gt;</code> | <code>{}</code> | The customChanges config may be present, and if it has the source path as a property, then the updateContent function will be applied to the contents. |
+
 <a name="module_common-exports.copyResources"></a>
 
 ### common-exports.copyResources(baseFilePath, [config]) ⇒ <code>undefined</code>
@@ -194,5 +213,5 @@ Based on configured 'copyResources', if we are in the corresponding based path c
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | baseFilePath | <code>string</code> |  | The source / module path to process. |
-| [config] | <code>Object.&lt;&#x27;copyResources&#x27;, Object.&lt;string, Array.&lt;Object.&lt;(&#x27;src&#x27;\|&#x27;dest&#x27;), string&gt;&gt;&gt;&gt;</code> | <code>{}</code> | The copyResources config may be present and if it has the source path as a property, then the src and dest will be used to copy resources. |
+| [config] | <code>Object.&lt;&#x27;copyResources&#x27;, Object.&lt;string, Array.&lt;Object.&lt;(&#x27;src&#x27;\|&#x27;dest&#x27;\|&#x27;updateContent&#x27;), (string\|function())&gt;&gt;&gt;&gt;</code> | <code>{}</code> | The copyResources config may be present, and if it has the source path as a property, then the src and dest will be used to copy resources. |
 

@@ -1,4 +1,4 @@
-import kabobToTitleCase from '../utilities/kabobToTitleCase'
+import { kabobToTitleCase } from '../utilities/kabobToTitleCase'
 /**
  * Some import / export conversions use await which must be wrapped in an async function.
  * @memberof module:common-exports
@@ -7,7 +7,7 @@ import kabobToTitleCase from '../utilities/kabobToTitleCase'
  * @returns {string}
  */
 export const wrapAwait = (fileContents, fileName = 'module-namespace') => {
-  if (!/await/g.test(fileContents)) {
+  if (!/(import|export).+\sawait\s/g.test(fileContents)) {
     // if we don't even see the word 'await', then we don't need the async function wrapped at all.
     return fileContents
   }
@@ -19,4 +19,3 @@ export const wrapAwait = (fileContents, fileName = 'module-namespace') => {
 
 ${exportModuleName}()`
 }
-export default wrapAwait

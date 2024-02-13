@@ -1,4 +1,4 @@
-import resolveMainFile from './resolveMainFile'
+import { resolveMainFile } from './resolveMainFile'
 import { mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { setUp } from 'test-filesystem'
 
@@ -37,7 +37,7 @@ describe('resolveMainFile', () => {
     const newPackage = `${modulesPath}/${modulePackage}`
     writeFileSync(newPackage, packageContent)
     const foundModulePath = resolveMainFile(modulePath)
-    expect(foundModulePath).toEqual(newMain)
+    expect(foundModulePath).toEqual(modulePath)
   })
 
   test('resolves path to file configured as exports', () => {

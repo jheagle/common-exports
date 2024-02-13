@@ -3,7 +3,7 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
-exports.importRegex = exports.default = void 0
+exports.importRegex = void 0
 /**
  * Get the regex for detecting ES6 import statements.
  * @memberof module:common-exports
@@ -11,4 +11,3 @@ exports.importRegex = exports.default = void 0
  */
 const importRegex = () => new RegExp('(:?export|import)\\(?(:?\\s*[a-zA-Z{}\\s-_,/]+\\s*from\\s*)?[\'`"](.+)[\'`"]\\)?', 'g')
 exports.importRegex = importRegex
-var _default = exports.default = importRegex

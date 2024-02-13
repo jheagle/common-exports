@@ -1,8 +1,8 @@
-import findImports from './findImports'
-import strAfter from '../utilities/strAfter'
-import makeFilepath from '../utilities/makeFilepath'
-import isCommonModule from './isCommonModule'
-import makeModuleInfo, { ModuleInfo } from './makeModuleInfo'
+import { findImports } from './findImports'
+import { strAfter } from '../utilities/strAfter'
+import { makeFilepath } from '../utilities/makeFilepath'
+import { isCommonModule } from './isCommonModule'
+import { makeModuleInfo, ModuleInfo } from './makeModuleInfo'
 
 /**
  * Statistical information about the file.
@@ -115,5 +115,3 @@ export function resolveImports (file: StreamFile, rootPath: string | null = null
       []
     )
 }
-
-export default resolveImports

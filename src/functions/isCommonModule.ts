@@ -1,8 +1,8 @@
-import makeFilepath from '../utilities/makeFilepath'
+import { makeFilepath } from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
 import { readFileSync } from 'fs'
 import { ModuleInfo } from './makeModuleInfo'
-import importRegex from './importRegex'
+import { importRegex } from './importRegex'
 
 /**
  * Attempt to detect if the current module is a common js module.
@@ -25,5 +25,3 @@ export const isCommonModule = (moduleInfo: ModuleInfo): boolean => {
   const mainContents = readFileSync(moduleInfo.file).toString()
   return /require\(['`"].+['`"]\)/.test(mainContents) && !importRegex().test(mainContents)
 }
-
-export default isCommonModule

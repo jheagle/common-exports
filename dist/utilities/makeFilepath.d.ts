@@ -6,4 +6,3 @@
  * @returns {string}
  */
 export declare const makeFilepath: (root: string, append?: string) => string;
-export default makeFilepath;

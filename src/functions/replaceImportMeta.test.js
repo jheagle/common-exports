@@ -1,5 +1,5 @@
 import { countMatches } from 'test-filesystem'
-import replaceImportMeta from './replaceImportMeta'
+import { replaceImportMeta } from './replaceImportMeta'
 
 const sampleContent = 'import fs from \'node:fs\';\n' +
   'import process from \'node:process\';\n' +

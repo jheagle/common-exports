@@ -1,4 +1,4 @@
-import resolveModule from './resolveModule'
+import { resolveModule } from './resolveModule'
 import { cpSync, mkdirSync } from 'fs'
 import { setUp } from 'test-filesystem'
 

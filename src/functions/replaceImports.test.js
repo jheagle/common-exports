@@ -1,8 +1,8 @@
-import replaceImports from './replaceImports'
+import { replaceImports } from './replaceImports'
 import { countMatches } from 'test-filesystem'
-import makeCommon from '../main'
+import { makeCommon } from '../main'
 
-jest.mock('../main', () => jest.fn())
+jest.mock('../main', () => ({ makeCommon: jest.fn() }))
 
 const fileContents = 'import path from \'node:path\';\n' +
   'import process from \'node:process\';\n' +

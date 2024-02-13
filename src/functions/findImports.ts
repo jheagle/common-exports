@@ -1,4 +1,4 @@
-import importRegex from './importRegex'
+import { importRegex } from './importRegex'
 
 /**
  * Retrieve all the module names from imports.
@@ -17,5 +17,3 @@ export const findImports = (fileContents: string): Array<string> => Array.from(f
     },
     []
   )
-
-export default findImports

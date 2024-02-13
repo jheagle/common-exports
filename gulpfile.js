@@ -10,7 +10,7 @@ const standard = require('gulp-standard')
 const through = require('through2')
 const ts = require('gulp-typescript')
 const { default: uglify } = require('gulp-uglify-es')
-const { removeDirectory } = require('test-filesystem/dist/functions/removeDirectory')
+const { removeDirectory } = require('test-filesystem')
 
 const cleanFolders = ['dist']
 const distMain = 'dist/main'

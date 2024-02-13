@@ -1,4 +1,3 @@
-import 'core-js/stable';
 /**
  * Retrieve the string part after the last search match.
  * Original source from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strAfterLast.ts Sí, funciona}
@@ -7,4 +6,3 @@ import 'core-js/stable';
  * @returns {string}
  */
 export declare const strAfterLast: (str: string, search: string) => string;
-export default strAfterLast;
