@@ -58,9 +58,12 @@ const resolveModule = (root, moduleName, current = '') => {
       tempName = tempName.replace(/(\\\$\\{.+\\})+/g, '.+')
     }
     const moduleRegex = new RegExp(`^${tempName}$`)
-    const foundFiles = (0, _fs.readdirSync)(tempCurrent).filter(filePath => moduleRegex.test(filePath))
-    if (foundFiles.length) {
-      return foundFiles.map(found => (0, _makeFilepath.makeFilepath)(tempCurrent, found)).filter(_testFilesystem.fileExists)
+    const pathStats = (0, _fs.statSync)(tempCurrent)
+    if (pathStats.isDirectory()) {
+      const foundFiles = (0, _fs.readdirSync)(tempCurrent).filter(filePath => moduleRegex.test(filePath))
+      if (foundFiles.length) {
+        return foundFiles.map(found => (0, _makeFilepath.makeFilepath)(tempCurrent, found)).filter(_testFilesystem.fileExists)
+      }
     }
   }
   if (current === modulesDirectory) {
