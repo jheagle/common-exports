@@ -144,4 +144,10 @@ describe('resolveModule', () => {
     const foundModulePath = resolveModule(rootPath, moduleName, dirPath)
     expect(foundModulePath).toEqual([`node_modules/${moduleName}`])
   })
+
+  test('module starts as file instead of directory', () => {
+    const fileName = './gulpfile.js'
+    const moduleName = 'gulp-babel'
+    expect(resolveModule(fileName, moduleName, fileName)).toEqual(['node_modules/gulp-babel'])
+  })
 })

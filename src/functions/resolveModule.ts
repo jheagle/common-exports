@@ -1,4 +1,4 @@
-import { readdirSync } from 'fs'
+import { readdirSync, statSync } from 'fs'
 import { strAfterLast } from '../utilities/strAfterLast'
 import { makeFilepath } from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
@@ -49,11 +49,14 @@ export const resolveModule = (root: string, moduleName: string, current: string 
       tempName = tempName.replace(/(\\\$\\{.+\\})+/g, '.+')
     }
     const moduleRegex = new RegExp(`^${tempName}$`)
-    const foundFiles = readdirSync(tempCurrent).filter((filePath: string): boolean => moduleRegex.test(filePath))
-    if (foundFiles.length) {
-      return foundFiles
-        .map((found: string) => makeFilepath(tempCurrent, found))
-        .filter(fileExists)
+    const pathStats = statSync(tempCurrent)
+    if (pathStats.isDirectory()) {
+      const foundFiles = readdirSync(tempCurrent).filter((filePath: string): boolean => moduleRegex.test(filePath))
+      if (foundFiles.length) {
+        return foundFiles
+          .map((found: string) => makeFilepath(tempCurrent, found))
+          .filter(fileExists)
+      }
     }
   }
   if (current === modulesDirectory) {
