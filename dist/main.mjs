@@ -8,13 +8,15 @@
 // @ts-ignore
 import babel from 'gulp-babel'
 import { copyResources } from './functions/copyResources.mjs'
-import { dest, src } from 'gulp'
+// @ts-ignore
+import pkg from 'gulp'
 import { replaceImports } from './functions/replaceImports.mjs'
 import { replaceImportMeta } from './functions/replaceImportMeta.mjs'
 import { resolveImports } from './functions/resolveImports.mjs'
 // @ts-ignore
 import through from 'through2'
 import { customChanges } from './functions/customChanges.mjs'
+const { dest, src } = pkg
 /**
  * Apply babel to source files and output with commonJs compatibility.
  * @memberof module:common-exports

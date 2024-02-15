@@ -31,9 +31,31 @@ const convertCommon = () => {
 exports.convertCommon = convertCommon
 ```
 
+Create a `babel.config.js` file if you do not already have one and add the following content:
+```js
+module.exports = {
+  plugins: [
+    '@babel/plugin-transform-modules-commonjs'
+  ],
+  presets: [
+    [
+      '@babel/preset-env',
+      {
+        useBuiltIns: 'usage',
+        corejs: { version: '3.6', proposals: true },
+        targets: { node: 'current' }
+      }
+    ]
+  ]
+}
+
+```
+The import configuration above is the use of the `plugin-transform-modules-commonjs` plugin
+since that will do the major work of converting each file.
+
 If you are copying packages from `node_modules`,
-ensure that you update your .gitignore
-to allow for `node_modules` in subdirectories to be included if you need them bundled.
+ensure that you change your .gitignore for `node_modules` to be `/node_modules`
+instead to allow subdirectories to be included if you need them bundled.
 
 Make sure to use the correct main file you wish to start conversion at and also the output directory for the conversion.
 

@@ -9,7 +9,7 @@ require('core-js/modules/esnext.iterator.constructor.js')
 require('core-js/modules/esnext.iterator.reduce.js')
 var _gulpBabel = _interopRequireDefault(require('gulp-babel'))
 var _copyResources = require('./functions/copyResources')
-var _gulp = require('gulp')
+var _gulp = _interopRequireDefault(require('gulp'))
 var _replaceImports = require('./functions/replaceImports')
 var _replaceImportMeta = require('./functions/replaceImportMeta')
 var _resolveImports = require('./functions/resolveImports')
@@ -27,6 +27,12 @@ function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { d
 
 // @ts-ignore
 
+// @ts-ignore
+
+const {
+  dest,
+  src
+} = _gulp.default
 /**
  * Apply babel to source files and output with commonJs compatibility.
  * @memberof module:common-exports
@@ -40,7 +46,7 @@ function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { d
  * @param {string} [config.rootPath=''] - Specify the root to use, this helps identify where to stop.
  * @return {stream.Stream}
  */
-const makeCommon = (srcPath, destPath, config = {}) => (0, _gulp.src)(srcPath).pipe(_through.default.obj(function (file, enc, callback) {
+const makeCommon = (srcPath, destPath, config = {}) => src(srcPath).pipe(_through.default.obj(function (file, enc, callback) {
   const rootPath = typeof config.rootPath === 'undefined' ? srcPath : config.rootPath
   // @ts-ignore
   const fileContents = (0, _resolveImports.resolveImports)(file, rootPath).reduce((0, _replaceImports.replaceImports)(srcPath, destPath, config), file.contents.toString());
@@ -52,5 +58,5 @@ const makeCommon = (srcPath, destPath, config = {}) => (0, _gulp.src)(srcPath).p
   file.contents = Buffer.from((0, _replaceImportMeta.replaceImportMeta)(file.contents.toString()))
   this.push(file)
   callback()
-})).pipe((0, _gulp.dest)(destPath))
+})).pipe(dest(destPath))
 exports.makeCommon = makeCommon

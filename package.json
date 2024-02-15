@@ -75,7 +75,6 @@
     "node": ">=10.2.1"
   },
   "files": [
-    "babel.config.js",
     "dist"
   ]
 }

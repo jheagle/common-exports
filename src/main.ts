@@ -10,14 +10,16 @@ import * as stream from 'stream'
 // @ts-ignore
 import babel from 'gulp-babel'
 import { copyResources } from './functions/copyResources'
-import { dest, src } from 'gulp'
+// @ts-ignore
+import pkg from 'gulp'
 import { replaceImports } from './functions/replaceImports'
 import { replaceImportMeta } from './functions/replaceImportMeta'
 import { resolveImports, StreamFile } from './functions/resolveImports'
-import { strAfterLast } from './utilities/strAfterLast'
 // @ts-ignore
 import through, { TransformCallback } from 'through2'
 import { customChanges } from './functions/customChanges'
+
+const { dest, src } = pkg
 
 export type updateContentCallback = (content: string) => string
 
