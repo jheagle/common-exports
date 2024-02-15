@@ -1,1 +1,0 @@
-export const regexEscape=e=>e.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");

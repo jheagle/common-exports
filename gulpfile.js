@@ -9,7 +9,6 @@ const { runCLI } = require('jest')
 const standard = require('gulp-standard')
 const through = require('through2')
 const ts = require('gulp-typescript')
-const { default: uglify } = require('gulp-uglify-es')
 const { removeDirectory } = require('test-filesystem')
 
 const cleanFolders = ['dist']
@@ -43,10 +42,11 @@ const tsSearch = `${distPath}/**/*.mjs`
  * @param {string} replaceWith
  * @return {string}
  */
-const importReplace = (contents, replaceWith) => {
-  const regexImport = new RegExp('(export|import) (.+) from ([\'"])(\./[a-zA-Z-_/]+)(\.[a-z]{2,3})?[\'"]', 'g')
-  return contents.replaceAll(regexImport, replaceWith)
-}
+const importReplace = (contents, replaceWith) => contents
+  .replaceAll(
+    /(export|import) ({?.+}?) from (['"])(\.+\/[a-zA-Z-_\/]+)(\.[a-z]{2,3})?['"]/g,
+    replaceWith
+  )
 
 /**
  * Deletes all the distribution files (used before create a new build).
@@ -121,20 +121,6 @@ const distLint = () => src(distSearch)
   .pipe(dest(distPath))
 
 /**
- * Creates minified versions of the dist files.
- * @function
- * @returns {*}
- */
-const distMinify = () => src(distSearch)
-  .pipe(uglify())
-  .pipe(rename(path => {
-    if (path.extname) {
-      path.extname = `.min${path.extname}`
-    }
-  }))
-  .pipe(dest(distPath))
-
-/**
  * Copy a readme template into the README.md file.
  * @function
  * @returns {*}
@@ -174,7 +160,7 @@ const build = (done = null) => parallel(
   series(
     clean,
     distSeries,
-    parallel(distLint, distMinify),
+    distLint,
     buildReadme
   ),
   testFull

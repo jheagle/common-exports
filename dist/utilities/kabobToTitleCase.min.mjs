@@ -1,1 +1,0 @@
-export const kabobToTitleCase=e=>{const t=e.split("-");return t.reduce(((e,t)=>e.concat((e=>e.charAt(0).toUpperCase()+e.slice(1).toLowerCase())(t))),"")};

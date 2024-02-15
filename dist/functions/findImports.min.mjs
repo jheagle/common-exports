@@ -1,1 +1,0 @@
-import{importRegex}from"./importRegex.mjs";export const findImports=r=>Array.from(r.matchAll(importRegex())).reduce(((r,e)=>(e[3].includes(":")||r.push(e[3]),r)),[]);

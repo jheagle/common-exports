@@ -1,1 +1,0 @@
-export const customChanges=(t,e,n={})=>n.hasOwnProperty("customChanges")&&n.customChanges.hasOwnProperty(t)?n.customChanges[t].reduce(((t,e)=>(e.updateContent&&(t=e.updateContent(t)),t)),e):e;

@@ -1,1 +1,0 @@
-export const strAfterLast=(t,s)=>{const n=t.lastIndexOf(s);return-1===n?"":t.substring(n+s.length)};

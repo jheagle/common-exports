@@ -1,10 +1,10 @@
 import { readdirSync, statSync } from 'fs'
-import { strAfterLast } from '../utilities/strAfterLast'
-import { makeFilepath } from '../utilities/makeFilepath'
+import { strAfterLast } from '../utilities/strAfterLast.mjs'
+import { makeFilepath } from '../utilities/makeFilepath.mjs'
 import { fileExists } from 'test-filesystem'
-import { regexEscape } from '../utilities/regexEscape'
-import { strBeforeLast } from '../utilities/strBeforeLast'
-import { makeRelativePath } from '../utilities/makeRelativePath'
+import { regexEscape } from '../utilities/regexEscape.mjs'
+import { strBeforeLast } from '../utilities/strBeforeLast.mjs'
+import { makeRelativePath } from '../utilities/makeRelativePath.mjs'
 const modulesDirectory = 'node_modules'
 /**
  * Search for the given module and return the full path.

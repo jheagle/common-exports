@@ -1,1 +1,0 @@
-export const replaceImportMeta=e=>e.replace(/import\.meta\.url/g,"require('url').pathToFileURL(__filename).toString()");

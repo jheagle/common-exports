@@ -1,4 +1,4 @@
-import { makeFilepath } from '../utilities/makeFilepath'
+import { makeFilepath } from '../utilities/makeFilepath.mjs'
 import { fileExists } from 'test-filesystem'
 import { readFileSync } from 'fs'
 import { importRegex } from './importRegex.mjs'

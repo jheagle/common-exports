@@ -1,9 +1,9 @@
-import { strBeforeLast } from '../utilities/strBeforeLast'
-import { makeFilepath } from '../utilities/makeFilepath'
+import { strBeforeLast } from '../utilities/strBeforeLast.mjs'
+import { makeFilepath } from '../utilities/makeFilepath.mjs'
 import { fileExists } from 'test-filesystem'
-import { makeCommon } from '../main'
-import { regexEscape } from '../utilities/regexEscape'
-import { makeRelativePath } from '../utilities/makeRelativePath'
+import { makeCommon } from '../main.mjs'
+import { regexEscape } from '../utilities/regexEscape.mjs'
+import { makeRelativePath } from '../utilities/makeRelativePath.mjs'
 /**
  * Take a srcPath, destPath, then return a function to reduce the content for replacing file imports.
  * @memberof module:common-exports

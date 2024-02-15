@@ -1,1 +1,0 @@
-export const importRegex=()=>new RegExp("(:?export|import)\\(?(:?\\s*[a-zA-Z{}\\s-_,/]+\\s*from\\s*)?['`\"](.+)['`\"]\\)?","g");
