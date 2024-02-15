@@ -1,6 +1,7 @@
 import { replaceImports } from './replaceImports'
 import { countMatches } from 'test-filesystem'
 import { makeCommon } from '../main'
+import { readFileSync } from 'fs'
 
 jest.mock('../main', () => ({ makeCommon: jest.fn() }))
 
@@ -117,7 +118,7 @@ describe('replaceImports', () => {
     expect(countMatches(bufferedContents, 'import plur from \'plur\'')).toBe(1)
     expect(countMatches(bufferedContents, 'import {gulpPlugin} from \'gulp-plugin-extras\'')).toBe(1)
     expect(countMatches(bufferedContents, 'const {default: plugin} = await import(`imagemin-${pluginName}`)')).toBe(1)
-    const result = importFiles.reduce(replaceImports(srcPath, destPath, file), bufferedContents)
+    const result = importFiles.reduce(replaceImports(srcPath, destPath), bufferedContents)
     expect(countMatches(result, 'import path from \'node:path\'')).toBe(1)
     expect(countMatches(result, 'import process from \'node:process\'')).toBe(1)
     expect(countMatches(result, 'import prettyBytes from \'../pretty-bytes/index.js\'')).toBe(1)
@@ -205,7 +206,7 @@ describe('replaceImports', () => {
     expect(countMatches(bufferedContents, 'import {handleInput, getSpawnedResult, makeAllStream, validateInputSync} from \'./lib/stream.js\'')).toBe(1)
     expect(countMatches(bufferedContents, 'import {joinCommand, parseCommand, getEscapedCommand} from \'./lib/command.js\'')).toBe(1)
 
-    const result = importFiles.reduce(replaceImports(srcPath, destPath, file), bufferedContents)
+    const result = importFiles.reduce(replaceImports(srcPath, destPath), bufferedContents)
     expect(countMatches(result, 'import {Buffer} from \'node:buffer\'')).toBe(1)
     expect(countMatches(result, 'import path from \'node:path\'')).toBe(1)
     expect(countMatches(result, 'import childProcess from \'node:child_process\'')).toBe(1)
@@ -230,6 +231,15 @@ describe('replaceImports', () => {
     expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stream.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
     expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/promise.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
     expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/command.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
+  })
 
+  test('will prefix the import with ./ when no relative path used', () => {
+    const fileName = './gulpfile.js'
+    const moduleName = 'gulp-babel'
+    const modulePath = 'node_modules/gulp-babel'
+    const fileContent = readFileSync(fileName).toString()
+    expect(countMatches(fileContent, 'const babel = require(\'gulp-babel\')')).toBe(1)
+    const result = replaceImports(fileName, 'vendor')(fileContent, {module: moduleName, path: modulePath, file: `${modulePath}/index.js`})
+    expect(countMatches(result, 'const babel = require(\'./node_modules/gulp-babel/index.js\')')).toBe(1)
   })
 })

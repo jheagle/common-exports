@@ -47,11 +47,10 @@ Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
 
 * [common-exports](#module_common-exports)
     * [.makeCommon(srcPath, destPath, [config])](#module_common-exports.makeCommon) ⇒ <code>stream.Stream</code>
-    * [.wrapAwait(fileContents, fileName)](#module_common-exports.wrapAwait) ⇒ <code>string</code>
     * [.resolveModule(root, moduleName, current)](#module_common-exports.resolveModule) ⇒ <code>Array.&lt;string&gt;</code>
     * [.resolveMainFile(modulePath)](#module_common-exports.resolveMainFile) ⇒ <code>string</code> \| <code>null</code>
     * [.resolveImports(file, [rootPath])](#module_common-exports.resolveImports) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
-    * [.replaceImports(srcPath, destPath, file, [config])](#module_common-exports.replaceImports) ⇒ <code>reduceImports</code>
+    * [.replaceImports(srcPath, destPath, [config])](#module_common-exports.replaceImports) ⇒ <code>reduceImports</code>
     * [.replaceImportMeta(content)](#module_common-exports.replaceImportMeta) ⇒ <code>string</code>
     * [.makeModuleInfo(dirPath, moduleName, rootPath)](#module_common-exports.makeModuleInfo) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
     * [.isCommonModule(moduleInfo)](#module_common-exports.isCommonModule) ⇒ <code>boolean</code>
@@ -75,18 +74,6 @@ Apply babel to source files and output with commonJs compatibility.
 | [config.copyResources] | <code>Object.&lt;string, Array.&lt;Object.&lt;(src\|dest\|updateContent), (string\|function())&gt;&gt;&gt;</code> | <code>{}</code> | Add custom files to copy for found modules. |
 | [config.customChanges] | <code>Object.&lt;string, Array.&lt;Object.&lt;updateContent, function()&gt;&gt;&gt;</code> | <code>{}</code> | Add custom content changes to the content used. |
 | [config.rootPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | Specify the root to use, this helps identify where to stop. |
-
-<a name="module_common-exports.wrapAwait"></a>
-
-### common-exports.wrapAwait(fileContents, fileName) ⇒ <code>string</code>
-Some import / export conversions use await which must be wrapped in an async function.
-
-**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| fileContents | <code>string</code> |  | The string content of the file for updating. |
-| fileName | <code>string</code> | <code>&quot;module-namespace&quot;</code> | The name of the file we are doing changes for. |
 
 <a name="module_common-exports.resolveModule"></a>
 
@@ -126,8 +113,8 @@ Given a file with buffer contents, identify all the imports it has and find thei
 
 <a name="module_common-exports.replaceImports"></a>
 
-### common-exports.replaceImports(srcPath, destPath, file, [config]) ⇒ <code>reduceImports</code>
-Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
+### common-exports.replaceImports(srcPath, destPath, [config]) ⇒ <code>reduceImports</code>
+Take a srcPath, destPath, then return a function to reduce the content for replacing file imports.
 
 **Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
 
@@ -135,7 +122,6 @@ Take a srcPath, destPath, and file and return a function to reduce the content f
 | --- | --- | --- | --- |
 | srcPath | <code>string</code> |  | The original path of the file to be updated. |
 | destPath | <code>string</code> |  | The outgoing path of the file once updated. |
-| file | <code>StreamFile</code> |  | The in-memory fetched file object. |
 | [config] | <code>Object.&lt;string, Object.&lt;string, \*&gt;&gt;</code> | <code>{}</code> | Additional configuration options. |
 
 <a name="module_common-exports.replaceImportMeta"></a>

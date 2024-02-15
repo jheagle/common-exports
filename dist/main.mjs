@@ -12,10 +12,8 @@ import { dest, src } from 'gulp'
 import { replaceImports } from './functions/replaceImports.mjs'
 import { replaceImportMeta } from './functions/replaceImportMeta.mjs'
 import { resolveImports } from './functions/resolveImports.mjs'
-import { strAfterLast } from './utilities/strAfterLast.mjs'
 // @ts-ignore
 import through from 'through2'
-import { wrapAwait } from './functions/wrapAwait.mjs'
 import { customChanges } from './functions/customChanges.mjs'
 /**
  * Apply babel to source files and output with commonJs compatibility.
@@ -35,7 +33,7 @@ export const makeCommon = (srcPath, destPath, config = {}) => src(srcPath)
     const rootPath = typeof config.rootPath === 'undefined' ? srcPath : config.rootPath
     // @ts-ignore
     const fileContents = resolveImports(file, rootPath)
-      .reduce(replaceImports(srcPath, destPath, file, config), file.contents.toString())
+      .reduce(replaceImports(srcPath, destPath, config), file.contents.toString())
     copyResources(srcPath, config)
     file.contents = Buffer.from(customChanges(srcPath, fileContents, config))
     this.push(file)
@@ -43,10 +41,7 @@ export const makeCommon = (srcPath, destPath, config = {}) => src(srcPath)
   }))
   .pipe(babel())
   .pipe(through.obj(function (file, enc, callback) {
-    let fileContents = file.contents.toString()
-    fileContents = replaceImportMeta(fileContents)
-    const wrappedContents = wrapAwait(fileContents, strAfterLast(file.base, '/'))
-    file.contents = Buffer.from(wrappedContents)
+    file.contents = Buffer.from(replaceImportMeta(file.contents.toString()))
     this.push(file)
     callback()
   }))

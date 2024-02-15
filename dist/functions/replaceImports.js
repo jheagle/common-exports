@@ -11,15 +11,14 @@ var _main = require('../main')
 var _regexEscape = require('../utilities/regexEscape')
 var _makeRelativePath = require('../utilities/makeRelativePath')
 /**
- * Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
+ * Take a srcPath, destPath, then return a function to reduce the content for replacing file imports.
  * @memberof module:common-exports
  * @param {string} srcPath - The original path of the file to be updated.
  * @param {string} destPath - The outgoing path of the file once updated.
- * @param {StreamFile} file - The in-memory fetched file object.
  * @param {Object<string, Object<string, *>>} [config={}] - Additional configuration options.
  * @returns {reduceImports}
  */
-const replaceImports = (srcPath, destPath, file, config = {}) => (content, importFile) => {
+const replaceImports = (srcPath, destPath, config = {}) => (content, importFile) => {
   if (!importFile.file) {
     console.error('Unable to find module', srcPath, importFile)
     return content
@@ -49,6 +48,9 @@ const replaceImports = (srcPath, destPath, file, config = {}) => (content, impor
   if (relativePath.endsWith('.mjs')) {
     // Handle wrong ending conversion from .mjs to .js file extension
     relativePath = (0, _strBeforeLast.strBeforeLast)(relativePath, '.mjs') + '.js'
+  }
+  if (!/^\.+\//.test(relativePath)) {
+    relativePath = `./${relativePath}`
   }
   return content.replace(moduleMatch, `$1${relativePath}$1`)
 }

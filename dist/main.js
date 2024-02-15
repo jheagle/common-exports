@@ -13,9 +13,7 @@ var _gulp = require('gulp')
 var _replaceImports = require('./functions/replaceImports')
 var _replaceImportMeta = require('./functions/replaceImportMeta')
 var _resolveImports = require('./functions/resolveImports')
-var _strAfterLast = require('./utilities/strAfterLast')
 var _through = _interopRequireDefault(require('through2'))
-var _wrapAwait = require('./functions/wrapAwait')
 var _customChanges = require('./functions/customChanges')
 function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
 /**
@@ -45,16 +43,13 @@ function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { d
 const makeCommon = (srcPath, destPath, config = {}) => (0, _gulp.src)(srcPath).pipe(_through.default.obj(function (file, enc, callback) {
   const rootPath = typeof config.rootPath === 'undefined' ? srcPath : config.rootPath
   // @ts-ignore
-  const fileContents = (0, _resolveImports.resolveImports)(file, rootPath).reduce((0, _replaceImports.replaceImports)(srcPath, destPath, file, config), file.contents.toString());
+  const fileContents = (0, _resolveImports.resolveImports)(file, rootPath).reduce((0, _replaceImports.replaceImports)(srcPath, destPath, config), file.contents.toString());
   (0, _copyResources.copyResources)(srcPath, config)
   file.contents = Buffer.from((0, _customChanges.customChanges)(srcPath, fileContents, config))
   this.push(file)
   callback()
 })).pipe((0, _gulpBabel.default)()).pipe(_through.default.obj(function (file, enc, callback) {
-  let fileContents = file.contents.toString()
-  fileContents = (0, _replaceImportMeta.replaceImportMeta)(fileContents)
-  const wrappedContents = (0, _wrapAwait.wrapAwait)(fileContents, (0, _strAfterLast.strAfterLast)(file.base, '/'))
-  file.contents = Buffer.from(wrappedContents)
+  file.contents = Buffer.from((0, _replaceImportMeta.replaceImportMeta)(file.contents.toString()))
   this.push(file)
   callback()
 })).pipe((0, _gulp.dest)(destPath))

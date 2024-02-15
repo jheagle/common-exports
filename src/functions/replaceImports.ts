@@ -17,15 +17,14 @@ import { ModuleInfo } from './makeModuleInfo'
 export type reduceImports = (content: string, importFile: ModuleInfo) => string
 
 /**
- * Take a srcPath, destPath, and file and return a function to reduce the content for replacing file imports.
+ * Take a srcPath, destPath, then return a function to reduce the content for replacing file imports.
  * @memberof module:common-exports
  * @param {string} srcPath - The original path of the file to be updated.
  * @param {string} destPath - The outgoing path of the file once updated.
- * @param {StreamFile} file - The in-memory fetched file object.
  * @param {Object<string, Object<string, *>>} [config={}] - Additional configuration options.
  * @returns {reduceImports}
  */
-export const replaceImports = (srcPath: string, destPath: string, file: StreamFile, config: makeCommonConfig = {}): reduceImports =>
+export const replaceImports = (srcPath: string, destPath: string, config: makeCommonConfig = {}): reduceImports =>
   (content: string, importFile: ModuleInfo): string => {
     if (!importFile.file) {
       console.error('Unable to find module', srcPath, importFile)
@@ -56,6 +55,9 @@ export const replaceImports = (srcPath: string, destPath: string, file: StreamFi
     if (relativePath.endsWith('.mjs')) {
       // Handle wrong ending conversion from .mjs to .js file extension
       relativePath = strBeforeLast(relativePath, '.mjs') + '.js'
+    }
+    if (!/^\.+\//.test(relativePath)) {
+      relativePath = `./${relativePath}`
     }
     return content.replace(moduleMatch, `$1${relativePath}$1`)
   }

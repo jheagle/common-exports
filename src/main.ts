@@ -17,7 +17,6 @@ import { resolveImports, StreamFile } from './functions/resolveImports'
 import { strAfterLast } from './utilities/strAfterLast'
 // @ts-ignore
 import through, { TransformCallback } from 'through2'
-import { wrapAwait } from './functions/wrapAwait'
 import { customChanges } from './functions/customChanges'
 
 export type updateContentCallback = (content: string) => string
@@ -51,7 +50,7 @@ export const makeCommon = (srcPath: string, destPath: string, config: makeCommon
     // @ts-ignore
     const fileContents = resolveImports(file, rootPath)
       .reduce(
-        replaceImports(srcPath, destPath, file, config),
+        replaceImports(srcPath, destPath, config),
         file.contents.toString()
       )
     copyResources(srcPath, config)
@@ -61,10 +60,7 @@ export const makeCommon = (srcPath: string, destPath: string, config: makeCommon
   }))
   .pipe(babel())
   .pipe(through.obj(function (file: StreamFile, enc: BufferEncoding, callback: TransformCallback): void {
-    let fileContents = file.contents.toString()
-    fileContents = replaceImportMeta(fileContents)
-    const wrappedContents = wrapAwait(fileContents, strAfterLast(file.base, '/'))
-    file.contents = Buffer.from(wrappedContents)
+    file.contents = Buffer.from(replaceImportMeta(file.contents.toString()))
     this.push(file)
     callback()
   }))
