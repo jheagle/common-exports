@@ -48,3 +48,10 @@ export const makeCommon = (srcPath, destPath, config = {}) => src(srcPath)
     callback()
   }))
   .pipe(dest(destPath))
+if (this) {
+  // @ts-ignore
+  this.commonExports = makeCommon
+} else if (typeof window !== 'undefined') {
+  // @ts-ignore
+  window.commonExports = makeCommon
+}

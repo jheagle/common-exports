@@ -60,3 +60,10 @@ const makeCommon = (srcPath, destPath, config = {}) => src(srcPath).pipe(_throug
   callback()
 })).pipe(dest(destPath))
 exports.makeCommon = makeCommon
+if (void 0) {
+  // @ts-ignore
+  (void 0).commonExports = makeCommon
+} else if (typeof window !== 'undefined') {
+  // @ts-ignore
+  window.commonExports = makeCommon
+}

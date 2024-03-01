@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Common Exports</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width">
+    <script src="./node_modules/test-filesystem/browser/test-fs.js"></script>
+</head>
+<body>
+<p>
+    This module can only be run in a terminal, so unfortunately it cannot be tested in the browser.
+</p>
+<a href='docs'>See the documentation on function usage</a>
+<script type="module">
+  import { makeCommon } from './dist/main.mjs'
+  window.addEventListener('DOMContentLoaded', () => {
+    testFs.logObject(makeCommon, 'Common Exports')
+  })
+</script>
+</body>
