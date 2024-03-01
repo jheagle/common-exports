@@ -1,6 +1,6 @@
 {
   "name": "common-exports",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Convert ES Module to CommonJS.",
   "main": "dist/main.js",
   "module": "./dist/main.mjs",
