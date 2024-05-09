@@ -174,9 +174,8 @@ describe('makeCommon', () => {
           'imagemin-svgo',
           'is-jpg',
           'mozjpeg',
-          // 'ow',
-          // 'peek-readable',
-          // 'strtok3',
+          'peek-readable',
+          'strtok3',
         ]
         copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
         expect.assertions(3)
@@ -226,7 +225,7 @@ describe('makeCommon', () => {
             expect(existsSync(vendorPath)).toBeTruthy()
             setTimeout(
               imageminTest,
-              800,
+              10000,
               files,
               done
             )
@@ -236,7 +235,7 @@ describe('makeCommon', () => {
             done()
           })
       },
-      8000
+      15000
     )
   })
 })

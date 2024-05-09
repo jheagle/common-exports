@@ -151,7 +151,7 @@ describe('resolveModule', () => {
     expect(resolveModule(fileName, moduleName, fileName)).toEqual(['node_modules/gulp-babel'])
   })
 
-  test.skip('get with specified export path', () => {
+  test('get with specified export path', () => {
     const copyModules = [
       'file-type',
       'strtok3',
@@ -162,7 +162,7 @@ describe('resolveModule', () => {
     expect(resolveModule(fileName, moduleName, fileName)).toEqual(['test-resolve-module/node_modules/strtok3/lib/core.js'])
   })
 
-  test.skip('some nested module is found', () => {
+  test('some nested module is found', () => {
     const copyModules = [
       'ow',
     ]

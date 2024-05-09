@@ -34,7 +34,7 @@ describe('verifyModule', () => {
     ])
   })
 
-  test.skip('get with specified export path', () => {
+  test('get with specified export path', () => {
     const copyModules = [
       'file-type',
       'strtok3',
