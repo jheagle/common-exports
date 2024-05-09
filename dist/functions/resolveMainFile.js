@@ -7,6 +7,7 @@ exports.resolveMainFile = void 0
 var _fs = require('fs')
 var _makeFilepath = require('../utilities/makeFilepath')
 var _testFilesystem = require('test-filesystem')
+var _resolvePackageExports = require('./resolvePackageExports')
 /**
  * Given a module path, find the file which should be used as main, based on module import.
  * @memberof module:common-exports
@@ -41,15 +42,9 @@ const resolveMainFile = modulePath => {
   // Check if there is a package.json and search there for the specified main file
   const packagePath = (0, _makeFilepath.makeFilepath)(modulePath, 'package.json')
   if ((0, _testFilesystem.fileExists)(packagePath)) {
-    const packageData = JSON.parse((0, _fs.readFileSync)(packagePath).toString())
-    if (packageData.exports) {
-      if (typeof packageData.exports === 'string') {
-        return (0, _makeFilepath.makeFilepath)(modulePath, packageData.exports)
-      }
-      return (0, _makeFilepath.makeFilepath)(modulePath, packageData.exports.default)
-    }
-    if (packageData.main) {
-      return (0, _makeFilepath.makeFilepath)(modulePath, packageData.main)
+    const resolvedFile = (0, _resolvePackageExports.resolvePackageExports)(JSON.parse((0, _fs.readFileSync)(packagePath).toString()), modulePath)
+    if (resolvedFile !== null) {
+      return resolvedFile
     }
   }
   const jsPath = (0, _makeFilepath.makeFilepath)(modulePath, 'index.js')

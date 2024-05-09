@@ -69,6 +69,8 @@ Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
 
 * [common-exports](#module_common-exports)
     * [.makeCommon(srcPath, destPath, [config])](#module_common-exports.makeCommon) ⇒ <code>stream.Stream</code>
+    * [.verifyModule(moduleName, current)](#module_common-exports.verifyModule) ⇒ <code>Array.&lt;string&gt;</code> \| <code>null</code>
+    * [.resolvePackageExports(packageData, modulePath)](#module_common-exports.resolvePackageExports) ⇒ <code>string</code> \| <code>null</code>
     * [.resolveModule(root, moduleName, current)](#module_common-exports.resolveModule) ⇒ <code>Array.&lt;string&gt;</code>
     * [.resolveMainFile(modulePath)](#module_common-exports.resolveMainFile) ⇒ <code>string</code> \| <code>null</code>
     * [.resolveImports(file, [rootPath])](#module_common-exports.resolveImports) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
@@ -80,6 +82,7 @@ Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
     * [.findImports(fileContents)](#module_common-exports.findImports) ⇒ <code>Array</code>
     * [.customChanges(baseFilePath, content, [config])](#module_common-exports.customChanges) ⇒ <code>string</code>
     * [.copyResources(baseFilePath, [config])](#module_common-exports.copyResources) ⇒ <code>undefined</code>
+    * [.checkPackageExports(exports, modulePath)](#module_common-exports.checkPackageExports) ⇒ <code>string</code> \| <code>null</code>
 
 <a name="module_common-exports.makeCommon"></a>
 
@@ -96,6 +99,30 @@ Apply babel to source files and output with commonJs compatibility.
 | [config.copyResources] | <code>Object.&lt;string, Array.&lt;Object.&lt;(src\|dest\|updateContent), (string\|function())&gt;&gt;&gt;</code> | <code>{}</code> | Add custom files to copy for found modules. |
 | [config.customChanges] | <code>Object.&lt;string, Array.&lt;Object.&lt;updateContent, function()&gt;&gt;&gt;</code> | <code>{}</code> | Add custom content changes to the content used. |
 | [config.rootPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | Specify the root to use, this helps identify where to stop. |
+
+<a name="module_common-exports.verifyModule"></a>
+
+### common-exports.verifyModule(moduleName, current) ⇒ <code>Array.&lt;string&gt;</code> \| <code>null</code>
+Check if the current path contains the module we are looking for.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type |
+| --- | --- |
+| moduleName | <code>string</code> | 
+| current | <code>string</code> | 
+
+<a name="module_common-exports.resolvePackageExports"></a>
+
+### common-exports.resolvePackageExports(packageData, modulePath) ⇒ <code>string</code> \| <code>null</code>
+Given the package details, determined the configured module entry point.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| packageData | <code>object</code> \| <code>string</code> | The package contents as an object. |
+| modulePath | <code>string</code> |  |
 
 <a name="module_common-exports.resolveModule"></a>
 
@@ -222,4 +249,16 @@ Based on configured 'copyResources', if we are in the corresponding based path c
 | --- | --- | --- | --- |
 | baseFilePath | <code>string</code> |  | The source / module path to process. |
 | [config] | <code>Object.&lt;&#x27;copyResources&#x27;, Object.&lt;string, Array.&lt;Object.&lt;(&#x27;src&#x27;\|&#x27;dest&#x27;\|&#x27;updateContent&#x27;), (string\|function())&gt;&gt;&gt;&gt;</code> | <code>{}</code> | The copyResources config may be present, and if it has the source path as a property, then the src and dest will be used to copy resources. |
+
+<a name="module_common-exports.checkPackageExports"></a>
+
+### common-exports.checkPackageExports(exports, modulePath) ⇒ <code>string</code> \| <code>null</code>
+Given the configured exports from a package, determine the preferred entry path.
+
+**Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| exports | <code>object</code> \| <code>string</code> | The relative path used to locate the module. |
+| modulePath | <code>string</code> |  |
 

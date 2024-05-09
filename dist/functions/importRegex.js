@@ -9,5 +9,5 @@ exports.importRegex = void 0
  * @memberof module:common-exports
  * @returns {string}
  */
-const importRegex = () => new RegExp('(:?export|import)\\(?(:?\\s*[a-zA-Z{}\\s-_,/]+\\s*from\\s*)?[\'`"](.+)[\'`"]\\)?', 'g')
+const importRegex = () => new RegExp('(:?export|import)\\(?(:?\\s*[*a-zA-Z0-9{}\\s-_,/]+\\s*from\\s*)?[\'`"](.+)[\'`"]\\)?', 'g')
 exports.importRegex = importRegex

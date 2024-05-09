@@ -3,4 +3,4 @@
  * @memberof module:common-exports
  * @returns {string}
  */
-export const importRegex = () => new RegExp('(:?export|import)\\(?(:?\\s*[a-zA-Z{}\\s-_,/]+\\s*from\\s*)?[\'`"](.+)[\'`"]\\)?', 'g')
+export const importRegex = () => new RegExp('(:?export|import)\\(?(:?\\s*[*a-zA-Z0-9{}\\s-_,/]+\\s*from\\s*)?[\'`"](.+)[\'`"]\\)?', 'g')
