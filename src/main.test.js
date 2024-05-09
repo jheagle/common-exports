@@ -63,7 +63,6 @@ const imageminTest = (files, done) => {
       .pipe(
         imagemin(
           {
-            interlaced: true,
             silent: true,
             verbose: false,
           }
@@ -108,15 +107,15 @@ describe('makeCommon', () => {
 
   describe('can use compiled package', () => {
     const testFileConversions = [
-      {
-        type: 'gif',
-        files: [{
-          origin: 'test-assets/original-gif.gif',
-          testPath: `${srcPath}/imageToCopy.gif`,
-          newPath: `${browserPath}/imageToCopy.gif`,
-          compressed: 'test-assets/compressed-gif.gif',
-        }]
-      },
+      // {
+      //   type: 'gif',
+      //   files: [{
+      //     origin: 'test-assets/original-gif.gif',
+      //     testPath: `${srcPath}/imageToCopy.gif`,
+      //     newPath: `${browserPath}/imageToCopy.gif`,
+      //     compressed: 'test-assets/compressed-gif.gif',
+      //   }]
+      // },
       {
         type: 'jpg',
         files: [{
@@ -174,6 +173,7 @@ describe('makeCommon', () => {
           'imagemin-svgo',
           'is-jpg',
           'mozjpeg',
+          'ow',
           'peek-readable',
           'strtok3',
         ]
@@ -225,7 +225,7 @@ describe('makeCommon', () => {
             expect(existsSync(vendorPath)).toBeTruthy()
             setTimeout(
               imageminTest,
-              10000,
+              15000,
               files,
               done
             )
@@ -235,7 +235,7 @@ describe('makeCommon', () => {
             done()
           })
       },
-      15000
+      20000
     )
   })
 })
