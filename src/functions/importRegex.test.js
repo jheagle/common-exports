@@ -65,7 +65,8 @@ const sampleContent = 'import ansiStyles from \'#ansi-styles\';\n' +
   'import{constants}from"os";\n' +
   '\n' +
   'import{SIGRTMAX}from"./realtime.js";\n' +
-  'import{getSignals}from"./signals.js";\n'
+  'import{getSignals}from"./signals.js";\n' +
+  'import * as strtok3 from \'strtok3\';\n'
 
 describe('importRegex', () => {
   test('detects all the imports', () => {
@@ -99,7 +100,8 @@ describe('importRegex', () => {
       './lib/promise.js',
       `./lib/command.js';import{constants}from"os`,
       './realtime.js',
-      './signals.js'
+      './signals.js',
+      'strtok3'
     ])
   })
 })

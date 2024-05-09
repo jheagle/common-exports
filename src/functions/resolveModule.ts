@@ -1,10 +1,9 @@
-import { readdirSync, statSync } from 'fs'
 import { strAfterLast } from '../utilities/strAfterLast'
 import { makeFilepath } from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
-import { regexEscape } from '../utilities/regexEscape'
 import { strBeforeLast } from '../utilities/strBeforeLast'
 import { makeRelativePath } from '../utilities/makeRelativePath'
+import { verifyModule } from './verifyModule'
 
 const modulesDirectory: string = 'node_modules'
 
@@ -41,33 +40,26 @@ export const resolveModule = (root: string, moduleName: string, current: string 
   }
   let tempCurrent = makeFilepath(current, strBeforeLast(moduleName, '/'))
   if (fileExists(tempCurrent)) {
-    let tempName = moduleName.includes('/') ? strAfterLast(moduleName, '/') : moduleName
-    tempName = makeFilepath(tempName)
-    tempName = regexEscape(tempName)
-    if (tempName.includes('\\$\\{')) {
-      // now that we already did the escape, we need to check the patter as escaped, then replace with wildcard
-      tempName = tempName.replace(/(\\\$\\{.+\\})+/g, '.+')
-    }
-    const moduleRegex = new RegExp(`^${tempName}$`)
-    const pathStats = statSync(tempCurrent)
-    if (pathStats.isDirectory()) {
-      const foundFiles = readdirSync(tempCurrent).filter((filePath: string): boolean => moduleRegex.test(filePath))
-      if (foundFiles.length) {
-        return foundFiles
-          .map((found: string) => makeFilepath(tempCurrent, found))
-          .filter(fileExists)
-      }
+    const result = verifyModule(moduleName, tempCurrent)
+    if (result !== null) {
+      return result
     }
   }
   if (current === modulesDirectory) {
     return []
   }
+  let hasModules = false
   if (strAfterLast(current, '/') === modulesDirectory) {
+    hasModules = true
     current = makeFilepath(current, '../../')
   }
   const next = makeFilepath(current, modulesDirectory)
   if (next === root || !next) {
     return []
+  }
+  if (hasModules && root !== current && current) {
+    // Check relative non-modules paths, skip this bit if this is already root level
+    return resolveModule(root, moduleName, current)
   }
   return resolveModule(root, moduleName, next)
 }

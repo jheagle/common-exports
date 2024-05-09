@@ -72,6 +72,12 @@ const squishedImports = 'import{constants}from"os";\n' +
   'import{SIGRTMAX}from"./realtime.js";\n' +
   'import{getSignals}from"./signals.js";\n'
 
+const userNamedImports = 'import is from \'@sindresorhus/is\';\n' +
+  'import { ArgumentError } from \'../argument-error.js\';\n' +
+  'import { not } from \'../operators/not.js\';\n' +
+  'import { generateArgumentErrorMessage } from \'../utils/generate-argument-error-message.js\';\n' +
+  'import { testSymbol } from \'./base-predicate.js\';'
+
 describe('findImports', () => {
   test('can detect multiline imports', () => {
     const found = findImports(multilineImport)
@@ -131,6 +137,17 @@ describe('findImports', () => {
       'os',
       './realtime.js',
       './signals.js',
+    ])
+  })
+
+  test('find operators/not and modules starting with user name', () => {
+    const found = findImports(userNamedImports)
+    expect(found).toEqual([
+      '@sindresorhus/is',
+      '../argument-error.js',
+      '../operators/not.js',
+      '../utils/generate-argument-error-message.js',
+      './base-predicate.js',
     ])
   })
 })

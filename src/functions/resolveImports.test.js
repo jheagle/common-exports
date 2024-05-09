@@ -1,4 +1,3 @@
-import { findImports } from './findImports'
 import { isCommonModule } from './isCommonModule'
 import { makeFilepath } from '../utilities/makeFilepath'
 import { makeModuleInfo } from './makeModuleInfo'
@@ -15,7 +14,6 @@ const foundModules = [
 ]
 const dirPath = 'test-resolve-imports/node_modules/gulp-imagemin'
 jest.mock('../utilities/makeFilepath', () => ({ makeFilepath: jest.fn(() => dirPath) }))
-jest.mock('./findImports', () => ({ findImports: jest.fn(() => foundModules) }))
 jest.mock('./makeModuleInfo', () => ({
   makeModuleInfo: jest.fn((path, moduleName) => [
     {
@@ -52,7 +50,22 @@ const fileContents = 'import path from \'node:path\';\n' +
   '\n' +
   'const getDefaultPlugins = async () => Promise.all(defaultPlugins.flatMap(plugin => loadPlugin(plugin)));\n'
 
+const owContents = 'import is from \'@sindresorhus/is\';\n' +
+  'import { ArgumentError } from \'../argument-error.js\';\n' +
+  'import { not } from \'../operators/not.js\';\n' +
+  'import { generateArgumentErrorMessage } from \'../utils/generate-argument-error-message.js\';\n' +
+  'import { testSymbol } from \'./base-predicate.js\';'
+
+const foundOwModules = [
+  '@sindresorhus/is',
+  '../argument-error.js',
+  '../operators/not.js',
+  '../utils/generate-argument-error-message.js',
+  './base-predicate.js'
+]
+
 describe('resolveImports', () => {
+  let timesCalled = 0
   test('will take the modules identified and format them', () => {
     const file = {
       base: `/common-exports/${basePath}/node_modules/gulp-imagemin`,
@@ -66,12 +79,34 @@ describe('resolveImports', () => {
       stat: {}
     }
     const resolvedImports = resolveImports(file)
-    // We set one module to be considered common so it is skipped, we get the total found minus one then
+    // We set one module to be considered common, so it is skipped, we get the total found minus one then
     expect(resolvedImports.length).toEqual(foundModules.length - 1)
     expect(makeFilepath).toHaveBeenCalledWith(`/${basePath}/node_modules/gulp-imagemin`)
-    expect(findImports).toHaveBeenCalledWith(fileContents)
-    expect(makeModuleInfo).toHaveBeenCalledTimes(foundModules.length)
+    timesCalled += foundModules.length
+    expect(makeModuleInfo).toHaveBeenCalledTimes(timesCalled)
     foundModules.forEach(moduleName => expect(makeModuleInfo).toHaveBeenCalledWith(dirPath, moduleName, dirPath))
-    expect(isCommonModule).toHaveBeenCalledTimes(foundModules.length)
+    expect(isCommonModule).toHaveBeenCalledTimes(timesCalled)
+  })
+
+  test('find imports from nested file', () => {
+    const file = {
+      base: `/common-exports/${basePath}/node_modules/ow`,
+      contents: Buffer.from(owContents),
+      cwd: '/common-exports',
+      history: [
+        `/common-exports/${basePath}/node_modules/ow/dist/predicates/predicate.js`
+      ],
+      isVinyl: undefined,
+      path: `/common-exports/${basePath}/node_modules/ow/dist/predicates/predicate.js`,
+      stat: {}
+    }
+    const resolvedImports = resolveImports(file)
+    // We set one module to be considered common, so it is skipped, we get the total found minus one then
+    expect(resolvedImports.length).toEqual(foundOwModules.length)
+    expect(makeFilepath).toHaveBeenCalledWith(`/${basePath}/node_modules/ow`)
+    timesCalled += foundOwModules.length
+    expect(makeModuleInfo).toHaveBeenCalledTimes(timesCalled)
+    foundOwModules.forEach(moduleName => expect(makeModuleInfo).toHaveBeenCalledWith(dirPath, moduleName, dirPath))
+    expect(isCommonModule).toHaveBeenCalledTimes(timesCalled)
   })
 })

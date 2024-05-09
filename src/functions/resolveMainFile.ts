@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 import { makeFilepath } from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
+import { resolvePackageExports } from './resolvePackageExports'
 
 /**
  * Given a module path, find the file which should be used as main, based on module import.
@@ -40,15 +41,12 @@ export const resolveMainFile = (modulePath: string): string | null => {
   // Check if there is a package.json and search there for the specified main file
   const packagePath = makeFilepath(modulePath, 'package.json')
   if (fileExists(packagePath)) {
-    const packageData = JSON.parse(readFileSync(packagePath).toString())
-    if (packageData.exports) {
-      if (typeof packageData.exports === 'string') {
-        return makeFilepath(modulePath, packageData.exports)
-      }
-      return makeFilepath(modulePath, packageData.exports.default)
-    }
-    if (packageData.main) {
-      return makeFilepath(modulePath, packageData.main)
+    const resolvedFile = resolvePackageExports(
+      JSON.parse(readFileSync(packagePath).toString()),
+      modulePath
+    )
+    if (resolvedFile !== null) {
+      return resolvedFile
     }
   }
   const jsPath = makeFilepath(modulePath, 'index.js')

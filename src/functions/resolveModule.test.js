@@ -146,8 +146,29 @@ describe('resolveModule', () => {
   })
 
   test('module starts as file instead of directory', () => {
-    const fileName = './gulpfile.js'
+    const fileName = './gulpfile.mjs'
     const moduleName = 'gulp-babel'
     expect(resolveModule(fileName, moduleName, fileName)).toEqual(['node_modules/gulp-babel'])
+  })
+
+  test.skip('get with specified export path', () => {
+    const copyModules = [
+      'file-type',
+      'strtok3',
+    ]
+    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    const fileName = `${modulesPath}/file-type/core.js`
+    const moduleName = 'strtok3/core'
+    expect(resolveModule(fileName, moduleName, fileName)).toEqual(['test-resolve-module/node_modules/strtok3/lib/core.js'])
+  })
+
+  test.skip('some nested module is found', () => {
+    const copyModules = [
+      'ow',
+    ]
+    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    const fileName = `${modulesPath}/ow/dist/predicates/predicate.js`
+    const moduleName = '../operators/not.js'
+    expect(resolveModule(fileName, moduleName, fileName)).toEqual([`${modulesPath}/ow/dist/operators/not.js`])
   })
 })

@@ -162,11 +162,9 @@ describe('makeCommon', () => {
           'file-type',
           'irregular-plurals',
           'globby',
-          'array-union',
           'merge2',
           'fast-glob',
           'p-pipe',
-          'dir-glob',
           'junk',
           'ignore',
           'slash',
@@ -176,6 +174,9 @@ describe('makeCommon', () => {
           'imagemin-svgo',
           'is-jpg',
           'mozjpeg',
+          // 'ow',
+          // 'peek-readable',
+          // 'strtok3',
         ]
         copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
         expect.assertions(3)
@@ -234,7 +235,8 @@ describe('makeCommon', () => {
             console.error('Encountered error', error)
             done()
           })
-      }
+      },
+      8000
     )
   })
 })

@@ -234,7 +234,7 @@ describe('replaceImports', () => {
   })
 
   test('will prefix the import with ./ when no relative path used', () => {
-    const fileName = './gulpfile.js'
+    const fileName = './gulpfile.mjs'
     const moduleName = 'gulp-babel'
     const modulePath = 'node_modules/gulp-babel'
     const fileContent = readFileSync(fileName).toString()

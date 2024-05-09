@@ -37,7 +37,7 @@ describe('resolveMainFile', () => {
     const newPackage = `${modulesPath}/${modulePackage}`
     writeFileSync(newPackage, packageContent)
     const foundModulePath = resolveMainFile(modulePath)
-    expect(foundModulePath).toEqual(modulePath)
+    expect(foundModulePath).toEqual(`${modulePath}/dist/main.js`)
   })
 
   test('resolves path to file configured as exports', () => {
