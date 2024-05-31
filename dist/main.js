@@ -15,7 +15,7 @@ var _replaceImportMeta = require('./functions/replaceImportMeta')
 var _resolveImports = require('./functions/resolveImports')
 var _through = _interopRequireDefault(require('through2'))
 var _customChanges = require('./functions/customChanges')
-function _interopRequireDefault (obj) { return obj && obj.__esModule ? obj : { default: obj } }
+function _interopRequireDefault (e) { return e && e.__esModule ? e : { default: e } }
 /**
  * Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
  * @file
