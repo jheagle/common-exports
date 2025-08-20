@@ -4,7 +4,7 @@ Object.defineProperty(exports, '__esModule', {
   value: true
 })
 exports.makeModuleInfo = void 0
-require('core-js/modules/esnext.async-iterator.map.js')
+require('core-js/modules/esnext.iterator.constructor.js')
 require('core-js/modules/esnext.iterator.map.js')
 var _resolveMainFile = require('./resolveMainFile')
 var _resolveModule = require('./resolveModule')

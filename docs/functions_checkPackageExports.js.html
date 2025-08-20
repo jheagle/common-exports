@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: functions/isCommonModule.js</title>
+    <title>JSDoc: Source: functions/checkPackageExports.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: functions/isCommonModule.js</h1>
+    <h1 class="page-title">Source: functions/checkPackageExports.js</h1>
 
     
 
@@ -31,33 +31,29 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
-exports.isCommonModule = void 0
+exports.checkPackageExports = void 0
 var _makeFilepath = require('../utilities/makeFilepath')
-var _testFilesystem = require('test-filesystem')
-var _fs = require('fs')
-var _importRegex = require('./importRegex')
+const priorityPath = ['node', 'require', '.', 'default', 'import', 'browser']
 /**
- * Attempt to detect if the current module is a common js module.
+ * Given the configured exports from a package, determine the preferred entry path.
  * @memberof module:common-exports
- * @param {Object&lt;module|path|file, string|null>} moduleInfo - An object containing the module, path, and file strings.
- * @returns {boolean}
+ * @param {object|string} exports - The relative path used to locate the module.
+ * @param {string} modulePath
+ * @returns {string|null}
  */
-const isCommonModule = moduleInfo => {
-  const packagePath = (0, _makeFilepath.makeFilepath)(moduleInfo.path, 'package.json')
-  if ((0, _testFilesystem.fileExists)(packagePath)) {
-    const packageData = JSON.parse((0, _fs.readFileSync)(packagePath).toString())
-    if (packageData.type &amp;&amp; packageData.type === 'module') {
-      return false
-    }
+const checkPackageExports = (exports, modulePath) => {
+  const result = priorityPath.find(path => {
+    return typeof exports[path] !== 'undefined'
+  })
+  if (typeof result === 'undefined') {
+    return null
   }
-  if (!(0, _testFilesystem.fileExists)(moduleInfo.file)) {
-    // Some native modules don't exist, hope for the best.
-    return true
+  if (typeof exports[result] === 'string') {
+    return (0, _makeFilepath.makeFilepath)(modulePath, exports[result])
   }
-  const mainContents = (0, _fs.readFileSync)(moduleInfo.file).toString()
-  return /require\(['`"].+['`"]\)/.test(mainContents) &amp;&amp; !(0, _importRegex.importRegex)().test(mainContents)
+  return checkPackageExports(exports[result], modulePath)
 }
-exports.isCommonModule = isCommonModule
+exports.checkPackageExports = checkPackageExports
 </code></pre>
         </article>
     </section>

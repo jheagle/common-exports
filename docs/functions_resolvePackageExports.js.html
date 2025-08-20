@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: functions/isCommonModule.js</title>
+    <title>JSDoc: Source: functions/resolvePackageExports.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: functions/isCommonModule.js</h1>
+    <h1 class="page-title">Source: functions/resolvePackageExports.js</h1>
 
     
 
@@ -31,33 +31,31 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
-exports.isCommonModule = void 0
+exports.resolvePackageExports = void 0
 var _makeFilepath = require('../utilities/makeFilepath')
-var _testFilesystem = require('test-filesystem')
-var _fs = require('fs')
-var _importRegex = require('./importRegex')
+var _checkPackageExports = require('./checkPackageExports')
 /**
- * Attempt to detect if the current module is a common js module.
+ * Given the package details, determined the configured module entry point.
  * @memberof module:common-exports
- * @param {Object&lt;module|path|file, string|null>} moduleInfo - An object containing the module, path, and file strings.
- * @returns {boolean}
+ * @param {object|string} packageData - The package contents as an object.
+ * @param {string} modulePath
+ * @returns {string|null}
  */
-const isCommonModule = moduleInfo => {
-  const packagePath = (0, _makeFilepath.makeFilepath)(moduleInfo.path, 'package.json')
-  if ((0, _testFilesystem.fileExists)(packagePath)) {
-    const packageData = JSON.parse((0, _fs.readFileSync)(packagePath).toString())
-    if (packageData.type &amp;&amp; packageData.type === 'module') {
-      return false
+const resolvePackageExports = (packageData, modulePath) => {
+  if (packageData.exports) {
+    // The newer "exports" config has precedence over the older "main" config
+    if (typeof packageData.exports === 'string') {
+      return (0, _makeFilepath.makeFilepath)(modulePath, packageData.exports)
     }
+    return (0, _checkPackageExports.checkPackageExports)(packageData.exports, modulePath)
   }
-  if (!(0, _testFilesystem.fileExists)(moduleInfo.file)) {
-    // Some native modules don't exist, hope for the best.
-    return true
+  if (packageData.main) {
+    // The classic "main" config is still considered
+    return (0, _makeFilepath.makeFilepath)(modulePath, packageData.main)
   }
-  const mainContents = (0, _fs.readFileSync)(moduleInfo.file).toString()
-  return /require\(['`"].+['`"]\)/.test(mainContents) &amp;&amp; !(0, _importRegex.importRegex)().test(mainContents)
+  return null
 }
-exports.isCommonModule = isCommonModule
+exports.resolvePackageExports = resolvePackageExports
 </code></pre>
         </article>
     </section>

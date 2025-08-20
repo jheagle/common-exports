@@ -12,8 +12,8 @@ jest.mock('./resolveMainFile', () => ({ resolveMainFile: jest.fn(() => mockFile)
 describe('makeModuleInfo', () => {
   test('make a call to build the module info', () => {
     const moduleInfo = makeModuleInfo(basePath, moduleName)
-    expect(resolveModule).toBeCalledWith(basePath, moduleName, basePath)
-    expect(resolveMainFile).toBeCalledWith(mockPath)
+    expect(resolveModule).toHaveBeenCalledWith(basePath, moduleName, basePath)
+    expect(resolveMainFile).toHaveBeenCalledWith(mockPath)
     expect(moduleInfo).toEqual([
       {
         module: moduleName,

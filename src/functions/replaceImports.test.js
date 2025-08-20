@@ -221,7 +221,7 @@ describe('replaceImports', () => {
     expect(countMatches(result, 'import {handleInput, getSpawnedResult, makeAllStream, validateInputSync} from \'./lib/stream.js\'')).toBe(1)
     expect(countMatches(result, 'import {joinCommand, parseCommand, getEscapedCommand} from \'./lib/command.js\'')).toBe(1)
 
-    expect(makeCommon).toBeCalledTimes(9)
+    expect(makeCommon).toHaveBeenCalledTimes(9)
     expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/strip-final-newline/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/strip-final-newline', {})
     expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/npm-run-path/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/npm-run-path', {})
     expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/onetime/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/onetime', {})
