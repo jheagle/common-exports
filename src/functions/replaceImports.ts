@@ -1,3 +1,4 @@
+import { cpSync } from 'fs'
 import { StreamFile } from './resolveImports'
 import { strBeforeLast } from '../utilities/strBeforeLast'
 import { makeFilepath } from '../utilities/makeFilepath'
@@ -26,7 +27,7 @@ export type reduceImports = (content: string, importFile: ModuleInfo) => string
  */
 export const replaceImports = (srcPath: string, destPath: string, config: makeCommonConfig = {}): reduceImports =>
   (content: string, importFile: ModuleInfo): string => {
-    if (!importFile.file) {
+    if (!importFile.file || !importFile.path) {
       console.error('Unable to find module', srcPath, importFile)
       return content
     }
@@ -40,10 +41,23 @@ export const replaceImports = (srcPath: string, destPath: string, config: makeCo
       modulePath = strBeforeLast(modulePath, '.mjs') + '.js'
     }
     if (!fileExists(modulePath)) {
-      if (modulePath.endsWith('.js') || modulePath.endsWith('.mjs')) {
-        modulePath = strBeforeLast(modulePath, '/')
+      let moduleDir = modulePath
+      if (moduleDir.endsWith('.js') || moduleDir.endsWith('.mjs')) {
+        moduleDir = strBeforeLast(moduleDir, '/')
       }
-      makeCommon(importFile.file, modulePath, config)
+      if (importFile.isCommon) {
+        // Already CommonJS-compatible - copy it as-is instead of converting it. It can't be left alone entirely:
+        // the vendor output doesn't mirror the original node_modules layout closely enough for Node's own
+        // resolution to find it from its new location otherwise.
+        //
+        // Copy the whole parent node_modules directory, not just this one package's folder: common packages are
+        // never scanned for their own imports, so a sibling they reach via a relative path (e.g. some-package
+        // requiring '../other-package/index.js' because npm deduped them side-by-side) would otherwise never get
+        // copied at all.
+        cpSync(strBeforeLast(importFile.path, '/'), strBeforeLast(moduleDir, '/'), { recursive: true })
+      } else {
+        makeCommon(importFile.file, moduleDir, config)
+      }
     }
     const moduleName = regexEscape(importFile.module)
     const moduleMatch = new RegExp(`(['"\`])${moduleName}['"\`]`)

@@ -1,4 +1,3 @@
-import { isCommonModule } from './isCommonModule'
 import { makeFilepath } from '../utilities/makeFilepath'
 import { makeModuleInfo } from './makeModuleInfo'
 import { resolveImports } from './resolveImports'
@@ -23,8 +22,6 @@ jest.mock('./makeModuleInfo', () => ({
     }
   ])
 }))
-jest.mock('./isCommonModule', () => ({ isCommonModule: jest.fn((moduleInfo) => moduleInfo.module === 'gulp-plugin-extras') }))
-
 const fileContents = 'import path from \'node:path\';\n' +
   'import process from \'node:process\';\n' +
   'import prettyBytes from \'pretty-bytes\';\n' +
@@ -79,13 +76,11 @@ describe('resolveImports', () => {
       stat: {}
     }
     const resolvedImports = resolveImports(file)
-    // We set one module to be considered common, so it is skipped, we get the total found minus one then
-    expect(resolvedImports.length).toEqual(foundModules.length - 1)
+    expect(resolvedImports.length).toEqual(foundModules.length)
     expect(makeFilepath).toHaveBeenCalledWith(`/${basePath}/node_modules/gulp-imagemin`)
     timesCalled += foundModules.length
     expect(makeModuleInfo).toHaveBeenCalledTimes(timesCalled)
     foundModules.forEach(moduleName => expect(makeModuleInfo).toHaveBeenCalledWith(dirPath, moduleName, dirPath))
-    expect(isCommonModule).toHaveBeenCalledTimes(timesCalled)
   })
 
   test('find imports from nested file', () => {
@@ -101,12 +96,10 @@ describe('resolveImports', () => {
       stat: {}
     }
     const resolvedImports = resolveImports(file)
-    // We set one module to be considered common, so it is skipped, we get the total found minus one then
     expect(resolvedImports.length).toEqual(foundOwModules.length)
     expect(makeFilepath).toHaveBeenCalledWith(`/${basePath}/node_modules/ow`)
     timesCalled += foundOwModules.length
     expect(makeModuleInfo).toHaveBeenCalledTimes(timesCalled)
     foundOwModules.forEach(moduleName => expect(makeModuleInfo).toHaveBeenCalledWith(dirPath, moduleName, dirPath))
-    expect(isCommonModule).toHaveBeenCalledTimes(timesCalled)
   })
 })

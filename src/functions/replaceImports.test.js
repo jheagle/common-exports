@@ -1,9 +1,10 @@
 import { replaceImports } from './replaceImports'
 import { countMatches } from 'test-filesystem'
 import { makeCommon } from '../main'
-import { readFileSync } from 'fs'
+import { cpSync, readFileSync } from 'fs'
 
 jest.mock('../main', () => ({ makeCommon: jest.fn() }))
+jest.mock('fs', () => ({ ...jest.requireActual('fs'), cpSync: jest.fn() }))
 
 const fileContents = 'import path from \'node:path\';\n' +
   'import process from \'node:process\';\n' +
@@ -231,6 +232,27 @@ describe('replaceImports', () => {
     expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stream.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
     expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/promise.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
     expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/command.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {})
+  })
+
+  test('will copy an already-common module instead of converting it', () => {
+    jest.clearAllMocks()
+    const srcPath = 'test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stream.js'
+    const destPath = 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib'
+    const fileContent = 'import getStream from \'get-stream\';\n'
+    const importFile = {
+      module: 'get-stream',
+      path: 'test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/get-stream',
+      file: 'test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/get-stream/index.js',
+      isCommon: true,
+    }
+    const result = replaceImports(srcPath, destPath)(fileContent, importFile)
+    expect(cpSync).toHaveBeenCalledWith(
+      'test-replace-imports/node_modules/imagemin-mozjpeg/node_modules',
+      'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules',
+      { recursive: true }
+    )
+    expect(makeCommon).not.toHaveBeenCalled()
+    expect(countMatches(result, 'import getStream from \'../../get-stream/index.js\'')).toBe(1)
   })
 
   test('will prefix the import with ./ when no relative path used', () => {
