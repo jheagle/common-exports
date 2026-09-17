@@ -1,5 +1,6 @@
 import { resolveMainFile } from './resolveMainFile'
 import { resolveModule } from './resolveModule'
+import { isCommonModule } from './isCommonModule'
 
 /**
  * Module info stores the location data for a module found through imports.
@@ -7,11 +8,13 @@ import { resolveModule } from './resolveModule'
  * @property {string} module - Name or path used in the import to get the module.
  * @property {string|null} path - The full (relative to root) path for retrieving the module.
  * @property {string|null} file - The main / index file of the module.
+ * @property {boolean} isCommon - Whether this module is already CommonJS-compatible as-is.
  */
 export type ModuleInfo = {
   module: string,
   path: string | null,
   file: string | null,
+  isCommon: boolean,
 }
 
 /**
@@ -29,10 +32,14 @@ export const makeModuleInfo = (dirPath: string, moduleName: string, rootPath: st
   }
   return resolveModule(rootPath, moduleName, dirPath)
     .map(
-      (path: string): ModuleInfo => ({
-        module: moduleName,
-        path: path,
-        file: resolveMainFile(path),
-      })
+      (path: string): ModuleInfo => {
+        const file = resolveMainFile(path)
+        return {
+          module: moduleName,
+          path: path,
+          file,
+          isCommon: isCommonModule({ path, file }),
+        }
+      }
     )
 }

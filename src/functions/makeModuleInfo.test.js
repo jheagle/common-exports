@@ -1,5 +1,6 @@
 import { resolveMainFile } from './resolveMainFile'
 import { resolveModule } from './resolveModule'
+import { isCommonModule } from './isCommonModule'
 import { makeModuleInfo } from './makeModuleInfo'
 
 const moduleName = 'test-filesystem'
@@ -19,7 +20,24 @@ describe('makeModuleInfo', () => {
         module: moduleName,
         path: mockPath,
         file: mockFile,
+        // Neither the fake path nor file exist on disk, so isCommonModule's "hope for the best" fallback applies.
+        isCommon: true,
       }
     ])
+  })
+
+  test('forwards isCommonModule\'s result as the isCommon flag', () => {
+    jest.spyOn(require('./isCommonModule'), 'isCommonModule').mockReturnValue(false)
+    const moduleInfo = makeModuleInfo(basePath, moduleName)
+    expect(isCommonModule).toHaveBeenCalledWith({ path: mockPath, file: mockFile })
+    expect(moduleInfo).toEqual([
+      {
+        module: moduleName,
+        path: mockPath,
+        file: mockFile,
+        isCommon: false,
+      }
+    ])
+    jest.restoreAllMocks()
   })
 })
