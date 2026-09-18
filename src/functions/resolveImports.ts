@@ -5,6 +5,7 @@ import { makeModuleInfo, ModuleInfo } from './makeModuleInfo'
 
 /**
  * Statistical information about the file.
+ * @memberof module:common-exports
  * @typedef {Object<string, number|string>} Stats
  * @property {number} dev
  * @property {number} mode
@@ -48,6 +49,7 @@ export type Stats = {
 
 /**
  * An encoded structure for storing data.
+ * @memberof module:common-exports
  * @typedef {Object} Buffer
  * @method write
  * @method toString
@@ -69,6 +71,7 @@ export type Stats = {
 
 /**
  * The format used to store a buffered file in memory.
+ * @memberof module:common-exports
  * @typedef {Object<string, string|Buffer|boolean|Stats>} StreamFile
  * @property {string} base
  * @property {Buffer} contents
@@ -90,8 +93,8 @@ export type StreamFile = {
 
 /**
  * Given a file with buffer contents, identify all the imports it has and find their full paths. Common (already
- * CommonJS-compatible) modules are included too, not just modules needing conversion - see {@link ModuleInfo}'s
- * isCommon flag, used by {@link replaceImports} to copy them into the vendor tree as-is rather than converting
+ * CommonJS-compatible) modules are included too, not just modules needing conversion - see
+ * {@link module:common-exports.ModuleInfo}'s isCommon flag, used by {@link module:common-exports.replaceImports} to copy them into the vendor tree as-is rather than converting
  * them. They can't simply be left alone: the vendor output directory structure doesn't mirror the original
  * node_modules layout closely enough for Node's own module resolution to find them from their new location.
  * @memberof module:common-exports

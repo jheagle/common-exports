@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: functions/makeModuleInfo.js</title>
+    <title>JSDoc: Source: utilities/kabobToTitleCase.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: functions/makeModuleInfo.js</h1>
+    <h1 class="page-title">Source: utilities/kabobToTitleCase.js</h1>
 
     
 
@@ -31,39 +31,22 @@
 Object.defineProperty(exports, '__esModule', {
   value: true
 })
-exports.makeModuleInfo = void 0
+exports.kabobToTitleCase = void 0
 require('core-js/modules/esnext.iterator.constructor.js')
-require('core-js/modules/esnext.iterator.map.js')
-var _resolveMainFile = require('./resolveMainFile')
-var _resolveModule = require('./resolveModule')
-var _isCommonModule = require('./isCommonModule')
+require('core-js/modules/esnext.iterator.reduce.js')
 /**
- * Create the Module Info object to store the name, path, and file for each matching module.
+ * Given a string in kebab-case convert to TitleCase (camelCase with a starting capital letter).
+ * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/camelCase.ts Sí, funciona}
  * @memberof module:common-exports
- * @param {string} dirPath - Current relative directory to search.
- * @param {string} moduleName - Path used in the import for the module.
- * @param {string} rootPath - The lowest path to search within for the module.
- * @returns {Array&lt;ModuleInfo>}
+ * @param {string} str
+ * @returns {string}
  */
-const makeModuleInfo = (dirPath, moduleName, rootPath = null) => {
-  if (!rootPath) {
-    // If a root path is not specified, assume the current directory is the root.
-    rootPath = dirPath
-  }
-  return (0, _resolveModule.resolveModule)(rootPath, moduleName, dirPath).map(path => {
-    const file = (0, _resolveMainFile.resolveMainFile)(path)
-    return {
-      module: moduleName,
-      path: path,
-      file,
-      isCommon: (0, _isCommonModule.isCommonModule)({
-        path,
-        file
-      })
-    }
-  })
+const kabobToTitleCase = str => {
+  const words = str.split('-')
+  const ucFirst = str => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+  return words.reduce((camel, part) => camel.concat(ucFirst(part)), '')
 }
-exports.makeModuleInfo = makeModuleInfo
+exports.kabobToTitleCase = kabobToTitleCase
 </code></pre>
         </article>
     </section>
