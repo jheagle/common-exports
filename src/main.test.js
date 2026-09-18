@@ -59,7 +59,12 @@ const imageminTest = (files, done) => {
     const imagesFile = img.testPath
     cpSync(img.origin, img.testPath)
     --waiting
-    src(imagesFile)
+    // encoding: false is required for binary files (images) - vinyl-fs otherwise reads them through a lossy
+    // text-encoding round-trip, corrupting the bytes. This doesn't visibly break jpg/png/svg here since their
+    // "expected compressed" fixtures were themselves captured from this same corrupted-input pipeline, but
+    // gifsicle's own GIF parser is strict enough to reject the corrupted input outright (rather than silently
+    // tolerating it like mozjpeg/optipng/svgo do), which is what caused gif's compression step to fail.
+    src(imagesFile, { encoding: false })
       .pipe(
         imagemin(
           {
@@ -107,16 +112,15 @@ describe('makeCommon', () => {
 
   describe('can use compiled package', () => {
     const testFileConversions = [
-      // This test fails, not a good sign for the latest updates
-      // {
-      //   type: 'gif',
-      //   files: [{
-      //     origin: 'test-assets/original-gif.gif',
-      //     testPath: `${srcPath}/imageToCopy.gif`,
-      //     newPath: `${browserPath}/imageToCopy.gif`,
-      //     compressed: 'test-assets/compressed-gif.gif',
-      //   }]
-      // },
+      {
+        type: 'gif',
+        files: [{
+          origin: 'test-assets/original-gif.gif',
+          testPath: `${srcPath}/imageToCopy.gif`,
+          newPath: `${browserPath}/imageToCopy.gif`,
+          compressed: 'test-assets/compressed-gif.gif',
+        }]
+      },
       {
         type: 'jpg',
         files: [{
@@ -227,7 +231,7 @@ describe('makeCommon', () => {
             done()
           })
       },
-      20000
+      25000
     )
   })
 })

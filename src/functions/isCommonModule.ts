@@ -11,6 +11,15 @@ import { importRegex } from './importRegex'
  * @returns {boolean}
  */
 export const isCommonModule = (moduleInfo: Pick<ModuleInfo, 'path' | 'file'>): boolean => {
+  // Node's own resolution lets a file's own extension override the package's "type" field: .cjs is always
+  // CommonJS and .mjs is always an ES module, regardless of what the nearest package.json says. Only a plain
+  // .js file (or no clear extension) falls back to the package-level type check below.
+  if (moduleInfo.file && moduleInfo.file.endsWith('.cjs')) {
+    return true
+  }
+  if (moduleInfo.file && moduleInfo.file.endsWith('.mjs')) {
+    return false
+  }
   const packagePath = makeFilepath(moduleInfo.path, 'package.json')
   if (fileExists(packagePath)) {
     const packageData = JSON.parse(readFileSync(packagePath).toString())
