@@ -1,5 +1,5 @@
-import { cpSync, mkdirSync } from 'fs'
-import { setUp } from 'test-filesystem'
+import { mkdirSync } from 'fs'
+import { copyRealModules, setUp } from 'test-filesystem'
 import { isCommonModule } from './isCommonModule'
 
 const tempDir = 'test-is-common-module/'
@@ -15,8 +15,7 @@ describe('isCommonModule', () => {
   test('will detect a non common module', () => {
     mkdirSync(modulesPath, { recursive: true })
     const moduleName = 'globby'
-    const copyModules = [moduleName]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, [moduleName])
     const moduleInfo = {
       module: moduleName,
       path: `${modulesPath}/${moduleName}`,
@@ -28,8 +27,7 @@ describe('isCommonModule', () => {
   test('will detect a common module', () => {
     mkdirSync(modulesPath, { recursive: true })
     const moduleName = 'graceful-fs'
-    const copyModules = [moduleName]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, [moduleName])
     const moduleInfo = {
       module: moduleName,
       path: `${modulesPath}/${moduleName}`,
@@ -42,8 +40,7 @@ describe('isCommonModule', () => {
     mkdirSync(modulesPath, { recursive: true })
     const moduleName = 'imagemin-mozjpeg'
     const modulePath = `${moduleName}/node_modules/execa/lib`
-    const copyModules = [moduleName]
-    copyModules.forEach(module => cpSync(`./node_modules/${modulePath}`, `${modulesPath}/${modulePath}`, { recursive: true }))
+    copyRealModules(modulesPath, [modulePath])
     const moduleInfo = {
       module: moduleName,
       path: `${modulesPath}/${modulePath}`,

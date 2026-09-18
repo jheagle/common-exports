@@ -1,5 +1,5 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { setUp } from 'test-filesystem'
+import { mkdirSync, readFileSync } from 'fs'
+import { setUp, writeFixtureFile } from 'test-filesystem'
 import { stripEsmType } from './stripEsmType'
 
 const tempDir = 'test-strip-esm-type/'
@@ -13,8 +13,7 @@ afterEach(setUp.afterEach)
 describe('stripEsmType', () => {
   test('strips "type": "module" (tab-indented, with trailing comma)', () => {
     const packageDir = `${tempDir}node_modules/execa`
-    mkdirSync(packageDir, { recursive: true })
-    writeFileSync(
+    writeFixtureFile(
       `${packageDir}/package.json`,
       '{\n\t"name": "execa",\n\t"type": "module",\n\t"version": "1.0.0"\n}\n'
     )
@@ -27,8 +26,7 @@ describe('stripEsmType', () => {
 
   test('strips "type": "module" (space-indented, no trailing comma, last property)', () => {
     const packageDir = `${tempDir}node_modules/human-signals`
-    mkdirSync(packageDir, { recursive: true })
-    writeFileSync(
+    writeFixtureFile(
       `${packageDir}/package.json`,
       '{\n  "name": "human-signals",\n  "type": "module"\n}\n'
     )
@@ -40,9 +38,8 @@ describe('stripEsmType', () => {
 
   test('leaves an already-correct package.json untouched', () => {
     const packageDir = `${tempDir}node_modules/cross-spawn`
-    mkdirSync(packageDir, { recursive: true })
     const original = '{\n\t"name": "cross-spawn",\n\t"version": "1.0.0"\n}\n'
-    writeFileSync(`${packageDir}/package.json`, original)
+    writeFixtureFile(`${packageDir}/package.json`, original)
     stripEsmType(tempDir)
     expect(readFileSync(`${packageDir}/package.json`).toString()).toEqual(original)
   })
@@ -50,7 +47,7 @@ describe('stripEsmType', () => {
   test('recurses through nested directories', () => {
     const deepDir = `${tempDir}node_modules/imagemin-mozjpeg/node_modules/execa/lib`
     mkdirSync(deepDir, { recursive: true })
-    writeFileSync(
+    writeFixtureFile(
       `${tempDir}node_modules/imagemin-mozjpeg/node_modules/execa/package.json`,
       '{\n\t"name": "execa",\n\t"type": "module"\n}\n'
     )
