@@ -8,7 +8,8 @@ import rename from 'gulp-rename'
 import { runCLI } from 'jest'
 import standard from 'gulp-standard'
 import through from 'through2'
-import ts from 'gulp-typescript'
+import ts from 'typescript'
+import tsCompile from 'gulp-ts-compile'
 import { removeDirectory } from 'test-filesystem'
 
 // Only used to load our own just-built dist/main.js (a CommonJS file this project generates itself) inside
@@ -76,11 +77,11 @@ export const clean = () => cleanFolders.reduce(
  */
 export const typescript = () => {
   const tsResult = src(srcSearch)
-    .pipe(ts({
+    .pipe(tsCompile({
       declaration: true,
-      moduleResolution: 'node',
-      target: 'es6',
-      module: 'es2020'
+      moduleResolution: ts.ModuleResolutionKind.Node10,
+      target: ts.ScriptTarget.ES2015,
+      module: ts.ModuleKind.ES2020
     }))
   tsResult.dts.pipe(dest(distPath))
   return tsResult.js
