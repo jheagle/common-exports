@@ -2,16 +2,20 @@ import Module from 'node:module'
 import { dest, parallel, series, src } from 'gulp'
 import { appendFileSync } from 'fs'
 import { globSync } from 'glob'
+import babel from 'gulp-babel'
+import jsdoc2md from 'jsdoc-to-markdown'
+import rename from 'gulp-rename'
+import { runCLI } from 'jest'
+import standard from 'gulp-standard'
+import through from 'through2'
+import ts from 'gulp-typescript'
+import { removeDirectory } from 'test-filesystem'
 
+// Only used to load our own just-built dist/main.js (a CommonJS file this project generates itself) inside
+// convertCommon below - unlike every dependency above, that's never at risk of becoming ESM-only, so a plain
+// require() there is simpler than juggling a dynamic import()'s async/stream-completion semantics inside a gulp
+// task that needs to return a stream synchronously.
 const require = Module.createRequire(import.meta.url)
-const babel = require('gulp-babel')
-const jsdoc2md = require('jsdoc-to-markdown')
-const rename = require('gulp-rename')
-const { runCLI } = require('jest')
-const standard = require('gulp-standard')
-const through = require('through2')
-const ts = require('gulp-typescript')
-const { removeDirectory } = require('test-filesystem')
 
 const cleanFolders = ['dist']
 const distMain = 'dist/main'

@@ -1,7 +1,7 @@
 import { replaceImports } from './replaceImports'
 import { countMatches } from 'test-filesystem'
 import { makeCommon } from '../main'
-import { cpSync, readFileSync } from 'fs'
+import { cpSync } from 'fs'
 
 // makeCommon is mocked to return a fake, already-finished stream, since replaceImports now wraps its return
 // value in streamToPromise (awaiting real completion in production) rather than firing-and-forgetting it.
@@ -260,11 +260,10 @@ describe('replaceImports', () => {
   })
 
   test('will prefix the import with ./ when no relative path used', () => {
-    const fileName = './gulpfile.mjs'
+    const fileName = 'consumer.js'
     const moduleName = 'gulp-babel'
     const modulePath = 'node_modules/gulp-babel'
-    const fileContent = readFileSync(fileName).toString()
-    expect(countMatches(fileContent, 'const babel = require(\'gulp-babel\')')).toBe(1)
+    const fileContent = 'const babel = require(\'gulp-babel\')\n'
     const result = replaceImports(fileName, 'vendor')(fileContent, {module: moduleName, path: modulePath, file: `${modulePath}/index.js`})
     expect(countMatches(result, 'const babel = require(\'./node_modules/gulp-babel/index.js\')')).toBe(1)
   })
