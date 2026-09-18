@@ -9,9 +9,10 @@ var _strAfter = require('./strAfter')
 /**
  * Compare two file paths and simplify them to a relative path.
  * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeRelativePath.ts Sí, funciona}
+ * @memberof module:common-exports
  * @param {string} fromFile
  * @param {string} toFile
- * @return {string}
+ * @returns {string}
  */
 const makeRelativePath = (fromFile, toFile) => {
   let relativePath = toFile

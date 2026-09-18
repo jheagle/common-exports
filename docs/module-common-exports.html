@@ -97,7 +97,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line18">line 18</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line47">line 47</a>
     </li></ul></dd>
     
 
@@ -1106,7 +1106,7 @@ then the updateContent function will be applied to the contents.</p></td>
             <td class="type">
             
                 
-<span class="param-type">Object.&lt;(module|path|file), (string|null)></span>
+<span class="param-type">Object.&lt;(path|file), (string|null)></span>
 
 
             
@@ -1116,7 +1116,7 @@ then the updateContent function will be applied to the contents.</p></td>
 
             
 
-            <td class="description last"><p>An object containing the module, path, and file strings.</p></td>
+            <td class="description last"><p>An object containing the path and file strings.</p></td>
         </tr>
 
     
@@ -1211,7 +1211,163 @@ then the updateContent function will be applied to the contents.</p></td>
     
 
     
-    <h4 class="name" id=".makeCommon"><span class="type-signature">(static) </span>makeCommon<span class="signature">(srcPath, destPath, config<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {stream.Stream}</span></h4>
+    <h4 class="name" id=".kabobToTitleCase"><span class="type-signature">(static) </span>kabobToTitleCase<span class="signature">(str)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Given a string in kebab-case convert to TitleCase (camelCase with a starting capital letter).
+Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/camelCase.ts">Sí, funciona</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>str</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_kabobToTitleCase.js.html">utilities/kabobToTitleCase.js</a>, <a href="utilities_kabobToTitleCase.js.html#line16">line 16</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".makeCommon"><span class="type-signature">(static) </span>makeCommon<span class="signature">(srcPath, destPath, config<span class="signature-attributes">opt</span>, inProgress<span class="signature-attributes">opt</span>, ancestors<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {stream.Stream}</span></h4>
     
 
     
@@ -1515,6 +1671,93 @@ then the updateContent function will be applied to the contents.</p></td>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>inProgress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Map.&lt;string, Promise.&lt;void>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new Map()
+                
+                </td>
+            
+
+            <td class="description last"><p>Tracks recursive conversions already started (by
+destination path) for this whole call tree, shared across every recursive makeCommon call it spawns. Without
+this, the same dependency reachable from multiple import chains (a very common shape once a tree gets deep or
+wide) gets independently, redundantly re-converted - each duplicate spawning its own full sub-tree of further
+duplicates - which is what caused this function's historical OOM crash under real-world dependency graphs.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ancestors</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Set.&lt;string></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new Set()
+                
+                </td>
+            
+
+            <td class="description last"><p>The chain of source files currently being converted above this
+call, in this same branch of the recursion. Real packages do have genuine circular imports (e.g. two files that
+import from each other) - CommonJS/Node handle that fine at runtime via partial exports, but this function
+cannot: waiting for a circular dependency's own conversion to finish before considering the current file done
+would deadlock (each side waiting on the other) forever. When a discovered import's target is already an
+ancestor, its conversion is already in flight further up this same chain - don't wait on it here too.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -1552,7 +1795,7 @@ then the updateContent function will be applied to the contents.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="main.js.html">main.js</a>, <a href="main.js.html#line48">line 48</a>
+        <a href="main.js.html">main.js</a>, <a href="main.js.html#line88">line 88</a>
     </li></ul></dd>
     
 
@@ -1589,6 +1832,217 @@ then the updateContent function will be applied to the contents.</p></td>
     <dd>
         
 <span class="param-type">stream.Stream</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".makeFilepath"><span class="type-signature">(static) </span>makeFilepath<span class="signature">(root, append<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Format the given path so that it does not have trailing slashes and also correctly appends a path.
+Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeFilePath.ts">Sí, funciona</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>root</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>append</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    ''
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_makeFilepath.js.html">utilities/makeFilepath.js</a>, <a href="utilities_makeFilepath.js.html#line16">line 16</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
 
 
     </dd>
@@ -1769,7 +2223,7 @@ then the updateContent function will be applied to the contents.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="functions_makeModuleInfo.js.html">functions/makeModuleInfo.js</a>, <a href="functions_makeModuleInfo.js.html#line19">line 19</a>
+        <a href="functions_makeModuleInfo.js.html">functions/makeModuleInfo.js</a>, <a href="functions_makeModuleInfo.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
@@ -1806,6 +2260,341 @@ then the updateContent function will be applied to the contents.</p></td>
     <dd>
         
 <span class="param-type">Array.&lt;ModuleInfo></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".makeRelativePath"><span class="type-signature">(static) </span>makeRelativePath<span class="signature">(fromFile, toFile)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Compare two file paths and simplify them to a relative path.
+Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeRelativePath.ts">Sí, funciona</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fromFile</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>toFile</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_makeRelativePath.js.html">utilities/makeRelativePath.js</a>, <a href="utilities_makeRelativePath.js.html#line17">line 17</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".regexEscape"><span class="type-signature">(static) </span>regexEscape<span class="signature">(str)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Take a string and escape the regex characters.
+Original source concepts from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/regexEscape.ts">Sí, funciona</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>str</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_regexEscape.js.html">utilities/regexEscape.js</a>, <a href="utilities_regexEscape.js.html#line14">line 14</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
 
 
     </dd>
@@ -1978,7 +2767,7 @@ then the updateContent function will be applied to the contents.</p></td>
     
 
     
-    <h4 class="name" id=".replaceImports"><span class="type-signature">(static) </span>replaceImports<span class="signature">(srcPath, destPath, config<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {reduceImports}</span></h4>
+    <h4 class="name" id=".replaceImports"><span class="type-signature">(static) </span>replaceImports<span class="signature">(srcPath, destPath, config<span class="signature-attributes">opt</span>, pending<span class="signature-attributes">opt</span>, inProgress<span class="signature-attributes">opt</span>, ancestors<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {reduceImports}</span></h4>
     
 
     
@@ -2132,6 +2921,135 @@ then the updateContent function will be applied to the contents.</p></td>
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>pending</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Promise.&lt;void>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    []
+                
+                </td>
+            
+
+            <td class="description last"><p>Recursive conversions started for discovered imports are pushed
+here as promises, so the caller can await them before considering the current file done. makeCommon's own
+recursive calls don't block; without this, a file could be reported &quot;finished&quot; before its own dependencies (or
+their dependencies, arbitrarily deep) have actually finished being written.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>inProgress</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Map.&lt;string, Promise.&lt;void>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new Map()
+                
+                </td>
+            
+
+            <td class="description last"><p>Tracks recursive conversions already started (by
+destination path), shared across the whole call tree. A dependency reachable from multiple import chains would
+otherwise be independently, redundantly re-converted every time it's encountered again while its first
+conversion is still in flight (the fileExists check below can't catch this - the file isn't written yet) -
+each duplicate spawning its own full sub-tree of further duplicates, which is what caused this function's
+historical OOM crash. Reusing the same in-flight promise instead of starting a new one avoids that entirely.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ancestors</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Set.&lt;string></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    new Set()
+                
+                </td>
+            
+
+            <td class="description last"><p>Source files currently being converted above this one, in this
+same branch. Real packages can have genuine circular imports (two files that import each other) - waiting for
+such a target's conversion to finish before this file is done would deadlock, since its own conversion is
+simultaneously waiting on this one. A target already in this set is already in flight further up the same
+chain - don't wait on it again here.</p></td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -2169,7 +3087,7 @@ then the updateContent function will be applied to the contents.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="functions_replaceImports.js.html">functions/replaceImports.js</a>, <a href="functions_replaceImports.js.html#line21">line 21</a>
+        <a href="functions_replaceImports.js.html">functions/replaceImports.js</a>, <a href="functions_replaceImports.js.html#line67">line 67</a>
     </li></ul></dd>
     
 
@@ -2231,7 +3149,11 @@ then the updateContent function will be applied to the contents.</p></td>
 
 
 <div class="description">
-    <p>Given a file with buffer contents, identify all the imports it has and find their full paths.</p>
+    <p>Given a file with buffer contents, identify all the imports it has and find their full paths. Common (already
+CommonJS-compatible) modules are included too, not just modules needing conversion - see
+module:common-exports.ModuleInfo's isCommon flag, used by <a href="module-common-exports.html#.replaceImports">module:common-exports.replaceImports</a> to copy them into the vendor tree as-is rather than converting
+them. They can't simply be left alone: the vendor output directory structure doesn't mirror the original
+node_modules layout closely enough for Node's own module resolution to find them from their new location.</p>
 </div>
 
 
@@ -2382,7 +3304,7 @@ then the updateContent function will be applied to the contents.</p></td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="functions_resolveImports.js.html">functions/resolveImports.js</a>, <a href="functions_resolveImports.js.html#line23">line 23</a>
+        <a href="functions_resolveImports.js.html">functions/resolveImports.js</a>, <a href="functions_resolveImports.js.html#line25">line 25</a>
     </li></ul></dd>
     
 
@@ -2979,6 +3901,877 @@ then the updateContent function will be applied to the contents.</p></td>
     
 
     
+    <h4 class="name" id=".strAfter"><span class="type-signature">(static) </span>strAfter<span class="signature">(str, search)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Retrieve the string part after the search match.
+Original source from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strAfter.ts">Sí, funciona</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>str</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>search</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_strAfter.js.html">utilities/strAfter.js</a>, <a href="utilities_strAfter.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".strAfterLast"><span class="type-signature">(static) </span>strAfterLast<span class="signature">(str, search)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Retrieve the string part after the last search match.
+Original source from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strAfterLast.ts">Sí, funciona</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>str</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>search</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_strAfterLast.js.html">utilities/strAfterLast.js</a>, <a href="utilities_strAfterLast.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".strBefore"><span class="type-signature">(static) </span>strBefore<span class="signature">(str, search)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Retrieve the string part before the search match.
+Original source from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strBefore.ts">Sí, funciona</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>str</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>search</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_strBefore.js.html">utilities/strBefore.js</a>, <a href="utilities_strBefore.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".strBeforeLast"><span class="type-signature">(static) </span>strBeforeLast<span class="signature">(str, search)</span><span class="type-signature"> &rarr; {string}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Retrieve the string part before the last search match.
+Original source from <a href="https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strBeforeLast.ts">Sí, funciona</a></p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>str</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>search</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_strBeforeLast.js.html">utilities/strBeforeLast.js</a>, <a href="utilities_strBeforeLast.js.html#line15">line 15</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">string</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id=".streamToPromise"><span class="type-signature">(static) </span>streamToPromise<span class="signature">(streamToWrap)</span><span class="type-signature"> &rarr; {Promise.&lt;void>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Wrap a stream so its completion (or failure) can be awaited.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>streamToWrap</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">stream.Stream</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utilities_streamToPromise.js.html">utilities/streamToPromise.js</a>, <a href="utilities_streamToPromise.js.html#line13">line 13</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;void></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
     <h4 class="name" id=".verifyModule"><span class="type-signature">(static) </span>verifyModule<span class="signature">(moduleName, current)</span><span class="type-signature"> &rarr; {Array.&lt;string>|null}</span></h4>
     
 
@@ -3176,7 +4969,7 @@ then the updateContent function will be applied to the contents.</p></td>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Wed Aug 20 2025 16:14:34 GMT-0400 (Eastern Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Thu Sep 17 2026 22:44:33 GMT-0400 (Eastern Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

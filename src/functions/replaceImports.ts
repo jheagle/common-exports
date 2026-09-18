@@ -11,6 +11,7 @@ import { streamToPromise } from '../utilities/streamToPromise'
 
 /**
  * Build the content replacements with a reduce function.
+ * @memberof module:common-exports
  * @callback reduceImports
  * @param {string} content - The string of file contents to find and replace imports within.
  * @param {ModuleInfo} importFile - Module location info object for the original name and path.

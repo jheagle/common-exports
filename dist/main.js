@@ -83,7 +83,7 @@ const {
  * cannot: waiting for a circular dependency's own conversion to finish before considering the current file done
  * would deadlock (each side waiting on the other) forever. When a discovered import's target is already an
  * ancestor, its conversion is already in flight further up this same chain - don't wait on it here too.
- * @return {stream.Stream}
+ * @returns {stream.Stream}
  */
 const makeCommon = (srcPath, destPath, config = {}, inProgress = new Map(), ancestors = new Set()) => src(srcPath).pipe(_through.default.obj(function (file, enc, callback) {
   const rootPath = typeof config.rootPath === 'undefined' ? srcPath : config.rootPath

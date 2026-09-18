@@ -1,6 +1,7 @@
 /**
- * Retrieve the string part after the last search match.
+ * Retrieve the string part before the last search match.
  * Original source from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strBeforeLast.ts Sí, funciona}
+ * @memberof module:common-exports
  * @param {string} str
  * @param {string} search
  * @returns {string}

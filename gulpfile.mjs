@@ -21,7 +21,10 @@ const srcSearch = 'src/**/*.ts'
 const readmeTemplate = 'MAIN.md'
 const readmeFile = 'README.md'
 const readmePath = './'
-const readmeSearch = ['dist/main.js', 'dist/functions/*.js']
+// Only the public entry point (makeCommon and its config) belongs in the README - functions/ and utilities/ are
+// internal implementation details, documented in-source for contributors but not part of the published API
+// (see package.json's "exports", which only publishes dist/main.js/.mjs).
+const readmeSearch = ['dist/main.js']
 const readmeOptions = 'utf8'
 const testPath = ['src']
 const testOptions = {

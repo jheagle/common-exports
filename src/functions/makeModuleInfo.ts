@@ -4,6 +4,7 @@ import { isCommonModule } from './isCommonModule'
 
 /**
  * Module info stores the location data for a module found through imports.
+ * @memberof module:common-exports
  * @typedef {Object<module|path|file, string|null>} ModuleInfo
  * @property {string} module - Name or path used in the import to get the module.
  * @property {string|null} path - The full (relative to root) path for retrieving the module.
