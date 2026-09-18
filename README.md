@@ -71,6 +71,14 @@ Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
 ### common-exports.makeCommon(srcPath, destPath, [config], [inProgress], [ancestors]) ⇒ <code>stream.Stream</code>
 Apply babel to source files and output with commonJs compatibility.
 
+Two things happen automatically, beyond converting srcPath's own ESM syntax: if srcPath itself is already
+plain CommonJS (nothing for the conversion pipeline to find/rewrite), its whole containing directory - private
+dependencies included - is copied wholesale instead of silently producing an incomplete result; and once the
+whole output tree is otherwise finished, any package.json left declaring `"type": "module"` next to
+already-CommonJS content (which can happen when an already-common package's own wholesale copy carries along
+an ESM sibling's original package.json - see replaceImports.ts) has that field stripped, since the output is
+always meant to be CommonJS.
+
 **Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
 
 | Param | Type | Default | Description |
@@ -82,5 +90,5 @@ Apply babel to source files and output with commonJs compatibility.
 | [config.customChanges] | <code>Object.&lt;string, Array.&lt;Object.&lt;updateContent, function()&gt;&gt;&gt;</code> | <code>{}</code> | Add custom content changes to the content used. |
 | [config.rootPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | Specify the root to use, this helps identify where to stop. |
 | [inProgress] | <code>Map.&lt;string, Promise.&lt;void&gt;&gt;</code> | <code>new Map()</code> | Tracks recursive conversions already started (by destination path) for this whole call tree, shared across every recursive makeCommon call it spawns. Without this, the same dependency reachable from multiple import chains (a very common shape once a tree gets deep or wide) gets independently, redundantly re-converted - each duplicate spawning its own full sub-tree of further duplicates - which is what caused this function's historical OOM crash under real-world dependency graphs. |
-| [ancestors] | <code>Set.&lt;string&gt;</code> | <code>new Set()</code> | The chain of source files currently being converted above this call, in this same branch of the recursion. Real packages do have genuine circular imports (e.g. two files that import from each other) - CommonJS/Node handle that fine at runtime via partial exports, but this function cannot: waiting for a circular dependency's own conversion to finish before considering the current file done would deadlock (each side waiting on the other) forever. When a discovered import's target is already an ancestor, its conversion is already in flight further up this same chain - don't wait on it here too. |
+| [ancestors] | <code>Set.&lt;string&gt;</code> | <code>new Set()</code> | The chain of source files currently being converted above this call, in this same branch of the recursion. Real packages do have genuine circular imports (e.g. two files that import from each other) - CommonJS/Node handle that fine at runtime via partial exports, but this function cannot: waiting for a circular dependency's own conversion to finish before considering the current file done would deadlock (each side waiting on the other) forever. When a discovered import's target is already an ancestor, its conversion is already in flight further up this same chain - don't wait on it here too. An empty set (the default) also marks this as the outermost call - see below. |
 
