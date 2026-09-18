@@ -28,18 +28,36 @@ const { dest, src } = pkg
  * @param {Object<string, Array.<Object.<updateContent, Function>>>} [config.customChanges={}] -
  * Add custom content changes to the content used.
  * @param {string} [config.rootPath=''] - Specify the root to use, this helps identify where to stop.
+ * @param {Map<string, Promise<void>>} [inProgress=new Map()] - Tracks recursive conversions already started (by
+ * destination path) for this whole call tree, shared across every recursive makeCommon call it spawns. Without
+ * this, the same dependency reachable from multiple import chains (a very common shape once a tree gets deep or
+ * wide) gets independently, redundantly re-converted - each duplicate spawning its own full sub-tree of further
+ * duplicates - which is what caused this function's historical OOM crash under real-world dependency graphs.
+ * @param {Set<string>} [ancestors=new Set()] - The chain of source files currently being converted above this
+ * call, in this same branch of the recursion. Real packages do have genuine circular imports (e.g. two files that
+ * import from each other) - CommonJS/Node handle that fine at runtime via partial exports, but this function
+ * cannot: waiting for a circular dependency's own conversion to finish before considering the current file done
+ * would deadlock (each side waiting on the other) forever. When a discovered import's target is already an
+ * ancestor, its conversion is already in flight further up this same chain - don't wait on it here too.
  * @return {stream.Stream}
  */
-export const makeCommon = (srcPath, destPath, config = {}) => src(srcPath)
+export const makeCommon = (srcPath, destPath, config = {}, inProgress = new Map(), ancestors = new Set()) => src(srcPath)
   .pipe(through.obj(function (file, enc, callback) {
     const rootPath = typeof config.rootPath === 'undefined' ? srcPath : config.rootPath
+    const pending = []
+    const currentAncestors = new Set(ancestors)
+    currentAncestors.add(srcPath)
     // @ts-ignore
     const fileContents = resolveImports(file, rootPath)
-      .reduce(replaceImports(srcPath, destPath, config), file.contents.toString())
-    copyResources(srcPath, config)
-    file.contents = Buffer.from(customChanges(srcPath, fileContents, config))
-    this.push(file)
-    callback()
+      .reduce(replaceImports(srcPath, destPath, config, pending, inProgress, currentAncestors), file.contents.toString())
+    // makeCommon's own recursive calls (for each discovered import) don't block - wait for them here so this
+    // file isn't reported "finished" before its dependencies, arbitrarily deep, have actually been written.
+    Promise.all(pending).then(() => {
+      copyResources(srcPath, config)
+      file.contents = Buffer.from(customChanges(srcPath, fileContents, config))
+      this.push(file)
+      callback()
+    }, (error) => callback(error))
   }))
   .pipe(babel())
   .pipe(through.obj(function (file, enc, callback) {
