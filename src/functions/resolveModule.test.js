@@ -1,6 +1,6 @@
 import { resolveModule } from './resolveModule'
-import { cpSync, mkdirSync } from 'fs'
-import { setUp } from 'test-filesystem'
+import { mkdirSync } from 'fs'
+import { copyRealModules, setUp } from 'test-filesystem'
 
 const tempDir = 'test-resolve-module/'
 const modulesPath = `${tempDir}node_modules`
@@ -52,7 +52,7 @@ describe('resolveModule', () => {
       'imagemin-optipng',
       'imagemin-svgo',
     ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, copyModules)
     const foundModulePath = resolveModule(tempDir, 'imagemin')
     expect(foundModulePath).toEqual([
       'test-resolve-module/node_modules/imagemin',
@@ -67,7 +67,7 @@ describe('resolveModule', () => {
       'imagemin-optipng',
       'imagemin-svgo',
     ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, copyModules)
     const foundModulePath = resolveModule(tempDir, 'imagemin-${pluginName}')
     expect(foundModulePath).toEqual([
       'test-resolve-module/node_modules/imagemin-gifsicle',
@@ -81,7 +81,7 @@ describe('resolveModule', () => {
     const copyModules = [
       'gulp-imagemin',
     ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, copyModules)
     const foundModulePath = resolveModule(`${modulesPath}/gulp-imagemin/node_modules/chalk/source`, './utilities.js')
     expect(foundModulePath).toEqual([
       `${modulesPath}/gulp-imagemin/node_modules/chalk/source/utilities.js`,
@@ -92,7 +92,7 @@ describe('resolveModule', () => {
     const copyModules = [
       'gulp-imagemin',
     ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, copyModules)
     const foundModulePath = resolveModule(`${modulesPath}/gulp-imagemin/node_modules/chalk/source`, '#ansi-styles')
     expect(foundModulePath).toEqual([
       `${modulesPath}/gulp-imagemin/node_modules/chalk/source/vendor/ansi-styles`,
@@ -103,7 +103,7 @@ describe('resolveModule', () => {
     const copyModules = [
       'imagemin-mozjpeg',
     ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, copyModules)
     let foundModulePath = ''
     foundModulePath = resolveModule(`${modulesPath}/imagemin-mozjpeg/node_modules/execa`, 'strip-final-newline')
     expect(foundModulePath).toEqual([`${modulesPath}/imagemin-mozjpeg/node_modules/strip-final-newline`])
@@ -156,7 +156,7 @@ describe('resolveModule', () => {
       'file-type',
       'strtok3',
     ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, copyModules)
     const fileName = `${modulesPath}/file-type/core.js`
     const moduleName = 'strtok3/core'
     expect(resolveModule(fileName, moduleName, fileName)).toEqual(['test-resolve-module/node_modules/strtok3/lib/core.js'])
@@ -166,7 +166,7 @@ describe('resolveModule', () => {
     const copyModules = [
       'ow',
     ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, copyModules)
     const fileName = `${modulesPath}/ow/dist/predicates/predicate.js`
     const moduleName = '../operators/not.js'
     expect(resolveModule(fileName, moduleName, fileName)).toEqual([`${modulesPath}/ow/dist/operators/not.js`])

@@ -1,6 +1,6 @@
 import { verifyModule } from './verifyModule'
-import { cpSync, mkdirSync } from 'fs'
-import { setUp } from 'test-filesystem'
+import { mkdirSync } from 'fs'
+import { copyRealModules, setUp } from 'test-filesystem'
 
 const tempDir = 'test-verify-module/'
 const modulesPath = `${tempDir}node_modules`
@@ -24,7 +24,7 @@ describe('verifyModule', () => {
       'imagemin-optipng',
       'imagemin-svgo',
     ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, copyModules)
     const moduleName = 'imagemin-${pluginName}'
     expect(verifyModule(moduleName, modulesPath)).toEqual([
       'test-verify-module/node_modules/imagemin-gifsicle',
@@ -39,7 +39,7 @@ describe('verifyModule', () => {
       'file-type',
       'strtok3',
     ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, copyModules)
     const fileName = `${modulesPath}/strtok3`
     const moduleName = 'strtok3/core'
     expect(verifyModule(moduleName, fileName)).toEqual(['test-verify-module/node_modules/strtok3/lib/core.js'])

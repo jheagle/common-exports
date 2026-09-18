@@ -1,6 +1,6 @@
 import { resolveMainFile } from './resolveMainFile'
 import { mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { setUp } from 'test-filesystem'
+import { setUp, writePackageJson } from 'test-filesystem'
 
 const tempDir = 'test-resolve-main-file/'
 const modulesPath = `${tempDir}node_modules`
@@ -57,8 +57,7 @@ describe('resolveMainFile', () => {
     const packageContent = readFileSync(`./node_modules/${modulePackage}`).toString()
     const packageJson = JSON.parse(packageContent)
     packageJson.exports = './dist/main.mjs'
-    const newPackage = `${modulesPath}/${modulePackage}`
-    writeFileSync(newPackage, JSON.stringify(packageJson))
+    writePackageJson(modulePath, packageJson)
     const foundModulePath = resolveMainFile(modulePath)
     expect(foundModulePath).toEqual(newExported)
   })

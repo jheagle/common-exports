@@ -1,5 +1,5 @@
-import { countMatches, fileExists, setUp } from 'test-filesystem'
-import { cpSync, mkdirSync, readFileSync } from 'fs'
+import { copyRealModules, countMatches, fileExists, setUp } from 'test-filesystem'
+import { mkdirSync, readFileSync } from 'fs'
 import { customChanges } from './customChanges'
 
 const tempDir = 'test-custom-changes/'
@@ -14,10 +14,7 @@ afterEach(setUp.afterEach)
 describe('customChanges', () => {
   test('configured function will be applied to the content', () => {
     mkdirSync(modulesPath, { recursive: true })
-    const copyModules = [
-      'imagemin-mozjpeg',
-    ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, ['imagemin-mozjpeg'])
     const updateFile = `${modulesPath}/imagemin-mozjpeg/node_modules/execa/lib/kill.js`
     const updateContent = readFileSync(updateFile).toString()
     const changeContent = 'import { onExit } from \'signal-exit\';'

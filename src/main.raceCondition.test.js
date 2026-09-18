@@ -1,6 +1,6 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync } from 'fs'
 import { makeCommon } from './main'
-import { setUp } from 'test-filesystem'
+import { setUp, writeFixtureFile, writePackageJson } from 'test-filesystem'
 
 // A small, fast, fully-synthetic fixture for reproducing/validating the recursive-conversion race condition,
 // deliberately avoiding any real npm package (like gulp-imagemin) - this needs to stay cheap to iterate on.
@@ -28,12 +28,11 @@ const buildChain = () => {
   for (let level = 0; level < DEPTH; level++) {
     const packageName = `pkg${level}`
     const packageDir = `${currentDir}/${packageName}`
-    mkdirSync(packageDir, { recursive: true })
     const isLeaf = level === DEPTH - 1
     const content = isLeaf
       ? 'export const value = \'leaf\'\n'
       : `import { value } from 'pkg${level + 1}'\nexport { value }\n`
-    writeFileSync(`${packageDir}/index.js`, content)
+    writeFixtureFile(`${packageDir}/index.js`, content)
     packagePaths.push(packageDir)
     currentDir = `${packageDir}/node_modules`
   }
@@ -49,18 +48,15 @@ const buildChain = () => {
 const BREADTH = 6
 const buildFanOut = () => {
   const entryDir = `${modulesPath}/entry`
-  mkdirSync(entryDir, { recursive: true })
   const siblingImports = []
   const siblingDirs = []
   for (let branch = 0; branch < BREADTH; branch++) {
     const siblingDir = `${modulesPath}/sibling${branch}`
-    mkdirSync(`${siblingDir}/node_modules`, { recursive: true })
     for (let leaf = 0; leaf < 2; leaf++) {
       const leafDir = `${siblingDir}/node_modules/leaf${leaf}`
-      mkdirSync(leafDir, { recursive: true })
-      writeFileSync(`${leafDir}/index.js`, `export const value = 'leaf${branch}-${leaf}'\n`)
+      writeFixtureFile(`${leafDir}/index.js`, `export const value = 'leaf${branch}-${leaf}'\n`)
     }
-    writeFileSync(
+    writeFixtureFile(
       `${siblingDir}/index.js`,
       'import { value as a } from \'leaf0\'\n' +
       'import { value as b } from \'leaf1\'\n' +
@@ -69,7 +65,7 @@ const buildFanOut = () => {
     siblingImports.push(`import { a as v${branch} } from 'sibling${branch}'`)
     siblingDirs.push(siblingDir)
   }
-  writeFileSync(
+  writeFixtureFile(
     `${entryDir}/index.js`,
     siblingImports.join('\n') + '\n' + `export { ${siblingImports.map((_, i) => `v${i}`).join(', ')} }\n`
   )
@@ -88,20 +84,15 @@ const buildFanOut = () => {
  */
 const buildCjsMainFixture = () => {
   const packageDir = `${modulesPath}/fast-equals-like`
-  mkdirSync(`${packageDir}/dist/cjs`, { recursive: true })
-  writeFileSync(
-    `${packageDir}/package.json`,
-    JSON.stringify({
-      name: 'fast-equals-like',
-      type: 'module',
-      main: './dist/cjs/index.cjs',
-      exports: { '.': { require: { default: './dist/cjs/index.cjs' }, default: './dist/es/index.mjs' } }
-    })
-  )
-  writeFileSync(`${packageDir}/dist/cjs/index.cjs`, 'module.exports.value = \'cjs-leaf\'\n')
+  writePackageJson(packageDir, {
+    name: 'fast-equals-like',
+    type: 'module',
+    main: './dist/cjs/index.cjs',
+    exports: { '.': { require: { default: './dist/cjs/index.cjs' }, default: './dist/es/index.mjs' } }
+  })
+  writeFixtureFile(`${packageDir}/dist/cjs/index.cjs`, 'module.exports.value = \'cjs-leaf\'\n')
   const entryDir = `${modulesPath}/cjs-consumer`
-  mkdirSync(entryDir, { recursive: true })
-  writeFileSync(`${entryDir}/index.js`, 'import { value } from \'fast-equals-like\'\nexport { value }\n')
+  writeFixtureFile(`${entryDir}/index.js`, 'import { value } from \'fast-equals-like\'\nexport { value }\n')
   return { entryFile: `${entryDir}/index.js` }
 }
 
@@ -116,9 +107,8 @@ const buildCjsMainFixture = () => {
 const buildAlreadyCommonEntryFixture = () => {
   const packageDir = `${modulesPath}/already-cjs-entry`
   const privateDepDir = `${packageDir}/node_modules/private-dep`
-  mkdirSync(privateDepDir, { recursive: true })
-  writeFileSync(`${privateDepDir}/index.js`, 'module.exports = \'private-dep-value\'\n')
-  writeFileSync(
+  writeFixtureFile(`${privateDepDir}/index.js`, 'module.exports = \'private-dep-value\'\n')
+  writeFixtureFile(
     `${packageDir}/index.js`,
     '\'use strict\';\nconst privateDep = require(\'private-dep\');\nmodule.exports = privateDep;\n'
   )
@@ -140,15 +130,13 @@ const buildStrayTypeModuleFixture = () => {
   const nestedModules = `${consumerDir}/node_modules`
   const commonSiblingDir = `${nestedModules}/common-sibling`
   const esmSiblingDir = `${nestedModules}/esm-sibling`
-  mkdirSync(commonSiblingDir, { recursive: true })
-  mkdirSync(esmSiblingDir, { recursive: true })
-  writeFileSync(`${commonSiblingDir}/package.json`, JSON.stringify({ name: 'common-sibling' }))
+  writePackageJson(commonSiblingDir, { name: 'common-sibling' })
   // isCommonModule's content-based fallback (when package.json has no "type" field) specifically looks for a
   // require() call as evidence of being CommonJS - a body with no requires at all wouldn't satisfy that check.
-  writeFileSync(`${commonSiblingDir}/index.js`, 'require(\'fs\')\nmodule.exports = \'common-sibling-value\'\n')
-  writeFileSync(`${esmSiblingDir}/package.json`, JSON.stringify({ name: 'esm-sibling', type: 'module' }))
-  writeFileSync(`${esmSiblingDir}/index.js`, 'export const value = \'esm-sibling-value\'\n')
-  writeFileSync(
+  writeFixtureFile(`${commonSiblingDir}/index.js`, 'require(\'fs\')\nmodule.exports = \'common-sibling-value\'\n')
+  writePackageJson(esmSiblingDir, { name: 'esm-sibling', type: 'module' })
+  writeFixtureFile(`${esmSiblingDir}/index.js`, 'export const value = \'esm-sibling-value\'\n')
+  writeFixtureFile(
     `${consumerDir}/index.js`,
     'import commonSibling from \'common-sibling\'\n' +
     'import { value } from \'esm-sibling\'\n' +

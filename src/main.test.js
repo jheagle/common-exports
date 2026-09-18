@@ -1,6 +1,6 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { makeCommon } from './main'
-import { setUp } from 'test-filesystem'
+import { copyRealModules, setUp } from 'test-filesystem'
 import { dest, src } from 'gulp'
 
 const tempDir = 'test-make-common/'
@@ -181,7 +181,7 @@ describe('makeCommon', () => {
           'peek-readable',
           'strtok3',
         ]
-        copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+        copyRealModules(modulesPath, copyModules)
         expect.assertions(3)
         const srcFile = `${newPath}/index.js`
         makeCommon(srcFile, `${vendorPath}/gulp-imagemin`, {

@@ -1,5 +1,5 @@
-import { countMatches, fileExists, setUp } from 'test-filesystem'
-import { cpSync, mkdirSync, readFileSync } from 'fs'
+import { copyRealModules, countMatches, fileExists, setUp } from 'test-filesystem'
+import { mkdirSync, readFileSync } from 'fs'
 import { copyResources } from './copyResources'
 
 const tempDir = 'test-copy-resources/'
@@ -15,10 +15,7 @@ afterEach(setUp.afterEach)
 describe('copyResources', () => {
   test('configured file will be copied and updateContent applied', () => {
     mkdirSync(modulesPath, { recursive: true })
-    const copyModules = [
-      'mozjpeg',
-    ]
-    copyModules.forEach(module => cpSync(`./node_modules/${module}`, `${modulesPath}/${module}`, { recursive: true }))
+    copyRealModules(modulesPath, ['mozjpeg'])
     const newPackage = `${vendorPath}/mozjpeg/package.json`
     const newVendor = `${vendorPath}/mozjpeg/vendor`
     copyResources(`${modulesPath}/mozjpeg`, {
