@@ -2,7 +2,7 @@ import { countMatches, fileExists, setUp } from 'test-filesystem'
 import { cpSync, mkdirSync, readFileSync } from 'fs'
 import { customChanges } from './customChanges'
 
-const tempDir = 'test-copy-resources/'
+const tempDir = 'test-custom-changes/'
 const modulesPath = `${tempDir}node_modules`
 
 setUp.setDefaults(tempDir)

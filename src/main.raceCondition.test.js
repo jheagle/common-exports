@@ -105,6 +105,58 @@ const buildCjsMainFixture = () => {
   return { entryFile: `${entryDir}/index.js` }
 }
 
+/**
+ * Build a package whose entry point is already plain CommonJS (no import/export syntax at all) with its own
+ * privately-nested dependency, mirroring imagemin-pngquant's real shape: a package that needs no ESM conversion
+ * at all, whose own require() calls into its own node_modules would otherwise never get discovered (findImports
+ * only scans for import/export syntax) or copied along, silently relying on the real environment happening to
+ * have a compatible version installed instead of this package's own private, pinned copy.
+ * @returns {{entryFile: string}}
+ */
+const buildAlreadyCommonEntryFixture = () => {
+  const packageDir = `${modulesPath}/already-cjs-entry`
+  const privateDepDir = `${packageDir}/node_modules/private-dep`
+  mkdirSync(privateDepDir, { recursive: true })
+  writeFileSync(`${privateDepDir}/index.js`, 'module.exports = \'private-dep-value\'\n')
+  writeFileSync(
+    `${packageDir}/index.js`,
+    '\'use strict\';\nconst privateDep = require(\'private-dep\');\nmodule.exports = privateDep;\n'
+  )
+  return { entryFile: `${packageDir}/index.js` }
+}
+
+/**
+ * Build a package whose privately-nested, already-common sibling ("common-sibling") sits in the same
+ * node_modules folder as an ESM sibling ("esm-sibling") that also gets individually, directly imported and
+ * converted. Reproduces the real bug found via the gulp-imagemin fork: common-sibling's own isCommon wholesale
+ * copy (needed so it can resolve *its own* siblings via relative paths) carries along esm-sibling's original,
+ * unconverted package.json as a side effect, even though esm-sibling's own .js content gets separately,
+ * correctly converted to CommonJS via the direct import below - leaving valid CJS content sitting next to a
+ * package.json that still says "type": "module".
+ * @returns {{entryFile: string}}
+ */
+const buildStrayTypeModuleFixture = () => {
+  const consumerDir = `${modulesPath}/consumer`
+  const nestedModules = `${consumerDir}/node_modules`
+  const commonSiblingDir = `${nestedModules}/common-sibling`
+  const esmSiblingDir = `${nestedModules}/esm-sibling`
+  mkdirSync(commonSiblingDir, { recursive: true })
+  mkdirSync(esmSiblingDir, { recursive: true })
+  writeFileSync(`${commonSiblingDir}/package.json`, JSON.stringify({ name: 'common-sibling' }))
+  // isCommonModule's content-based fallback (when package.json has no "type" field) specifically looks for a
+  // require() call as evidence of being CommonJS - a body with no requires at all wouldn't satisfy that check.
+  writeFileSync(`${commonSiblingDir}/index.js`, 'require(\'fs\')\nmodule.exports = \'common-sibling-value\'\n')
+  writeFileSync(`${esmSiblingDir}/package.json`, JSON.stringify({ name: 'esm-sibling', type: 'module' }))
+  writeFileSync(`${esmSiblingDir}/index.js`, 'export const value = \'esm-sibling-value\'\n')
+  writeFileSync(
+    `${consumerDir}/index.js`,
+    'import commonSibling from \'common-sibling\'\n' +
+    'import { value } from \'esm-sibling\'\n' +
+    'export { commonSibling, value }\n'
+  )
+  return { entryFile: `${consumerDir}/index.js` }
+}
+
 describe('makeCommon recursive conversion', () => {
   test('every level of a deep import chain is fully converted by the time the entry file reports finished', done => {
     const { entryFile } = buildChain()
@@ -161,6 +213,38 @@ describe('makeCommon recursive conversion', () => {
         expect(existsSync(cjsFile)).toBeTruthy()
         expect(existsSync(`${cjsFile}/index.js`)).toBeFalsy()
         expect(readFileSync(cjsFile).toString()).toEqual('module.exports.value = \'cjs-leaf\'\n')
+        done()
+      })
+      .on('error', error => {
+        done(error)
+      })
+  }, 10000)
+
+  test('an already-CommonJS entry point is copied wholesale, bringing its own private dependency along', done => {
+    const { entryFile } = buildAlreadyCommonEntryFixture()
+    makeCommon(entryFile, `${vendorPath}/already-cjs-entry`)
+      .on('finish', () => {
+        expect(existsSync(`${vendorPath}/already-cjs-entry/index.js`)).toBeTruthy()
+        const privateDepFile = `${vendorPath}/already-cjs-entry/node_modules/private-dep/index.js`
+        expect(existsSync(privateDepFile)).toBeTruthy()
+        expect(readFileSync(privateDepFile).toString()).toEqual('module.exports = \'private-dep-value\'\n')
+        done()
+      })
+      .on('error', error => {
+        done(error)
+      })
+  }, 10000)
+
+  test('a privately-nested common sibling\'s wholesale copy does not leave a stray "type": "module" on an ESM sibling converted alongside it', done => {
+    const { entryFile } = buildStrayTypeModuleFixture()
+    makeCommon(entryFile, `${vendorPath}/consumer`)
+      .on('finish', () => {
+        const esmSiblingDest = `${vendorPath}/consumer/node_modules/esm-sibling`
+        const contents = readFileSync(`${esmSiblingDest}/index.js`).toString()
+        expect(contents).not.toMatch(/^export /m)
+        expect(contents).toContain('esm-sibling-value')
+        const packageJson = JSON.parse(readFileSync(`${esmSiblingDest}/package.json`).toString())
+        expect(packageJson.type).not.toEqual('module')
         done()
       })
       .on('error', error => {

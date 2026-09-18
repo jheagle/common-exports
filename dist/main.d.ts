@@ -24,6 +24,14 @@ export type makeCommonConfig = {
 };
 /**
  * Apply babel to source files and output with commonJs compatibility.
+ *
+ * Two things happen automatically, beyond converting srcPath's own ESM syntax: if srcPath itself is already
+ * plain CommonJS (nothing for the conversion pipeline to find/rewrite), its whole containing directory - private
+ * dependencies included - is copied wholesale instead of silently producing an incomplete result; and once the
+ * whole output tree is otherwise finished, any package.json left declaring `"type": "module"` next to
+ * already-CommonJS content (which can happen when an already-common package's own wholesale copy carries along
+ * an ESM sibling's original package.json - see replaceImports.ts) has that field stripped, since the output is
+ * always meant to be CommonJS.
  * @memberof module:common-exports
  * @param {string|array} srcPath - The relative path to the file to convert.
  * @param {string} destPath - The relative path to the output directory.
@@ -43,7 +51,8 @@ export type makeCommonConfig = {
  * import from each other) - CommonJS/Node handle that fine at runtime via partial exports, but this function
  * cannot: waiting for a circular dependency's own conversion to finish before considering the current file done
  * would deadlock (each side waiting on the other) forever. When a discovered import's target is already an
- * ancestor, its conversion is already in flight further up this same chain - don't wait on it here too.
+ * ancestor, its conversion is already in flight further up this same chain - don't wait on it here too. An empty
+ * set (the default) also marks this as the outermost call - see below.
  * @returns {stream.Stream}
  */
 export declare const makeCommon: (srcPath: string, destPath: string, config?: makeCommonConfig, inProgress?: Map<string, Promise<void>>, ancestors?: Set<string>) => stream.Stream;
