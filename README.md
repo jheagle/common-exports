@@ -68,13 +68,13 @@ Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
 **Author**: Joshua Heagle <joshuaheagle@gmail.com>  
 
 * [common-exports](#module_common-exports)
-    * [.makeCommon(srcPath, destPath, [config])](#module_common-exports.makeCommon) ⇒ <code>stream.Stream</code>
+    * [.makeCommon(srcPath, destPath, [config], [inProgress], [ancestors])](#module_common-exports.makeCommon) ⇒ <code>stream.Stream</code>
     * [.verifyModule(moduleName, current)](#module_common-exports.verifyModule) ⇒ <code>Array.&lt;string&gt;</code> \| <code>null</code>
     * [.resolvePackageExports(packageData, modulePath)](#module_common-exports.resolvePackageExports) ⇒ <code>string</code> \| <code>null</code>
     * [.resolveModule(root, moduleName, current)](#module_common-exports.resolveModule) ⇒ <code>Array.&lt;string&gt;</code>
     * [.resolveMainFile(modulePath)](#module_common-exports.resolveMainFile) ⇒ <code>string</code> \| <code>null</code>
     * [.resolveImports(file, [rootPath])](#module_common-exports.resolveImports) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
-    * [.replaceImports(srcPath, destPath, [config])](#module_common-exports.replaceImports) ⇒ <code>reduceImports</code>
+    * [.replaceImports(srcPath, destPath, [config], [pending], [inProgress], [ancestors])](#module_common-exports.replaceImports) ⇒ <code>reduceImports</code>
     * [.replaceImportMeta(content)](#module_common-exports.replaceImportMeta) ⇒ <code>string</code>
     * [.makeModuleInfo(dirPath, moduleName, rootPath)](#module_common-exports.makeModuleInfo) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
     * [.isCommonModule(moduleInfo)](#module_common-exports.isCommonModule) ⇒ <code>boolean</code>
@@ -86,7 +86,7 @@ Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
 
 <a name="module_common-exports.makeCommon"></a>
 
-### common-exports.makeCommon(srcPath, destPath, [config]) ⇒ <code>stream.Stream</code>
+### common-exports.makeCommon(srcPath, destPath, [config], [inProgress], [ancestors]) ⇒ <code>stream.Stream</code>
 Apply babel to source files and output with commonJs compatibility.
 
 **Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
@@ -99,6 +99,8 @@ Apply babel to source files and output with commonJs compatibility.
 | [config.copyResources] | <code>Object.&lt;string, Array.&lt;Object.&lt;(src\|dest\|updateContent), (string\|function())&gt;&gt;&gt;</code> | <code>{}</code> | Add custom files to copy for found modules. |
 | [config.customChanges] | <code>Object.&lt;string, Array.&lt;Object.&lt;updateContent, function()&gt;&gt;&gt;</code> | <code>{}</code> | Add custom content changes to the content used. |
 | [config.rootPath] | <code>string</code> | <code>&quot;&#x27;&#x27;&quot;</code> | Specify the root to use, this helps identify where to stop. |
+| [inProgress] | <code>Map.&lt;string, Promise.&lt;void&gt;&gt;</code> | <code>new Map()</code> | Tracks recursive conversions already started (by destination path) for this whole call tree, shared across every recursive makeCommon call it spawns. Without this, the same dependency reachable from multiple import chains (a very common shape once a tree gets deep or wide) gets independently, redundantly re-converted - each duplicate spawning its own full sub-tree of further duplicates - which is what caused this function's historical OOM crash under real-world dependency graphs. |
+| [ancestors] | <code>Set.&lt;string&gt;</code> | <code>new Set()</code> | The chain of source files currently being converted above this call, in this same branch of the recursion. Real packages do have genuine circular imports (e.g. two files that import from each other) - CommonJS/Node handle that fine at runtime via partial exports, but this function cannot: waiting for a circular dependency's own conversion to finish before considering the current file done would deadlock (each side waiting on the other) forever. When a discovered import's target is already an ancestor, its conversion is already in flight further up this same chain - don't wait on it here too. |
 
 <a name="module_common-exports.verifyModule"></a>
 
@@ -151,7 +153,11 @@ Given a module path, find the file which should be used as main, based on module
 <a name="module_common-exports.resolveImports"></a>
 
 ### common-exports.resolveImports(file, [rootPath]) ⇒ <code>Array.&lt;ModuleInfo&gt;</code>
-Given a file with buffer contents, identify all the imports it has and find their full paths.
+Given a file with buffer contents, identify all the imports it has and find their full paths. Common (already
+CommonJS-compatible) modules are included too, not just modules needing conversion - see [ModuleInfo](ModuleInfo)'s
+isCommon flag, used by [replaceImports](replaceImports) to copy them into the vendor tree as-is rather than converting
+them. They can't simply be left alone: the vendor output directory structure doesn't mirror the original
+node_modules layout closely enough for Node's own module resolution to find them from their new location.
 
 **Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
 
@@ -162,7 +168,7 @@ Given a file with buffer contents, identify all the imports it has and find thei
 
 <a name="module_common-exports.replaceImports"></a>
 
-### common-exports.replaceImports(srcPath, destPath, [config]) ⇒ <code>reduceImports</code>
+### common-exports.replaceImports(srcPath, destPath, [config], [pending], [inProgress], [ancestors]) ⇒ <code>reduceImports</code>
 Take a srcPath, destPath, then return a function to reduce the content for replacing file imports.
 
 **Kind**: static method of [<code>common-exports</code>](#module_common-exports)  
@@ -172,6 +178,9 @@ Take a srcPath, destPath, then return a function to reduce the content for repla
 | srcPath | <code>string</code> |  | The original path of the file to be updated. |
 | destPath | <code>string</code> |  | The outgoing path of the file once updated. |
 | [config] | <code>Object.&lt;string, Object.&lt;string, \*&gt;&gt;</code> | <code>{}</code> | Additional configuration options. |
+| [pending] | <code>Array.&lt;Promise.&lt;void&gt;&gt;</code> | <code>[]</code> | Recursive conversions started for discovered imports are pushed here as promises, so the caller can await them before considering the current file done. makeCommon's own recursive calls don't block; without this, a file could be reported "finished" before its own dependencies (or their dependencies, arbitrarily deep) have actually finished being written. |
+| [inProgress] | <code>Map.&lt;string, Promise.&lt;void&gt;&gt;</code> | <code>new Map()</code> | Tracks recursive conversions already started (by destination path), shared across the whole call tree. A dependency reachable from multiple import chains would otherwise be independently, redundantly re-converted every time it's encountered again while its first conversion is still in flight (the fileExists check below can't catch this - the file isn't written yet) - each duplicate spawning its own full sub-tree of further duplicates, which is what caused this function's historical OOM crash. Reusing the same in-flight promise instead of starting a new one avoids that entirely. |
+| [ancestors] | <code>Set.&lt;string&gt;</code> | <code>new Set()</code> | Source files currently being converted above this one, in this same branch. Real packages can have genuine circular imports (two files that import each other) - waiting for such a target's conversion to finish before this file is done would deadlock, since its own conversion is simultaneously waiting on this one. A target already in this set is already in flight further up the same chain - don't wait on it again here. |
 
 <a name="module_common-exports.replaceImportMeta"></a>
 
@@ -206,7 +215,7 @@ Attempt to detect if the current module is a common js module.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| moduleInfo | <code>Object.&lt;(module\|path\|file), (string\|null)&gt;</code> | An object containing the module, path, and file strings. |
+| moduleInfo | <code>Object.&lt;(path\|file), (string\|null)&gt;</code> | An object containing the path and file strings. |
 
 <a name="module_common-exports.importRegex"></a>
 

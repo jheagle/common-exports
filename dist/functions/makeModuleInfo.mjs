@@ -1,5 +1,6 @@
 import { resolveMainFile } from './resolveMainFile.mjs'
 import { resolveModule } from './resolveModule.mjs'
+import { isCommonModule } from './isCommonModule.mjs'
 /**
  * Create the Module Info object to store the name, path, and file for each matching module.
  * @memberof module:common-exports
@@ -14,9 +15,13 @@ export const makeModuleInfo = (dirPath, moduleName, rootPath = null) => {
     rootPath = dirPath
   }
   return resolveModule(rootPath, moduleName, dirPath)
-    .map((path) => ({
-      module: moduleName,
-      path: path,
-      file: resolveMainFile(path)
-    }))
+    .map((path) => {
+      const file = resolveMainFile(path)
+      return {
+        module: moduleName,
+        path: path,
+        file,
+        isCommon: isCommonModule({ path, file })
+      }
+    })
 }
