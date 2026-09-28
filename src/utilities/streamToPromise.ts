@@ -1,12 +1,9 @@
-import * as stream from 'stream'
-
 /**
  * Wrap a stream so its completion (or failure) can be awaited.
  * @memberof module:common-exports
- * @param {stream.Stream} streamToWrap
- * @returns {Promise<void>}
+ * @param streamToWrap
  */
-export const streamToPromise = (streamToWrap: stream.Stream): Promise<void> => new Promise(
+export const streamToPromise = (streamToWrap: NodeJS.ReadWriteStream): Promise<void> => new Promise(
   (resolve, reject) => {
     streamToWrap.on('finish', resolve)
     streamToWrap.on('error', reject)

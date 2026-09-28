@@ -2,9 +2,8 @@
  * Retrieve the string part before the last search match.
  * Original source from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strBeforeLast.ts Sí, funciona}
  * @memberof module:common-exports
- * @param {string} str
- * @param {string} search
- * @returns {string}
+ * @param str
+ * @param search
  */
 export const strBeforeLast = (str: string, search: string): string => {
   const index = str.lastIndexOf(search)

@@ -13,8 +13,7 @@ import { makeFilepath } from '../utilities/makeFilepath'
  * is otherwise complete, catches and fixes any of these mismatches without needing to enumerate every affected
  * package by hand.
  * @memberof module:common-exports
- * @param {string} destPath - The root directory to sweep.
- * @returns {undefined}
+ * @param destPath - The root directory to sweep.
  */
 export const stripEsmType = (destPath: string): void => {
   for (const entry of readdirSync(destPath, { withFileTypes: true })) {

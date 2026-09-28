@@ -9,12 +9,11 @@ require('core-js/modules/esnext.iterator.reduce.js')
 /**
  * Based on configured 'customChanges', if we are in the corresponding based path, apply the change function to the content.
  * @memberof module:common-exports
- * @param {string} baseFilePath - The source / module path to process.
- * @param {string} content - The file content which will receive changes.
- * @param {Object<'customChanges', Object<string, Array<Object<'updateContent', Function>>>>} [config={}] -
+ * @param baseFilePath - The source / module path to process.
+ * @param content - The file content which will receive changes.
+ * @param config -
  * The customChanges config may be present, and if it has the source path as a property,
  * then the updateContent function will be applied to the contents.
- * @returns {string}
  */
 const customChanges = (baseFilePath, content, config = {}) => {
   if (!config.hasOwnProperty('customChanges')) {

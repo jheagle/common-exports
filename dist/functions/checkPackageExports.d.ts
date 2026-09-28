@@ -18,8 +18,7 @@ export type packageExports = filePath | conditionalExportConfig;
 /**
  * Given the configured exports from a package, determine the preferred entry path.
  * @memberof module:common-exports
- * @param {object|string} exports - The relative path used to locate the module.
- * @param {string} modulePath
- * @returns {string|null}
+ * @param exports - The relative path used to locate the module.
+ * @param modulePath
  */
 export declare const checkPackageExports: (exports: packageExports, modulePath: string) => string | null;
