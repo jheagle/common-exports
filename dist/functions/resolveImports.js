@@ -18,9 +18,8 @@ var _makeModuleInfo = require('./makeModuleInfo')
  * them. They can't simply be left alone: the vendor output directory structure doesn't mirror the original
  * node_modules layout closely enough for Node's own module resolution to find them from their new location.
  * @memberof module:common-exports
- * @param {StreamFile} file - The in-memory fetched file object.
- * @param {string|null} [rootPath=null] - The root path to use when resolving imports.
- * @returns {Array<ModuleInfo>}
+ * @param file - The in-memory fetched file object.
+ * @param rootPath - The root path to use when resolving imports.
  */
 function resolveImports (file, rootPath = null) {
   const dirPath = (0, _makeFilepath.makeFilepath)((0, _strAfter.strAfter)(file.base, file.cwd))

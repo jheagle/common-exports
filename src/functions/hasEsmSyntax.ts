@@ -4,7 +4,6 @@
  * dependency's module name) - a bare `export default ...` or `export const foo = ...` has no "from" clause and
  * would otherwise go undetected, even though it's still ESM syntax that needs converting.
  * @memberof module:common-exports
- * @param {string} content - The file content to check.
- * @returns {boolean}
+ * @param content - The file content to check.
  */
 export const hasEsmSyntax = (content: string): boolean => /^\s*(export|import)\s/m.test(content)

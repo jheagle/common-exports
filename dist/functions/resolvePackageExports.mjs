@@ -3,9 +3,8 @@ import { checkPackageExports } from './checkPackageExports.mjs'
 /**
  * Given the package details, determined the configured module entry point.
  * @memberof module:common-exports
- * @param {object|string} packageData - The package contents as an object.
- * @param {string} modulePath
- * @returns {string|null}
+ * @param packageData - The package contents as an object.
+ * @param modulePath
  */
 export const resolvePackageExports = (packageData, modulePath) => {
   if (packageData.exports) {

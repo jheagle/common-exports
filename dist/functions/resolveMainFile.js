@@ -11,8 +11,7 @@ var _resolvePackageExports = require('./resolvePackageExports')
 /**
  * Given a module path, find the file which should be used as main, based on module import.
  * @memberof module:common-exports
- * @param {string} modulePath - The relative path used to locate the module.
- * @returns {string|null}
+ * @param modulePath - The relative path used to locate the module.
  */
 const resolveMainFile = modulePath => {
   if (!(0, _testFilesystem.fileExists)(modulePath)) {

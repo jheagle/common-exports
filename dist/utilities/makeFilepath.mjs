@@ -3,9 +3,8 @@ import { strBeforeLast } from './strBeforeLast.mjs'
  * Format the given path so that it does not have trailing slashes and also correctly appends a path.
  * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/makeFilePath.ts Sí, funciona}
  * @memberof module:common-exports
- * @param {string} root
- * @param {string} [append='']
- * @returns {string}
+ * @param root
+ * @param append
  */
 export const makeFilepath = (root, append = '') => {
   if (root.startsWith('./')) {

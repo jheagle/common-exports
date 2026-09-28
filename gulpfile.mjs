@@ -1,9 +1,9 @@
 import Module from 'node:module'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import { dest, parallel, series, src } from 'gulp'
-import { appendFileSync } from 'fs'
-import { globSync } from 'glob'
 import babel from 'gulp-babel'
-import jsdoc2md from 'jsdoc-to-markdown'
 import rename from 'gulp-rename'
 import { runCLI } from 'jest'
 import standard from 'gulp-standard'
@@ -23,14 +23,9 @@ const distMain = 'dist/main'
 const distSearch = 'dist/**/*js'
 const distPath = 'dist'
 const srcSearch = 'src/**/*.ts'
-const readmeTemplate = 'MAIN.md'
-const readmeFile = 'README.md'
-const readmePath = './'
-// Only the public entry point (makeCommon and its config) belongs in the README - functions/ and utilities/ are
-// internal implementation details, documented in-source for contributors but not part of the published API
-// (see package.json's "exports", which only publishes dist/main.js/.mjs).
-const readmeSearch = ['dist/main.js']
-const readmeOptions = 'utf8'
+const docsFrom = 'src'
+const docsTo = '../joshuaheagle.local/projects/common-exports/docs'
+const docsIndex = 'MAIN.md'
 const testPath = ['src']
 const testOptions = {
   clearCache: false,
@@ -65,7 +60,7 @@ const importReplace = (contents, replaceWith) => contents
  * @returns {Promise<string[]> | *}
  */
 export const clean = () => cleanFolders.reduce(
-  (promise, path) => promise.then(() => removeDirectory(path)),
+  (promise, folderPath) => promise.then(() => removeDirectory(folderPath)),
   Promise.resolve()
 )
 
@@ -128,33 +123,81 @@ const distLint = () => src(distSearch)
   }))
   .pipe(dest(distPath))
 
-/**
- * Copy a readme template into the README.md file.
- * @function
- * @returns {*}
- */
-const createReadme = () => src(readmeTemplate)
-  .pipe(rename(readmeFile))
-  .pipe(dest(readmePath))
+const isDocSource = fileName => /\.ts$/.test(fileName) && !/\.test\./.test(fileName)
+
+const listDocSources = dirPath => fs.readdirSync(dirPath, { withFileTypes: true }).flatMap(entry => {
+  const entryPath = path.join(dirPath, entry.name)
+  if (entry.isDirectory()) {
+    return entry.name === 'node_modules' ? [] : listDocSources(entryPath)
+  }
+  return isDocSource(entry.name) ? [entryPath] : []
+})
+
+const toModulePath = filePath => filePath.replace(/\.ts$/, '').split(path.sep).join('/')
 
 /**
- * Appends all the jsdoc comments to the readme file. Assumes empty or templated file.
- * Configure this with 'readmeSearch', 'readmePath', 'readmeFile', and 'readmeOptions'.
+ * Write one entry file per top-level folder of docsFrom into entryDir, each re-exporting all of that folder's
+ * source files - this is what makes TypeDoc's modules mirror the source folders (functions, utilities), same as
+ * js-build-tools' typeDocsFor does for every other project. Duplicated here (not imported from js-build-tools)
+ * because js-build-tools itself depends on common-exports, and importing it back would be a circular dependency.
  * @function
- * @returns {string|Uint8Array}
+ * @param {string} srcDir
+ * @param {string} entryDir
+ * @returns {Array<string>}
  */
-const addToReadme = () => jsdoc2md
-  .render({ files: globSync(readmeSearch) })
-  .then(
-    readme => appendFileSync(readmePath + readmeFile, readme, readmeOptions)
-  )
+const writeDocEntries = (srcDir, entryDir) => {
+  const absoluteSrc = path.resolve(srcDir)
+  fs.mkdirSync(entryDir, { recursive: true })
+  const folders = fs.readdirSync(absoluteSrc, { withFileTypes: true })
+    .filter(entry => entry.isDirectory() && entry.name !== 'node_modules')
+    .map(entry => ({ name: entry.name, files: listDocSources(path.join(absoluteSrc, entry.name)) }))
+    .filter(folder => folder.files.length)
+  return folders.map(folder => {
+    const lines = folder.files.sort().map(file => `export * from '${toModulePath(file)}'`)
+    const entryPath = path.join(entryDir, `${folder.name}.ts`)
+    fs.writeFileSync(entryPath, lines.join('\n') + '\n')
+    return entryPath
+  })
+}
 
 /**
- * Generate the readme file.
+ * Generate the HTML documentation from the TypeScript source with TypeDoc, straight into the sibling website
+ * checkout. Configure this with 'docsFrom', 'docsTo' and 'docsIndex'.
  * @function
- * @return {*}
+ * @returns {Promise<void>}
  */
-export const readme = (done = null) => series(createReadme, addToReadme)(done)
+export const docs = async () => {
+  const { Application } = await import('typedoc')
+  const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'typedocs-'))
+  try {
+    const entryPoints = writeDocEntries(docsFrom, path.join(workDir, 'entries'))
+    const tsconfig = path.join(workDir, 'tsconfig.json')
+    fs.writeFileSync(tsconfig, JSON.stringify({
+      extends: path.resolve('tsconfig.json'),
+      include: [
+        path.join(workDir, 'entries', '*.ts').split(path.sep).join('/'),
+        path.resolve(docsFrom).split(path.sep).join('/') + '/**/*.ts'
+      ],
+      exclude: [path.resolve(docsFrom).split(path.sep).join('/') + '/**/*.test.*']
+    }))
+    await removeDirectory(docsTo)
+    const app = await Application.bootstrap({
+      entryPoints,
+      tsconfig,
+      name: 'common-exports',
+      readme: fs.existsSync(docsIndex) ? docsIndex : 'none',
+      logLevel: 'Warn',
+      skipErrorChecking: true
+    })
+    const project = await app.convert()
+    if (!project) {
+      throw new Error('TypeDoc could not read the TypeScript source, see the errors above.')
+    }
+    await app.generateDocs(project, docsTo)
+  } finally {
+    await removeDirectory(workDir)
+  }
+}
 
 /**
  * Run all tests with jest.
@@ -169,7 +212,7 @@ export const build = (done = null) => parallel(
     clean,
     distSeries,
     distLint,
-    readme
+    docs
   ),
   testFull
 )(done)

@@ -11,8 +11,7 @@ var _importRegex = require('./importRegex')
 /**
  * Attempt to detect if the current module is a common js module.
  * @memberof module:common-exports
- * @param {Object<path|file, string|null>} moduleInfo - An object containing the path and file strings.
- * @returns {boolean}
+ * @param moduleInfo - An object containing the path and file strings.
  */
 const isCommonModule = moduleInfo => {
   // Node's own resolution lets a file's own extension override the package's "type" field: .cjs is always

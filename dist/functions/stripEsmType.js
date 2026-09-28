@@ -19,8 +19,7 @@ var _makeFilepath = require('../utilities/makeFilepath')
  * is otherwise complete, catches and fixes any of these mismatches without needing to enumerate every affected
  * package by hand.
  * @memberof module:common-exports
- * @param {string} destPath - The root directory to sweep.
- * @returns {undefined}
+ * @param destPath - The root directory to sweep.
  */
 const stripEsmType = destPath => {
   for (const entry of (0, _fs.readdirSync)(destPath, {

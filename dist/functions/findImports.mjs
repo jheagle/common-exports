@@ -2,8 +2,7 @@ import { importRegex } from './importRegex.mjs'
 /**
  * Retrieve all the module names from imports.
  * @memberof module:common-exports
- * @param {string} fileContents - The string of contents to parse for import matches.
- * @returns {Array}
+ * @param fileContents - The string of contents to parse for import matches.
  */
 export const findImports = (fileContents) => Array.from(fileContents.matchAll(importRegex()))
   .reduce((foundImports, matches) => {

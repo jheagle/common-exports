@@ -4,10 +4,9 @@ import { isCommonModule } from './isCommonModule.mjs'
 /**
  * Create the Module Info object to store the name, path, and file for each matching module.
  * @memberof module:common-exports
- * @param {string} dirPath - Current relative directory to search.
- * @param {string} moduleName - Path used in the import for the module.
- * @param {string} rootPath - The lowest path to search within for the module.
- * @returns {Array<ModuleInfo>}
+ * @param dirPath - Current relative directory to search.
+ * @param moduleName - Path used in the import for the module.
+ * @param rootPath - The lowest path to search within for the module.
  */
 export const makeModuleInfo = (dirPath, moduleName, rootPath = null) => {
   if (!rootPath) {

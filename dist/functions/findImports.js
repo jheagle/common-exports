@@ -10,8 +10,7 @@ var _importRegex = require('./importRegex')
 /**
  * Retrieve all the module names from imports.
  * @memberof module:common-exports
- * @param {string} fileContents - The string of contents to parse for import matches.
- * @returns {Array}
+ * @param fileContents - The string of contents to parse for import matches.
  */
 const findImports = fileContents => Array.from(fileContents.matchAll((0, _importRegex.importRegex)())).reduce((foundImports, matches) => {
   if (!matches[3].includes(':')) {

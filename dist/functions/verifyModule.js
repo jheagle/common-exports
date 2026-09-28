@@ -15,9 +15,8 @@ var _testFilesystem = require('test-filesystem')
 /**
  * Check if the current path contains the module we are looking for.
  * @memberof module:common-exports
- * @param {string} moduleName
- * @param {string} current
- * @returns {Array<string>|null}
+ * @param moduleName
+ * @param current
  */
 const verifyModule = (moduleName, current) => {
   let tempName = moduleName.includes('/') ? (0, _strAfterLast.strAfterLast)(moduleName, '/') : moduleName
