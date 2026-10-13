@@ -1,16 +1,16 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.resolveModule = void 0
-var _strAfterLast = require('../utilities/strAfterLast')
-var _makeFilepath = require('../utilities/makeFilepath')
-var _testFilesystem = require('test-filesystem')
-var _strBeforeLast = require('../utilities/strBeforeLast')
-var _makeRelativePath = require('../utilities/makeRelativePath')
-var _verifyModule = require('./verifyModule')
-const modulesDirectory = 'node_modules'
+});
+exports.resolveModule = void 0;
+var _strAfterLast = require("../utilities/strAfterLast");
+var _makeFilepath = require("../utilities/makeFilepath");
+var _testFilesystem = require("test-filesystem");
+var _strBeforeLast = require("../utilities/strBeforeLast");
+var _makeRelativePath = require("../utilities/makeRelativePath");
+var _verifyModule = require("./verifyModule");
+const modulesDirectory = 'node_modules';
 /**
  * Search for the given module and return the full path.
  * @memberof module:common-exports
@@ -19,51 +19,51 @@ const modulesDirectory = 'node_modules'
  * @param current - The current directory we are checking for module matches.
  */
 const resolveModule = (root, moduleName, current = '') => {
-  root = (0, _makeFilepath.makeFilepath)(root)
+  root = (0, _makeFilepath.makeFilepath)(root);
   if (!current) {
-    current = root
+    current = root;
   }
-  let hasFullPath = true
+  let hasFullPath = true;
   if (moduleName.startsWith('#')) {
-    moduleName = moduleName.slice(1)
-    current = (0, _makeFilepath.makeFilepath)(current, 'vendor')
-    hasFullPath = false
+    moduleName = moduleName.slice(1);
+    current = (0, _makeFilepath.makeFilepath)(current, 'vendor');
+    hasFullPath = false;
   }
   if (moduleName.startsWith('./')) {
-    moduleName = moduleName.slice(2)
-    hasFullPath = false
+    moduleName = moduleName.slice(2);
+    hasFullPath = false;
   }
   if (moduleName.startsWith('../')) {
-    moduleName = moduleName.slice(3)
-    hasFullPath = false
+    moduleName = moduleName.slice(3);
+    hasFullPath = false;
   }
   if (hasFullPath) {
     // Given longer paths, reduce them to relative parts
-    moduleName = (0, _makeRelativePath.makeRelativePath)(root, moduleName)
+    moduleName = (0, _makeRelativePath.makeRelativePath)(root, moduleName);
   }
-  const tempCurrent = (0, _makeFilepath.makeFilepath)(current, (0, _strBeforeLast.strBeforeLast)(moduleName, '/'))
+  const tempCurrent = (0, _makeFilepath.makeFilepath)(current, (0, _strBeforeLast.strBeforeLast)(moduleName, '/'));
   if ((0, _testFilesystem.fileExists)(tempCurrent)) {
-    const result = (0, _verifyModule.verifyModule)(moduleName, tempCurrent)
+    const result = (0, _verifyModule.verifyModule)(moduleName, tempCurrent);
     if (result !== null) {
-      return result
+      return result;
     }
   }
   if (current === modulesDirectory) {
-    return []
+    return [];
   }
-  let hasModules = false
+  let hasModules = false;
   if ((0, _strAfterLast.strAfterLast)(current, '/') === modulesDirectory) {
-    hasModules = true
-    current = (0, _makeFilepath.makeFilepath)(current, '../../')
+    hasModules = true;
+    current = (0, _makeFilepath.makeFilepath)(current, '../../');
   }
-  const next = (0, _makeFilepath.makeFilepath)(current, modulesDirectory)
+  const next = (0, _makeFilepath.makeFilepath)(current, modulesDirectory);
   if (next === root || !next) {
-    return []
+    return [];
   }
   if (hasModules && root !== current && current) {
     // Check relative non-modules paths, skip this bit if this is already root level
-    return resolveModule(root, moduleName, current)
+    return resolveModule(root, moduleName, current);
   }
-  return resolveModule(root, moduleName, next)
-}
-exports.resolveModule = resolveModule
+  return resolveModule(root, moduleName, next);
+};
+exports.resolveModule = resolveModule;

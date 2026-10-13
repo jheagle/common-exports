@@ -1,14 +1,14 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.makeModuleInfo = void 0
-require('core-js/modules/esnext.iterator.constructor.js')
-require('core-js/modules/esnext.iterator.map.js')
-var _resolveMainFile = require('./resolveMainFile')
-var _resolveModule = require('./resolveModule')
-var _isCommonModule = require('./isCommonModule')
+});
+exports.makeModuleInfo = void 0;
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.map.js");
+var _resolveMainFile = require("./resolveMainFile");
+var _resolveModule = require("./resolveModule");
+var _isCommonModule = require("./isCommonModule");
 /**
  * Create the Module Info object to store the name, path, and file for each matching module.
  * @memberof module:common-exports
@@ -19,19 +19,19 @@ var _isCommonModule = require('./isCommonModule')
 const makeModuleInfo = (dirPath, moduleName, rootPath = null) => {
   if (!rootPath) {
     // If a root path is not specified, assume the current directory is the root.
-    rootPath = dirPath
+    rootPath = dirPath;
   }
   return (0, _resolveModule.resolveModule)(rootPath, moduleName, dirPath).map(path => {
-    const file = (0, _resolveMainFile.resolveMainFile)(path)
+    const file = (0, _resolveMainFile.resolveMainFile)(path);
     return {
       module: moduleName,
-      path: path,
+      path,
       file,
       isCommon: (0, _isCommonModule.isCommonModule)({
         path,
         file
       })
-    }
-  })
-}
-exports.makeModuleInfo = makeModuleInfo
+    };
+  });
+};
+exports.makeModuleInfo = makeModuleInfo;

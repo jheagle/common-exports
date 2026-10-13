@@ -27,7 +27,7 @@ export const makeModuleInfo = (dirPath: string, moduleName: string, rootPath: st
         const file = resolveMainFile(path)
         return {
           module: moduleName,
-          path: path,
+          path,
           file,
           isCommon: isCommonModule({ path, file }),
         }

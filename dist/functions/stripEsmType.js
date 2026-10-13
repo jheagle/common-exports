@@ -1,12 +1,12 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.stripEsmType = void 0
-require('core-js/modules/es.json.stringify.js')
-var _fs = require('fs')
-var _makeFilepath = require('../utilities/makeFilepath')
+});
+exports.stripEsmType = void 0;
+require("core-js/modules/es.json.stringify.js");
+var _fs = require("fs");
+var _makeFilepath = require("../utilities/makeFilepath");
 /**
  * Recursively walk a directory and strip any lingering `"type": "module"` from every package.json found. The
  * entire point of makeCommon's output is CommonJS compatibility, so no package.json anywhere under it should
@@ -25,18 +25,18 @@ const stripEsmType = destPath => {
   for (const entry of (0, _fs.readdirSync)(destPath, {
     withFileTypes: true
   })) {
-    const entryPath = (0, _makeFilepath.makeFilepath)(destPath, entry.name)
+    const entryPath = (0, _makeFilepath.makeFilepath)(destPath, entry.name);
     if (entry.isDirectory()) {
-      stripEsmType(entryPath)
-      continue
+      stripEsmType(entryPath);
+      continue;
     }
     if (entry.name !== 'package.json') {
-      continue
+      continue;
     }
-    const content = (0, _fs.readFileSync)(entryPath).toString()
-    const packageData = JSON.parse(content)
+    const content = (0, _fs.readFileSync)(entryPath).toString();
+    const packageData = JSON.parse(content);
     if (packageData.type !== 'module') {
-      continue
+      continue;
     }
     delete packageData.type;
     // Parsing and re-serializing (rather than a regex replace on the raw text) is robust regardless of the
@@ -44,7 +44,7 @@ const stripEsmType = destPath => {
     // property, even minified single-line JSON with no whitespace at all. This is vendor output, not
     // hand-maintained source, so normalizing to a plain 2-space indent instead of preserving whatever the
     // original used is an acceptable trade-off for that robustness.
-    (0, _fs.writeFileSync)(entryPath, JSON.stringify(packageData, null, 2) + '\n')
+    (0, _fs.writeFileSync)(entryPath, JSON.stringify(packageData, null, 2) + '\n');
   }
-}
-exports.stripEsmType = stripEsmType
+};
+exports.stripEsmType = stripEsmType;

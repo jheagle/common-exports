@@ -1,9 +1,9 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.strAfter = void 0
+});
+exports.strAfter = void 0;
 /**
  * Retrieve the string part after the search match.
  * Original source from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/strAfter.ts Sí, funciona}
@@ -12,7 +12,7 @@ exports.strAfter = void 0
  * @param search
  */
 const strAfter = (str, search) => {
-  const index = str.indexOf(search)
-  return index === -1 ? '' : str.substring(index + search.length)
-}
-exports.strAfter = strAfter
+  const index = str.indexOf(search);
+  return index === -1 ? '' : str.substring(index + search.length);
+};
+exports.strAfter = strAfter;

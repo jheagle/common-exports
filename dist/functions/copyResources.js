@@ -1,12 +1,12 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.copyResources = void 0
-require('core-js/modules/esnext.iterator.constructor.js')
-require('core-js/modules/esnext.iterator.for-each.js')
-var _fs = require('fs')
+});
+exports.copyResources = void 0;
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.for-each.js");
+var _fs = require("fs");
 /**
  * Based on configured 'copyResources', if we are in the corresponding based path copy each src to dest.
  * @memberof module:common-exports
@@ -17,19 +17,19 @@ var _fs = require('fs')
  */
 const copyResources = (baseFilePath, config = {}) => {
   if (!config.hasOwnProperty('copyResources')) {
-    return
+    return;
   }
   if (!config.copyResources.hasOwnProperty(baseFilePath)) {
-    return
+    return;
   }
   config.copyResources[baseFilePath].forEach(targets => {
     (0, _fs.cpSync)(targets.src, targets.dest, {
       recursive: true
-    })
+    });
     if (targets.updateContent) {
       const originalContent = (0, _fs.readFileSync)(targets.dest).toString();
-      (0, _fs.writeFileSync)(targets.dest, targets.updateContent(originalContent))
+      (0, _fs.writeFileSync)(targets.dest, targets.updateContent(originalContent));
     }
-  })
-}
-exports.copyResources = copyResources
+  });
+};
+exports.copyResources = copyResources;

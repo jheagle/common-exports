@@ -1,9 +1,9 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.hasEsmSyntax = void 0
+});
+exports.hasEsmSyntax = void 0;
 /**
  * Detect whether file content has any ES module import/export syntax at all. This is deliberately broader than
  * importRegex/findImports, which only match `import`/`export ... from '...'` statements (needed to extract a
@@ -12,5 +12,5 @@ exports.hasEsmSyntax = void 0
  * @memberof module:common-exports
  * @param content - The file content to check.
  */
-const hasEsmSyntax = content => /^\s*(export|import)\s/m.test(content)
-exports.hasEsmSyntax = hasEsmSyntax
+const hasEsmSyntax = content => /^\s*(export|import)\s/m.test(content);
+exports.hasEsmSyntax = hasEsmSyntax;

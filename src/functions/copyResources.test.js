@@ -25,7 +25,7 @@ describe('copyResources', () => {
             src: `${modulesPath}/mozjpeg/package.json`,
             dest: newPackage,
             updateContent: (content) => content.replace(
-              "\n\t\"type\": \"module\",", ''
+              '\n\t"type": "module",', ''
             )
           },
           {

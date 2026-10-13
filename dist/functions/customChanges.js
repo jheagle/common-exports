@@ -1,11 +1,11 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.customChanges = void 0
-require('core-js/modules/esnext.iterator.constructor.js')
-require('core-js/modules/esnext.iterator.reduce.js')
+});
+exports.customChanges = void 0;
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.reduce.js");
 /**
  * Based on configured 'customChanges', if we are in the corresponding based path, apply the change function to the content.
  * @memberof module:common-exports
@@ -17,16 +17,16 @@ require('core-js/modules/esnext.iterator.reduce.js')
  */
 const customChanges = (baseFilePath, content, config = {}) => {
   if (!config.hasOwnProperty('customChanges')) {
-    return content
+    return content;
   }
   if (!config.customChanges.hasOwnProperty(baseFilePath)) {
-    return content
+    return content;
   }
   return config.customChanges[baseFilePath].reduce((newContent, targets) => {
     if (targets.updateContent) {
-      newContent = targets.updateContent(newContent)
+      newContent = targets.updateContent(newContent);
     }
-    return newContent
-  }, content)
-}
-exports.customChanges = customChanges
+    return newContent;
+  }, content);
+};
+exports.customChanges = customChanges;

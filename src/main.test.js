@@ -151,7 +151,7 @@ describe('makeCommon', () => {
     ]
 
     test.each(testFileConversions)(
-      `to compress $type images`,
+      'to compress $type images',
       ({ type, files }, done) => {
         const newPath = `${modulesPath}/gulp-imagemin`
         mkdirSync(modulesPath, { recursive: true })

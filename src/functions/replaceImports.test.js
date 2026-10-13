@@ -264,7 +264,7 @@ describe('replaceImports', () => {
     const moduleName = 'gulp-babel'
     const modulePath = 'node_modules/gulp-babel'
     const fileContent = 'const babel = require(\'gulp-babel\')\n'
-    const result = replaceImports(fileName, 'vendor')(fileContent, {module: moduleName, path: modulePath, file: `${modulePath}/index.js`})
+    const result = replaceImports(fileName, 'vendor')(fileContent, { module: moduleName, path: modulePath, file: `${modulePath}/index.js` })
     expect(countMatches(result, 'const babel = require(\'./node_modules/gulp-babel/index.js\')')).toBe(1)
   })
 })
