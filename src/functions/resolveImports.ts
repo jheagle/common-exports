@@ -46,7 +46,7 @@ export type StreamFile = {
  */
 export function resolveImports (file: StreamFile, rootPath: string | null = null): Array<ModuleInfo> {
   const dirPath = makeFilepath(strAfter(file.base, file.cwd))
-  const useRoot = rootPath ? rootPath : dirPath
+  const useRoot = rootPath || dirPath
   return findImports(file.contents.toString())
     .reduce(
       (modules: ModuleInfo[], moduleName: string): ModuleInfo[] => {

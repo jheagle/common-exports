@@ -32,7 +32,7 @@ describe('resolvePackageExports', () => {
     const exportFile = `${moduleName}/dist/main.mjs`
     const newExported = `${modulesPath}/${exportFile}`
     const foundModulePath = resolvePackageExports(
-      { exports: `./dist/main.mjs` },
+      { exports: './dist/main.mjs' },
       modulePath
     )
     expect(foundModulePath).toEqual(newExported)
@@ -43,7 +43,7 @@ describe('resolvePackageExports', () => {
     const modulePath = `${modulesPath}/${moduleName}`
     const newMain = `${modulesPath}/${moduleName}/index.js`
     const foundModulePath = resolvePackageExports(
-      { exports: { default: `./index.js` } },
+      { exports: { default: './index.js' } },
       modulePath
     )
     expect(foundModulePath).toEqual(newMain)
@@ -54,7 +54,7 @@ describe('resolvePackageExports', () => {
     const modulePath = `${modulesPath}/${moduleName}`
     const newMain = `${modulesPath}/${moduleName}/index.mjs`
     const foundModulePath = resolvePackageExports(
-      { exports: { default: `./index.mjs` } },
+      { exports: { default: './index.mjs' } },
       modulePath
     )
     expect(foundModulePath).toEqual(newMain)
@@ -68,8 +68,8 @@ describe('resolvePackageExports', () => {
       {
         exports: {
           '.': {
-            'import': './mjs/index.mjs',
-            'require': './cjs/index.cjs',
+            import: './mjs/index.mjs',
+            require: './cjs/index.cjs',
           }
         }
       },

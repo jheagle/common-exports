@@ -1,11 +1,11 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.kabobToTitleCase = void 0
-require('core-js/modules/esnext.iterator.constructor.js')
-require('core-js/modules/esnext.iterator.reduce.js')
+});
+exports.kabobToTitleCase = void 0;
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.reduce.js");
 /**
  * Given a string in kebab-case convert to TitleCase (camelCase with a starting capital letter).
  * Original source concepts from {@link https://github.com/jheagle/si-funciona/blob/main/src/helpers/strings/camelCase.ts Sí, funciona}
@@ -13,8 +13,8 @@ require('core-js/modules/esnext.iterator.reduce.js')
  * @param str
  */
 const kabobToTitleCase = str => {
-  const words = str.split('-')
-  const ucFirst = str => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
-  return words.reduce((camel, part) => camel.concat(ucFirst(part)), '')
-}
-exports.kabobToTitleCase = kabobToTitleCase
+  const words = str.split('-');
+  const ucFirst = str => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  return words.reduce((camel, part) => camel.concat(ucFirst(part)), '');
+};
+exports.kabobToTitleCase = kabobToTitleCase;

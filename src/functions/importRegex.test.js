@@ -98,7 +98,7 @@ describe('importRegex', () => {
       './lib/kill.js',
       './lib/stream.js',
       './lib/promise.js',
-      `./lib/command.js';import{constants}from"os`,
+      './lib/command.js\';import{constants}from"os',
       './realtime.js',
       './signals.js',
       'strtok3'

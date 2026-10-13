@@ -1,16 +1,16 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.resolveImports = resolveImports
-require('core-js/modules/esnext.iterator.constructor.js')
-require('core-js/modules/esnext.iterator.for-each.js')
-require('core-js/modules/esnext.iterator.reduce.js')
-var _findImports = require('./findImports')
-var _strAfter = require('../utilities/strAfter')
-var _makeFilepath = require('../utilities/makeFilepath')
-var _makeModuleInfo = require('./makeModuleInfo')
+});
+exports.resolveImports = resolveImports;
+require("core-js/modules/esnext.iterator.constructor.js");
+require("core-js/modules/esnext.iterator.for-each.js");
+require("core-js/modules/esnext.iterator.reduce.js");
+var _findImports = require("./findImports");
+var _strAfter = require("../utilities/strAfter");
+var _makeFilepath = require("../utilities/makeFilepath");
+var _makeModuleInfo = require("./makeModuleInfo");
 /**
  * Given a file with buffer contents, identify all the imports it has and find their full paths. Common (already
  * CommonJS-compatible) modules are included too, not just modules needing conversion - see
@@ -21,11 +21,11 @@ var _makeModuleInfo = require('./makeModuleInfo')
  * @param file - The in-memory fetched file object.
  * @param rootPath - The root path to use when resolving imports.
  */
-function resolveImports (file, rootPath = null) {
-  const dirPath = (0, _makeFilepath.makeFilepath)((0, _strAfter.strAfter)(file.base, file.cwd))
-  const useRoot = rootPath || dirPath
+function resolveImports(file, rootPath = null) {
+  const dirPath = (0, _makeFilepath.makeFilepath)((0, _strAfter.strAfter)(file.base, file.cwd));
+  const useRoot = rootPath || dirPath;
   return (0, _findImports.findImports)(file.contents.toString()).reduce((modules, moduleName) => {
-    (0, _makeModuleInfo.makeModuleInfo)(dirPath, moduleName, useRoot).forEach(moduleInfo => modules.push(moduleInfo))
-    return modules
-  }, [])
+    (0, _makeModuleInfo.makeModuleInfo)(dirPath, moduleName, useRoot).forEach(moduleInfo => modules.push(moduleInfo));
+    return modules;
+  }, []);
 }

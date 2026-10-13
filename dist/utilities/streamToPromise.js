@@ -1,16 +1,16 @@
-'use strict'
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
-})
-exports.streamToPromise = void 0
+});
+exports.streamToPromise = void 0;
 /**
  * Wrap a stream so its completion (or failure) can be awaited.
  * @memberof module:common-exports
  * @param streamToWrap
  */
 const streamToPromise = streamToWrap => new Promise((resolve, reject) => {
-  streamToWrap.on('finish', resolve)
-  streamToWrap.on('error', reject)
-})
-exports.streamToPromise = streamToPromise
+  streamToWrap.on('finish', resolve);
+  streamToWrap.on('error', reject);
+});
+exports.streamToPromise = streamToPromise;

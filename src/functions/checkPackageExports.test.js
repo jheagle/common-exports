@@ -22,7 +22,7 @@ describe('checkPackageExports', () => {
     {
       description: 'Use default at top-level',
       exportConfig: {
-        default: `./index.js`
+        default: './index.js'
       },
       expected: `${modulesPath}/${moduleName}/index.js`
     },
@@ -30,15 +30,15 @@ describe('checkPackageExports', () => {
       description: 'Use require in base path config',
       exportConfig: {
         '.': {
-          'import': './mjs/index.mjs',
-          'require': './cjs/index.cjs',
+          import: './mjs/index.mjs',
+          require: './cjs/index.cjs',
         }
       },
       expected: `${modulesPath}/${moduleName}/cjs/index.cjs`
     }
   ]
   test.each(testExportConfig)(
-    `$description`,
+    '$description',
     ({ description, exportConfig, expected }) => {
       expect(
         checkPackageExports(

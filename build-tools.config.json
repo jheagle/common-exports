@@ -1,0 +1,15 @@
+{
+  "browser": {
+    "enabled": false
+  },
+  "docs": {
+    "enabled": true,
+    "from": "src",
+    "index": "MAIN.md",
+    "to": "../joshuaheagle.local/projects/common-exports/docs"
+  },
+  "typescript": {
+    "config": "tsconfig.json",
+    "enabled": true
+  }
+}

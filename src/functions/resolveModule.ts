@@ -37,7 +37,7 @@ export const resolveModule = (root: string, moduleName: string, current: string 
     // Given longer paths, reduce them to relative parts
     moduleName = makeRelativePath(root, moduleName)
   }
-  let tempCurrent = makeFilepath(current, strBeforeLast(moduleName, '/'))
+  const tempCurrent = makeFilepath(current, strBeforeLast(moduleName, '/'))
   if (fileExists(tempCurrent)) {
     const result = verifyModule(moduleName, tempCurrent)
     if (result !== null) {
