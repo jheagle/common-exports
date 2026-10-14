@@ -1,6 +1,6 @@
 {
   "name": "common-exports",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Convert ES Module to CommonJS.",
   "main": "dist/main.js",
   "types": "dist/main.d.ts",
@@ -58,7 +58,7 @@
     "babel-jest": "^30.5.2",
     "gulp-imagemin": "^9.2.0",
     "jest": "^30.5.2",
-    "js-build-tools": "^6.0.0",
+    "js-build-tools": "^6.1.0",
     "merge2": "^1.4.1",
     "typedoc": "^0.28.20",
     "typescript": "^6.0.3"
