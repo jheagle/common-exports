@@ -8,6 +8,8 @@
     "build": "gulp build",
     "dev": "gulp",
     "docs": "gulp docs",
+    "release": "release-it",
+    "release:dry-run": "release-it --dry-run",
     "test": "gulp testFull",
     "test:quick": "gulp testQuick",
     "typecheck": "tsc --noEmit -p tsconfig.json",
@@ -60,6 +62,7 @@
     "jest": "^30.5.2",
     "js-build-tools": "^6.1.0",
     "merge2": "^1.4.1",
+    "release-it": "^21.1.1",
     "typedoc": "^0.28.20",
     "typescript": "^6.0.3"
   },
