@@ -143,7 +143,7 @@ const replaceImports = (srcPath, destPath, config = {}, pending = [], inProgress
   const moduleMatch = new RegExp(`(['"\`])${moduleName}['"\`]`);
   if (importFile.module.includes('${')) {
     const replaceName = moduleName.replace(/(\\\$\\{.+\\})+/g, '.+');
-    const replaceFor = new RegExp(`(.+\/)(${replaceName})(\/.+)`, 'g');
+    const replaceFor = new RegExp(`(.+/)(${replaceName})(/.+)`, 'g');
     relativePath = relativePath.replace(replaceFor, '$1' + importFile.module + '$3');
   }
   if (relativePath.endsWith('.js')) {

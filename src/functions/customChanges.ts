@@ -10,10 +10,10 @@ import { makeCommonConfig, updateContentCallback } from '../main'
  * then the updateContent function will be applied to the contents.
  */
 export const customChanges = (baseFilePath: string, content: string, config: makeCommonConfig = {}): string => {
-  if (!config.hasOwnProperty('customChanges')) {
+  if (!Object.prototype.hasOwnProperty.call(config, 'customChanges')) {
     return content
   }
-  if (!config.customChanges.hasOwnProperty(baseFilePath)) {
+  if (!Object.prototype.hasOwnProperty.call(config.customChanges, baseFilePath)) {
     return content
   }
   return config.customChanges[baseFilePath].reduce(

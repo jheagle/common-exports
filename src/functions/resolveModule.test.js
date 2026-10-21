@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import { resolveModule } from './resolveModule'
 import { mkdirSync } from 'fs'
 import { copyRealModules, setUp } from 'test-filesystem'

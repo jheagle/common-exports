@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import { findImports } from './findImports'
 
 const multilineImport = 'import ansiStyles from \'#ansi-styles\';\n' +

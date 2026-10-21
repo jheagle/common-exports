@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import { countMatches } from 'test-filesystem'
 import { replaceImportMeta } from './replaceImportMeta'
 

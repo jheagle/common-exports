@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import { makeFilepath } from '../utilities/makeFilepath'
 import { makeModuleInfo } from './makeModuleInfo'
 import { resolveImports } from './resolveImports'

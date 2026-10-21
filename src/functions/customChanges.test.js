@@ -1,4 +1,4 @@
-import { copyRealModules, countMatches, fileExists, setUp } from 'test-filesystem'
+import { copyRealModules, countMatches, setUp } from 'test-filesystem'
 import { mkdirSync, readFileSync } from 'fs'
 import { customChanges } from './customChanges'
 

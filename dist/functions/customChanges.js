@@ -16,10 +16,10 @@ require("core-js/modules/esnext.iterator.reduce.js");
  * then the updateContent function will be applied to the contents.
  */
 const customChanges = (baseFilePath, content, config = {}) => {
-  if (!config.hasOwnProperty('customChanges')) {
+  if (!Object.prototype.hasOwnProperty.call(config, 'customChanges')) {
     return content;
   }
-  if (!config.customChanges.hasOwnProperty(baseFilePath)) {
+  if (!Object.prototype.hasOwnProperty.call(config.customChanges, baseFilePath)) {
     return content;
   }
   return config.customChanges[baseFilePath].reduce((newContent, targets) => {

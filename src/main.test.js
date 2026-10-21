@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
 import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { makeCommon } from './main'
 import { copyRealModules, setUp } from 'test-filesystem'
