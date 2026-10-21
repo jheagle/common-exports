@@ -16,10 +16,10 @@ var _fs = require("fs");
  * then the src and dest will be used to copy resources.
  */
 const copyResources = (baseFilePath, config = {}) => {
-  if (!config.hasOwnProperty('copyResources')) {
+  if (!Object.prototype.hasOwnProperty.call(config, 'copyResources')) {
     return;
   }
-  if (!config.copyResources.hasOwnProperty(baseFilePath)) {
+  if (!Object.prototype.hasOwnProperty.call(config.copyResources, baseFilePath)) {
     return;
   }
   config.copyResources[baseFilePath].forEach(targets => {

@@ -1,5 +1,4 @@
 import { cpSync } from 'fs'
-import { StreamFile } from './resolveImports'
 import { strBeforeLast } from '../utilities/strBeforeLast'
 import { makeFilepath } from '../utilities/makeFilepath'
 import { fileExists } from 'test-filesystem'
@@ -109,7 +108,7 @@ export const replaceImports = (srcPath: string, destPath: string, config: makeCo
     const moduleMatch = new RegExp(`(['"\`])${moduleName}['"\`]`)
     if (importFile.module.includes('${')) {
       const replaceName = moduleName.replace(/(\\\$\\{.+\\})+/g, '.+')
-      const replaceFor = new RegExp(`(.+\/)(${replaceName})(\/.+)`, 'g')
+      const replaceFor = new RegExp(`(.+/)(${replaceName})(/.+)`, 'g')
       relativePath = relativePath.replace(replaceFor, '$1' + importFile.module + '$3')
     }
     if (relativePath.endsWith('.mjs')) {

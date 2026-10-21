@@ -2,7 +2,6 @@
  * Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
  */
 
-import * as stream from 'stream'
 import { cpSync, readFileSync, writeFileSync } from 'fs'
 // @ts-ignore
 import babel from 'gulp-babel'

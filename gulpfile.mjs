@@ -2,6 +2,7 @@ export {
   build,
   defaultCmd as default,
   docs,
+  lint,
   readme,
   testFull,
   testQuick,
