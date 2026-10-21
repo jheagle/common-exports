@@ -3,7 +3,6 @@ import { ModuleInfo } from './makeModuleInfo';
 export type reduceImports = (content: string, importFile: ModuleInfo) => string;
 /**
  * Take a srcPath, destPath, then return a function to reduce the content for replacing file imports.
- * @memberof module:common-exports
  * @param srcPath - The original path of the file to be updated.
  * @param destPath - The outgoing path of the file once updated.
  * @param config - Additional configuration options.

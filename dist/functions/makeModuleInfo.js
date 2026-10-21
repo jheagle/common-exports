@@ -11,7 +11,6 @@ var _resolveModule = require("./resolveModule");
 var _isCommonModule = require("./isCommonModule");
 /**
  * Create the Module Info object to store the name, path, and file for each matching module.
- * @memberof module:common-exports
  * @param dirPath - Current relative directory to search.
  * @param moduleName - Path used in the import for the module.
  * @param rootPath - The lowest path to search within for the module.

@@ -74,7 +74,6 @@ const {
  * already-CommonJS content (which can happen when an already-common package's own wholesale copy carries along
  * an ESM sibling's original package.json - see replaceImports.ts) has that field stripped, since the output is
  * always meant to be CommonJS.
- * @memberof module:common-exports
  * @param srcPath - The relative path to the file to convert.
  * @param destPath - The relative path to the output directory.
  * @param config - Add additional instructions to the process.

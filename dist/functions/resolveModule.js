@@ -13,7 +13,6 @@ var _verifyModule = require("./verifyModule");
 const modulesDirectory = 'node_modules';
 /**
  * Search for the given module and return the full path.
- * @memberof module:common-exports
  * @param root - The base path for searching.
  * @param moduleName - The import name used for retrieving the module.
  * @param current - The current directory we are checking for module matches.

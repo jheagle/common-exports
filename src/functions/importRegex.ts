@@ -1,5 +1,4 @@
 /**
  * Get the regex for detecting ES6 import statements.
- * @memberof module:common-exports
  */
 export const importRegex = (): RegExp => /(:?export|import)\(?(:?\s*[*a-zA-Z0-9{}\s-_,/]+\s*from\s*)?['`"](.+)['`"]\)?/g

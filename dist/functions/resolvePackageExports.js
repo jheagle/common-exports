@@ -8,7 +8,6 @@ var _makeFilepath = require("../utilities/makeFilepath");
 var _checkPackageExports = require("./checkPackageExports");
 /**
  * Given the package details, determined the configured module entry point.
- * @memberof module:common-exports
  * @param packageData - The package contents as an object.
  * @param modulePath
  */

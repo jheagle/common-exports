@@ -10,7 +10,6 @@ var _fs = require("fs");
 var _importRegex = require("./importRegex");
 /**
  * Attempt to detect if the current module is a common js module.
- * @memberof module:common-exports
  * @param moduleInfo - An object containing the path and file strings.
  */
 const isCommonModule = moduleInfo => {

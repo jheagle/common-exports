@@ -8,7 +8,6 @@ require("core-js/modules/esnext.iterator.constructor.js");
 require("core-js/modules/esnext.iterator.reduce.js");
 /**
  * Based on configured 'customChanges', if we are in the corresponding based path, apply the change function to the content.
- * @memberof module:common-exports
  * @param baseFilePath - The source / module path to process.
  * @param content - The file content which will receive changes.
  * @param config -

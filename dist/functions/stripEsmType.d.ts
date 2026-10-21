@@ -9,7 +9,6 @@
  * still says "type": "module", so Node refuses to require() it. This sweep, run once after the whole output tree
  * is otherwise complete, catches and fixes any of these mismatches without needing to enumerate every affected
  * package by hand.
- * @memberof module:common-exports
  * @param destPath - The root directory to sweep.
  */
 export declare const stripEsmType: (destPath: string) => void;

@@ -2,7 +2,6 @@ import { importRegex } from './importRegex'
 
 /**
  * Retrieve all the module names from imports.
- * @memberof module:common-exports
  * @param fileContents - The string of contents to parse for import matches.
  */
 export const findImports = (fileContents: string): Array<string> => Array.from(fileContents.matchAll(importRegex()))

@@ -15,7 +15,6 @@ var _fs = require("fs");
 var _testFilesystem = require("test-filesystem");
 /**
  * Check if the current path contains the module we are looking for.
- * @memberof module:common-exports
  * @param moduleName
  * @param current
  */
