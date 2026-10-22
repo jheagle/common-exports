@@ -35,7 +35,6 @@ const priorityPath = [
 
 /**
  * Given the configured exports from a package, determine the preferred entry path.
- * @memberof module:common-exports
  * @param exports - The relative path used to locate the module.
  * @param modulePath
  */
