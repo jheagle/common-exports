@@ -62,7 +62,7 @@
     "babel-jest": "^30.5.2",
     "gulp-imagemin": "^9.2.0",
     "jest": "^30.5.2",
-    "js-build-tools": "^6.8.0",
+    "js-build-tools": "^6.9.0",
     "merge2": "^1.4.1",
     "release-it": "^21.1.2",
     "typedoc": "^0.28.20",
@@ -81,6 +81,7 @@
     "@parcel/watcher": false,
     "core-js": false,
     "core-js-pure": false,
-    "unrs-resolver": false
+    "unrs-resolver": false,
+    "esbuild": false
   }
 }
