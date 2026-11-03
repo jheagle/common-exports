@@ -266,12 +266,7 @@ describe('makeCommon', () => {
             // Every package.json in the converted output must have lost "type": "module", including the ones of
             // dependencies written outside the destination folder (e.g. imagemin-mozjpeg's own node_modules)
             expect(packageJsonFilesWithEsmType(vendorPath)).toEqual([])
-            setTimeout(
-              imageminTest,
-              15000,
-              files,
-              done
-            )
+            imageminTest(files, done)
           })
           .on('error', error => {
             console.error('Encountered error', error)
