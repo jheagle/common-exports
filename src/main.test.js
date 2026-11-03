@@ -1,5 +1,5 @@
 /* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
-import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs'
 import { makeCommon } from './main'
 import { copyRealModules, setUp } from 'test-filesystem'
 import { dest, src } from 'gulp'
@@ -46,6 +46,19 @@ setUp.setDefaults(tempDir)
 beforeEach(setUp.beforeEach)
 
 afterEach(setUp.afterEach)
+
+/**
+ * Every package.json under dir that still declares "type": "module".
+ * @param {string} dir
+ * @return {Array<string>}
+ */
+const packageJsonFilesWithEsmType = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+  const entryPath = `${dir}/${entry.name}`
+  if (entry.isDirectory()) {
+    return packageJsonFilesWithEsmType(entryPath)
+  }
+  return entry.name === 'package.json' && JSON.parse(readFileSync(entryPath).toString()).type === 'module' ? [entryPath] : []
+})
 
 /**
  * Run the imagemin process to demonstrate that it has been converted successfully.
@@ -109,6 +122,36 @@ describe('makeCommon', () => {
         console.error('Encountered error', error)
         done()
       })
+  })
+
+  test('strips "type": "module" from packages copied next to, not inside, the destination folder', done => {
+    // The real shape (gulp-imagemin -> imagemin-mozjpeg -> execa): app imports the ES module package "owner", which
+    // is converted next to app (dependencies are written relative to destPath: browser/app/../owner). owner imports
+    // the CommonJS "common-dep" from its own private node_modules, so that whole folder is copied wholesale -
+    // including an ES module sibling's package.json still saying "type": "module".
+    const modules = `${srcPath}/node_modules`
+    const privateModules = `${modules}/owner/node_modules`
+    for (const dir of [`${modules}/app`, `${privateModules}/common-dep`, `${privateModules}/esm-sibling`]) {
+      mkdirSync(dir, { recursive: true })
+    }
+    writeFileSync(`${modules}/app/package.json`, JSON.stringify({ name: 'app', type: 'module', main: 'index.js' }))
+    writeFileSync(`${modules}/app/index.js`, 'import owner from \'owner\'\nexport default owner\n')
+    writeFileSync(`${modules}/owner/package.json`, JSON.stringify({ name: 'owner', type: 'module', main: 'index.js' }))
+    writeFileSync(`${modules}/owner/index.js`, 'import dep from \'common-dep\'\nexport default dep\n')
+    // A require() call is what makes common-exports treat a package as already CommonJS (copied, not converted)
+    writeFileSync(`${privateModules}/common-dep/package.json`, JSON.stringify({ name: 'common-dep', main: 'index.js' }))
+    writeFileSync(`${privateModules}/common-dep/index.js`, 'module.exports = require(\'./value.js\')\n')
+    writeFileSync(`${privateModules}/common-dep/value.js`, 'module.exports = 1\n')
+    writeFileSync(`${privateModules}/esm-sibling/package.json`, JSON.stringify({ name: 'esm-sibling', type: 'module' }))
+    writeFileSync(`${privateModules}/esm-sibling/index.js`, 'export default 2\n')
+    expect.assertions(2)
+    makeCommon(`${modules}/app/index.js`, `${browserPath}/app`)
+      .on('finish', () => {
+        expect(existsSync(`${browserPath}/owner/node_modules/esm-sibling/package.json`)).toBeTruthy()
+        expect(packageJsonFilesWithEsmType(browserPath)).toEqual([])
+        done()
+      })
+      .on('error', error => done(error))
   })
 
   describe('can use compiled package', () => {
@@ -183,7 +226,7 @@ describe('makeCommon', () => {
           'strtok3',
         ]
         copyRealModules(modulesPath, copyModules)
-        expect.assertions(3)
+        expect.assertions(4)
         const srcFile = `${newPath}/index.js`
         makeCommon(srcFile, `${vendorPath}/gulp-imagemin`, {
           copyResources: {
@@ -220,6 +263,9 @@ describe('makeCommon', () => {
         })
           .on('finish', () => {
             expect(existsSync(vendorPath)).toBeTruthy()
+            // Every package.json in the converted output must have lost "type": "module", including the ones of
+            // dependencies written outside the destination folder (e.g. imagemin-mozjpeg's own node_modules)
+            expect(packageJsonFilesWithEsmType(vendorPath)).toEqual([])
             setTimeout(
               imageminTest,
               15000,

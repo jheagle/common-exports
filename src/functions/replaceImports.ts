@@ -30,8 +30,12 @@ export type reduceImports = (content: string, importFile: ModuleInfo) => string
  * such a target's conversion to finish before this file is done would deadlock, since its own conversion is
  * simultaneously waiting on this one. A target already in this set is already in flight further up the same
  * chain - don't wait on it again here.
+ * @param outputRoots - Every folder this call tree copied a package (or a private node_modules folder)
+ * into, shared across the whole call tree. Those wholesale copies can carry an ESM sibling's original package.json
+ * (see stripEsmType.ts); the outermost makeCommon sweeps these folders afterwards, since they can sit outside
+ * destPath (dependencies are written relative to it, e.g. destPath/../some-package).
  */
-export const replaceImports = (srcPath: string, destPath: string, config: makeCommonConfig = {}, pending: Array<Promise<void>> = [], inProgress: Map<string, Promise<void>> = new Map(), ancestors: Set<string> = new Set()): reduceImports =>
+export const replaceImports = (srcPath: string, destPath: string, config: makeCommonConfig = {}, pending: Array<Promise<void>> = [], inProgress: Map<string, Promise<void>> = new Map(), ancestors: Set<string> = new Set(), outputRoots: Set<string> = new Set()): reduceImports =>
   (content: string, importFile: ModuleInfo): string => {
     if (!importFile.file || !importFile.path) {
       console.error('Unable to find module', srcPath, importFile)
@@ -84,11 +88,9 @@ export const replaceImports = (srcPath: string, destPath: string, config: makeCo
         const sourceModulesDir = strBeforeLast(importFile.path, '/')
         const sourceModulesOwner = strBeforeLast(sourceModulesDir, '/')
         const isPrivatelyNested = sourceModulesOwner.includes('node_modules')
-        if (isPrivatelyNested) {
-          cpSync(sourceModulesDir, strBeforeLast(packageRootDest, '/'), { recursive: true })
-        } else {
-          cpSync(importFile.path, packageRootDest, { recursive: true })
-        }
+        const copyDest = isPrivatelyNested ? strBeforeLast(packageRootDest, '/') : packageRootDest
+        cpSync(isPrivatelyNested ? sourceModulesDir : importFile.path, copyDest, { recursive: true })
+        outputRoots.add(copyDest)
       }
     } else if (!ancestors.has(importFile.file)) {
       // Unlike the copy above, this isn't gated on fileExists: a wholesale sibling copy (just above) may have
@@ -98,7 +100,7 @@ export const replaceImports = (srcPath: string, destPath: string, config: makeCo
       // this function itself started) should ever be trusted to mean "already handled" for an ESM target.
       let conversion = inProgress.get(modulePath)
       if (!conversion) {
-        conversion = streamToPromise(makeCommon(importFile.file, moduleDir, config, inProgress, ancestors))
+        conversion = streamToPromise(makeCommon(importFile.file, moduleDir, config, inProgress, ancestors, outputRoots))
         inProgress.set(modulePath, conversion)
       }
       pending.push(conversion)
