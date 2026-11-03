@@ -3,6 +3,7 @@
  */
 
 import { cpSync, existsSync, readFileSync, writeFileSync } from 'fs'
+import { normalize } from 'path'
 // @ts-ignore
 import babel from 'gulp-babel'
 import { copyResources } from './functions/copyResources'
@@ -131,7 +132,10 @@ export const makeCommon = (srcPath: string, destPath: string, config: makeCommon
     // skipping roots already inside another root and any that don't exist. A failure is reported on the stream
     // instead of being thrown from inside this listener.
     finalStream.on('finish', () => {
-      const roots = [destPath, ...outputRoots].filter((root: string) => existsSync(root))
+      // Normalized (kept relative: makeFilepath drops a leading '/'), so dest/../pkg and a trailing slash compare
+      // correctly when skipping nested roots
+      const roots = Array.from(new Set([destPath, ...outputRoots].map((root: string) => normalize(root).replace(/\/+$/, ''))))
+        .filter((root: string) => existsSync(root))
       try {
         roots
           .filter((root: string) => !roots.some((other: string) => other !== root && root.startsWith(`${other}/`)))
