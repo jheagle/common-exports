@@ -2,7 +2,7 @@
  * Bundle a project or vendor projects for usage as CommonJS AND ES6 modules.
  */
 
-import { cpSync, readFileSync, writeFileSync } from 'fs'
+import { cpSync, existsSync, readFileSync, writeFileSync } from 'fs'
 // @ts-ignore
 import babel from 'gulp-babel'
 import { copyResources } from './functions/copyResources'
@@ -57,6 +57,8 @@ export type makeCommonConfig = {
  * this, the same dependency reachable from multiple import chains (a very common shape once a tree gets deep or
  * wide) gets independently, redundantly re-converted - each duplicate spawning its own full sub-tree of further
  * duplicates - which is what caused this function's historical OOM crash under real-world dependency graphs.
+ * @param outputRoots - Folders the call tree copied packages into (filled by replaceImports); the
+ * outermost call sweeps them for leftover "type": "module" along with destPath.
  * @param ancestors - The chain of source files currently being converted above this
  * call, in this same branch of the recursion. Real packages do have genuine circular imports (e.g. two files that
  * import from each other) - CommonJS/Node handle that fine at runtime via partial exports, but this function
@@ -65,7 +67,7 @@ export type makeCommonConfig = {
  * ancestor, its conversion is already in flight further up this same chain - don't wait on it here too. An empty
  * set (the default) also marks this as the outermost call - see below.
  */
-export const makeCommon = (srcPath: string, destPath: string, config: makeCommonConfig = {}, inProgress: Map<string, Promise<void>> = new Map(), ancestors: Set<string> = new Set()): NodeJS.ReadWriteStream => {
+export const makeCommon = (srcPath: string, destPath: string, config: makeCommonConfig = {}, inProgress: Map<string, Promise<void>> = new Map(), ancestors: Set<string> = new Set(), outputRoots: Set<string> = new Set()): NodeJS.ReadWriteStream => {
   const isOutermostCall = ancestors.size === 0
   const finalStream = src(srcPath)
     .pipe(through.obj(function (file: StreamFile, enc: BufferEncoding, callback: TransformCallback): void {
@@ -98,7 +100,7 @@ export const makeCommon = (srcPath: string, destPath: string, config: makeCommon
       // @ts-ignore
       const fileContents = resolveImports(file, rootPath)
         .reduce(
-          replaceImports(srcPath, destPath, config, pending, inProgress, currentAncestors),
+          replaceImports(srcPath, destPath, config, pending, inProgress, currentAncestors, outputRoots),
           file.contents.toString()
         )
       // makeCommon's own recursive calls (for each discovered import) don't block - wait for them here so this
@@ -124,12 +126,19 @@ export const makeCommon = (srcPath: string, destPath: string, config: makeCommon
     // Only the outermost call sweeps the output for stray "type": "module" package.json files (see
     // stripEsmType.ts) - it needs the whole tree to actually be finished, not just this one file, and running it
     // once here rather than after every recursive call keeps it cheap.
-    // Dependencies are written relative to destPath (e.g. destPath/../imagemin-mozjpeg), so the sweep covers
-    // destPath plus the folder of every conversion this call tree started - not just destPath, which missed
-    // converted dependencies outside it and left their nested package.json files saying "type": "module".
+    // Wholesale package copies can land outside destPath (dependencies are written relative to it, e.g.
+    // destPath/../some-package), so the sweep covers destPath plus every folder a copy went into (outputRoots),
+    // skipping roots already inside another root and any that don't exist. A failure is reported on the stream
+    // instead of being thrown from inside this listener.
     finalStream.on('finish', () => {
-      const sweepRoots = new Set([destPath, ...Array.from(inProgress.keys()).map((modulePath: string) => strBeforeLast(modulePath, '/'))])
-      sweepRoots.forEach((root: string) => stripEsmType(root))
+      const roots = [destPath, ...outputRoots].filter((root: string) => existsSync(root))
+      try {
+        roots
+          .filter((root: string) => !roots.some((other: string) => other !== root && root.startsWith(`${other}/`)))
+          .forEach((root: string) => stripEsmType(root))
+      } catch (error) {
+        finalStream.emit('error', error)
+      }
     })
   }
   return finalStream

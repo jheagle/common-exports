@@ -228,15 +228,15 @@ describe('replaceImports', () => {
     expect(countMatches(result, 'import {joinCommand, parseCommand, getEscapedCommand} from \'./lib/command.js\'')).toBe(1)
 
     expect(makeCommon).toHaveBeenCalledTimes(9)
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/strip-final-newline/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/strip-final-newline', {}, expect.any(Map), expect.any(Set))
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/npm-run-path/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/npm-run-path', {}, expect.any(Map), expect.any(Set))
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/onetime/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/onetime', {}, expect.any(Map), expect.any(Set))
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/error.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set))
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stdio.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set))
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/kill.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set))
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stream.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set))
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/promise.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set))
-    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/command.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set))
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/strip-final-newline/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/strip-final-newline', {}, expect.any(Map), expect.any(Set), expect.any(Set))
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/npm-run-path/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/npm-run-path', {}, expect.any(Map), expect.any(Set), expect.any(Set))
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/onetime/index.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/onetime', {}, expect.any(Map), expect.any(Set), expect.any(Set))
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/error.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set), expect.any(Set))
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stdio.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set), expect.any(Set))
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/kill.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set), expect.any(Set))
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/stream.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set), expect.any(Set))
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/promise.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set), expect.any(Set))
+    expect(makeCommon).toHaveBeenCalledWith('test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/execa/lib/command.js', 'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules/execa/lib', {}, expect.any(Map), expect.any(Set), expect.any(Set))
   })
 
   test('will copy an already-common module instead of converting it', () => {
@@ -250,13 +250,16 @@ describe('replaceImports', () => {
       file: 'test-replace-imports/node_modules/imagemin-mozjpeg/node_modules/get-stream/index.js',
       isCommon: true,
     }
-    const result = replaceImports(srcPath, destPath)(fileContent, importFile)
+    const outputRoots = new Set()
+    const result = replaceImports(srcPath, destPath, {}, [], new Map(), new Set(), outputRoots)(fileContent, importFile)
     expect(cpSync).toHaveBeenCalledWith(
       'test-replace-imports/node_modules/imagemin-mozjpeg/node_modules',
       'test-replace-imports/external-modules/imagemin-mozjpeg/node_modules',
       { recursive: true }
     )
     expect(makeCommon).not.toHaveBeenCalled()
+    // The copy's destination is recorded so makeCommon's final sweep strips leftover "type": "module" there
+    expect([...outputRoots]).toEqual(['test-replace-imports/external-modules/imagemin-mozjpeg/node_modules'])
     expect(countMatches(result, 'import getStream from \'../../get-stream/index.js\'')).toBe(1)
   })
 
