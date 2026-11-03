@@ -124,7 +124,13 @@ export const makeCommon = (srcPath: string, destPath: string, config: makeCommon
     // Only the outermost call sweeps the output for stray "type": "module" package.json files (see
     // stripEsmType.ts) - it needs the whole tree to actually be finished, not just this one file, and running it
     // once here rather than after every recursive call keeps it cheap.
-    finalStream.on('finish', () => stripEsmType(destPath))
+    // Dependencies are written relative to destPath (e.g. destPath/../imagemin-mozjpeg), so the sweep covers
+    // destPath plus the folder of every conversion this call tree started - not just destPath, which missed
+    // converted dependencies outside it and left their nested package.json files saying "type": "module".
+    finalStream.on('finish', () => {
+      const sweepRoots = new Set([destPath, ...Array.from(inProgress.keys()).map((modulePath: string) => strBeforeLast(modulePath, '/'))])
+      sweepRoots.forEach((root: string) => stripEsmType(root))
+    })
   }
   return finalStream
 }

@@ -1,5 +1,5 @@
 /* eslint-disable no-template-curly-in-string -- fixture source code, the ${...} is meant to stay literal */
-import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs'
 import { makeCommon } from './main'
 import { copyRealModules, setUp } from 'test-filesystem'
 import { dest, src } from 'gulp'
@@ -53,6 +53,14 @@ afterEach(setUp.afterEach)
  * @param {Function} done
  * @return {stream.Stream}
  */
+const packageJsonFilesWithEsmType = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+  const entryPath = `${dir}/${entry.name}`
+  if (entry.isDirectory()) {
+    return packageJsonFilesWithEsmType(entryPath)
+  }
+  return entry.name === 'package.json' && JSON.parse(readFileSync(entryPath).toString()).type === 'module' ? [entryPath] : []
+})
+
 const imageminTest = (files, done) => {
   const imagemin = require(`../${vendorPath}/gulp-imagemin`).default
   let waiting = files.length
@@ -183,7 +191,7 @@ describe('makeCommon', () => {
           'strtok3',
         ]
         copyRealModules(modulesPath, copyModules)
-        expect.assertions(3)
+        expect.assertions(4)
         const srcFile = `${newPath}/index.js`
         makeCommon(srcFile, `${vendorPath}/gulp-imagemin`, {
           copyResources: {
@@ -220,6 +228,9 @@ describe('makeCommon', () => {
         })
           .on('finish', () => {
             expect(existsSync(vendorPath)).toBeTruthy()
+            // Every package.json in the converted output must have lost "type": "module", including the ones of
+            // dependencies written outside the destination folder (e.g. imagemin-mozjpeg's own node_modules)
+            expect(packageJsonFilesWithEsmType(vendorPath)).toEqual([])
             setTimeout(
               imageminTest,
               15000,
