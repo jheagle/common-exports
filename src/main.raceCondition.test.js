@@ -17,6 +17,16 @@ afterEach(setUp.afterEach)
 const DEPTH = 30
 
 /**
+ * Resolve when the stream finishes, reject on its error, so assertions run in the test body (an expect() that throws
+ * inside a 'finish' callback never reaches done() and only shows up as a timeout).
+ * @param {stream.Stream} stream
+ * @return {Promise<void>}
+ */
+const streamFinished = stream => new Promise((resolve, reject) => {
+  stream.on('finish', resolve).on('error', reject)
+})
+
+/**
  * Build a chain of DEPTH packages, each nested inside the previous one's own node_modules (mirroring how npm
  * nests non-deduped dependencies), where each one imports the next by bare name. This is the same shape as the
  * real execa -> human-signals -> ... chain that originally surfaced the race condition.
@@ -146,97 +156,67 @@ const buildStrayTypeModuleFixture = () => {
 }
 
 describe('makeCommon recursive conversion', () => {
-  test('every level of a deep import chain is fully converted by the time the entry file reports finished', done => {
+  test('every level of a deep import chain is fully converted by the time the entry file reports finished', async () => {
     const { entryFile } = buildChain()
-    makeCommon(entryFile, `${vendorPath}/pkg0`)
-      .on('finish', () => {
-        // The vendor output mirrors the same nested structure as the source.
-        let expectedDir = `${vendorPath}/pkg0`
-        for (let level = 0; level < DEPTH; level++) {
-          const expectedFile = `${expectedDir}/index.js`
-          expect(existsSync(expectedFile)).toBeTruthy()
-          const contents = readFileSync(expectedFile).toString()
-          expect(contents).not.toMatch(/^import /m)
-          expect(contents).not.toMatch(/^export /m)
-          expectedDir = `${expectedDir}/node_modules/pkg${level + 1}`
-        }
-        done()
-      })
-      .on('error', error => {
-        done(error)
-      })
+    await streamFinished(makeCommon(entryFile, `${vendorPath}/pkg0`))
+    // The vendor output mirrors the same nested structure as the source.
+    let expectedDir = `${vendorPath}/pkg0`
+    for (let level = 0; level < DEPTH; level++) {
+      const expectedFile = `${expectedDir}/index.js`
+      expect(existsSync(expectedFile)).toBeTruthy()
+      const contents = readFileSync(expectedFile).toString()
+      expect(contents).not.toMatch(/^import /m)
+      expect(contents).not.toMatch(/^export /m)
+      expectedDir = `${expectedDir}/node_modules/pkg${level + 1}`
+    }
   }, 10000)
 
-  test('every sibling branch of a fan-out import is fully converted by the time the entry file reports finished', done => {
+  test('every sibling branch of a fan-out import is fully converted by the time the entry file reports finished', async () => {
     const { siblingDirs } = buildFanOut()
-    makeCommon(`${modulesPath}/entry/index.js`, `${vendorPath}/entry`)
-      .on('finish', () => {
-        siblingDirs.forEach((siblingDir, branch) => {
-          // sibling0..siblingN sit flat alongside entry (all direct children of modulesPath), not nested inside
-          // entry's own node_modules - the vendor output mirrors that same flat relative structure.
-          const siblingFile = `${vendorPath}/sibling${branch}/index.js`
-          expect(existsSync(siblingFile)).toBeTruthy()
-          const siblingContents = readFileSync(siblingFile).toString()
-          expect(siblingContents).not.toMatch(/^import /m)
-          for (let leaf = 0; leaf < 2; leaf++) {
-            const leafFile = `${vendorPath}/sibling${branch}/node_modules/leaf${leaf}/index.js`
-            expect(existsSync(leafFile)).toBeTruthy()
-            const leafContents = readFileSync(leafFile).toString()
-            expect(leafContents).not.toMatch(/^export const/m)
-          }
-        })
-        done()
-      })
-      .on('error', error => {
-        done(error)
-      })
+    await streamFinished(makeCommon(`${modulesPath}/entry/index.js`, `${vendorPath}/entry`))
+    siblingDirs.forEach((siblingDir, branch) => {
+      // sibling0..siblingN sit flat alongside entry (all direct children of modulesPath), not nested inside
+      // entry's own node_modules - the vendor output mirrors that same flat relative structure.
+      const siblingFile = `${vendorPath}/sibling${branch}/index.js`
+      expect(existsSync(siblingFile)).toBeTruthy()
+      const siblingContents = readFileSync(siblingFile).toString()
+      expect(siblingContents).not.toMatch(/^import /m)
+      for (let leaf = 0; leaf < 2; leaf++) {
+        const leafFile = `${vendorPath}/sibling${branch}/node_modules/leaf${leaf}/index.js`
+        expect(existsSync(leafFile)).toBeTruthy()
+        const leafContents = readFileSync(leafFile).toString()
+        expect(leafContents).not.toMatch(/^export const/m)
+      }
+    })
   }, 10000)
 
-  test('a .cjs main file is copied as-is, not misresolved into a nested "index.cjs/index.js" path', done => {
+  test('a .cjs main file is copied as-is, not misresolved into a nested "index.cjs/index.js" path', async () => {
     const { entryFile } = buildCjsMainFixture()
-    makeCommon(entryFile, `${vendorPath}/cjs-consumer`)
-      .on('finish', () => {
-        // Copied verbatim (isCommon), not converted, and not written inside a bogus "index.cjs/" directory.
-        const cjsFile = `${vendorPath}/fast-equals-like/dist/cjs/index.cjs`
-        expect(existsSync(cjsFile)).toBeTruthy()
-        expect(existsSync(`${cjsFile}/index.js`)).toBeFalsy()
-        expect(readFileSync(cjsFile).toString()).toEqual('module.exports.value = \'cjs-leaf\'\n')
-        done()
-      })
-      .on('error', error => {
-        done(error)
-      })
+    await streamFinished(makeCommon(entryFile, `${vendorPath}/cjs-consumer`))
+    // Copied verbatim (isCommon), not converted, and not written inside a bogus "index.cjs/" directory.
+    const cjsFile = `${vendorPath}/fast-equals-like/dist/cjs/index.cjs`
+    expect(existsSync(cjsFile)).toBeTruthy()
+    expect(existsSync(`${cjsFile}/index.js`)).toBeFalsy()
+    expect(readFileSync(cjsFile).toString()).toEqual('module.exports.value = \'cjs-leaf\'\n')
   }, 10000)
 
-  test('an already-CommonJS entry point is copied wholesale, bringing its own private dependency along', done => {
+  test('an already-CommonJS entry point is copied wholesale, bringing its own private dependency along', async () => {
     const { entryFile } = buildAlreadyCommonEntryFixture()
-    makeCommon(entryFile, `${vendorPath}/already-cjs-entry`)
-      .on('finish', () => {
-        expect(existsSync(`${vendorPath}/already-cjs-entry/index.js`)).toBeTruthy()
-        const privateDepFile = `${vendorPath}/already-cjs-entry/node_modules/private-dep/index.js`
-        expect(existsSync(privateDepFile)).toBeTruthy()
-        expect(readFileSync(privateDepFile).toString()).toEqual('module.exports = \'private-dep-value\'\n')
-        done()
-      })
-      .on('error', error => {
-        done(error)
-      })
+    await streamFinished(makeCommon(entryFile, `${vendorPath}/already-cjs-entry`))
+    expect(existsSync(`${vendorPath}/already-cjs-entry/index.js`)).toBeTruthy()
+    const privateDepFile = `${vendorPath}/already-cjs-entry/node_modules/private-dep/index.js`
+    expect(existsSync(privateDepFile)).toBeTruthy()
+    expect(readFileSync(privateDepFile).toString()).toEqual('module.exports = \'private-dep-value\'\n')
   }, 10000)
 
-  test('a privately-nested common sibling\'s wholesale copy does not leave a stray "type": "module" on an ESM sibling converted alongside it', done => {
+  test('a privately-nested common sibling\'s wholesale copy does not leave a stray "type": "module" on an ESM sibling converted alongside it', async () => {
     const { entryFile } = buildStrayTypeModuleFixture()
-    makeCommon(entryFile, `${vendorPath}/consumer`)
-      .on('finish', () => {
-        const esmSiblingDest = `${vendorPath}/consumer/node_modules/esm-sibling`
-        const contents = readFileSync(`${esmSiblingDest}/index.js`).toString()
-        expect(contents).not.toMatch(/^export /m)
-        expect(contents).toContain('esm-sibling-value')
-        const packageJson = JSON.parse(readFileSync(`${esmSiblingDest}/package.json`).toString())
-        expect(packageJson.type).not.toEqual('module')
-        done()
-      })
-      .on('error', error => {
-        done(error)
-      })
+    await streamFinished(makeCommon(entryFile, `${vendorPath}/consumer`))
+    const esmSiblingDest = `${vendorPath}/consumer/node_modules/esm-sibling`
+    const contents = readFileSync(`${esmSiblingDest}/index.js`).toString()
+    expect(contents).not.toMatch(/^export /m)
+    expect(contents).toContain('esm-sibling-value')
+    const packageJson = JSON.parse(readFileSync(`${esmSiblingDest}/package.json`).toString())
+    expect(packageJson.type).not.toEqual('module')
   }, 10000)
 })

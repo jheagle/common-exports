@@ -61,70 +61,62 @@ const packageJsonFilesWithEsmType = (dir) => readdirSync(dir, { withFileTypes: t
 })
 
 /**
+ * Resolve when the stream finishes, reject on its first error (or an error on any of the other streams given:
+ * pipe() doesn't forward errors down the chain). Assertions then run in the test body, where a failure fails the
+ * test straight away; an expect() that throws inside a 'finish' callback never reaches done(), so it only shows up
+ * as a timeout.
+ * @param {stream.Stream} stream
+ * @param {...stream.Stream} upstream
+ * @return {Promise<void>}
+ */
+const streamFinished = (stream, ...upstream) => new Promise((resolve, reject) => {
+  upstream.forEach(item => item.on('error', reject))
+  stream.on('finish', resolve).on('error', reject)
+})
+
+/**
  * Run the imagemin process to demonstrate that it has been converted successfully.
  * @param {Array} files
- * @param {Function} done
- * @return {stream.Stream}
+ * @return {Promise<void>}
  */
-const imageminTest = (files, done) => {
+const imageminTest = async files => {
   const imagemin = require(`../${vendorPath}/gulp-imagemin`).default
-  let waiting = files.length
   for (const img of files) {
     const imagesFile = img.testPath
     cpSync(img.origin, img.testPath)
-    --waiting
     // encoding: false is required for binary files (images) - vinyl-fs otherwise reads them through a lossy
     // text-encoding round-trip, corrupting the bytes. This doesn't visibly break jpg/png/svg here since their
     // "expected compressed" fixtures were themselves captured from this same corrupted-input pipeline, but
     // gifsicle's own GIF parser is strict enough to reject the corrupted input outright (rather than silently
     // tolerating it like mozjpeg/optipng/svgo do), which is what caused gif's compression step to fail.
-    src(imagesFile, { encoding: false })
-      .pipe(
-        imagemin(
-          {
-            silent: true,
-            verbose: false,
-          }
-        )
-      )
-      .pipe(dest(browserPath))
-      .on('finish', () => {
-        expect(existsSync(browserPath)).toBeTruthy()
-        expect(
-          readFileSync(img.newPath).toString()
-        ).toEqual(
-          readFileSync(img.compressed).toString()
-        )
-        if (waiting <= 0) {
-          done()
-        }
-      })
-      .on('error', error => {
-        console.error('Encountered error', error)
-        done()
-      })
+    const compress = imagemin(
+      {
+        silent: true,
+        verbose: false,
+      }
+    )
+    await streamFinished(src(imagesFile, { encoding: false }).pipe(compress).pipe(dest(browserPath)), compress)
+    expect(existsSync(browserPath)).toBeTruthy()
+    expect(
+      readFileSync(img.newPath).toString()
+    ).toEqual(
+      readFileSync(img.compressed).toString()
+    )
   }
 }
 
 describe('makeCommon', () => {
-  test('can convert files with circular imports', done => {
+  test('can convert files with circular imports', async () => {
     expect.assertions(2)
     const srcFile = `${srcPath}/main.mjs`
     writeFileSync(srcFile, mainFileContent)
     writeFileSync(`${srcPath}/dependency.mjs`, dependencyContent)
-    makeCommon(srcFile, browserPath)
-      .on('finish', () => {
-        expect(existsSync(`${browserPath}/main.js`)).toBeTruthy()
-        expect(existsSync(`${browserPath}/dependency.js`)).toBeTruthy()
-        done()
-      })
-      .on('error', error => {
-        console.error('Encountered error', error)
-        done()
-      })
+    await streamFinished(makeCommon(srcFile, browserPath))
+    expect(existsSync(`${browserPath}/main.js`)).toBeTruthy()
+    expect(existsSync(`${browserPath}/dependency.js`)).toBeTruthy()
   })
 
-  test('strips "type": "module" from packages copied next to, not inside, the destination folder', done => {
+  test('strips "type": "module" from packages copied next to, not inside, the destination folder', async () => {
     // The real shape (gulp-imagemin -> imagemin-mozjpeg -> execa): app imports the ES module package "owner", which
     // is converted next to app (dependencies are written relative to destPath: browser/app/../owner). owner imports
     // the CommonJS "common-dep" from its own private node_modules, so that whole folder is copied wholesale -
@@ -145,13 +137,9 @@ describe('makeCommon', () => {
     writeFileSync(`${privateModules}/esm-sibling/package.json`, JSON.stringify({ name: 'esm-sibling', type: 'module' }))
     writeFileSync(`${privateModules}/esm-sibling/index.js`, 'export default 2\n')
     expect.assertions(2)
-    makeCommon(`${modules}/app/index.js`, `${browserPath}/app`)
-      .on('finish', () => {
-        expect(existsSync(`${browserPath}/owner/node_modules/esm-sibling/package.json`)).toBeTruthy()
-        expect(packageJsonFilesWithEsmType(browserPath)).toEqual([])
-        done()
-      })
-      .on('error', error => done(error))
+    await streamFinished(makeCommon(`${modules}/app/index.js`, `${browserPath}/app`))
+    expect(existsSync(`${browserPath}/owner/node_modules/esm-sibling/package.json`)).toBeTruthy()
+    expect(packageJsonFilesWithEsmType(browserPath)).toEqual([])
   })
 
   describe('can use compiled package', () => {
@@ -196,7 +184,7 @@ describe('makeCommon', () => {
 
     test.each(testFileConversions)(
       'to compress $type images',
-      ({ type, files }, done) => {
+      async ({ files }) => {
         const newPath = `${modulesPath}/gulp-imagemin`
         mkdirSync(modulesPath, { recursive: true })
         const copyModules = [
@@ -228,7 +216,7 @@ describe('makeCommon', () => {
         copyRealModules(modulesPath, copyModules)
         expect.assertions(4)
         const srcFile = `${newPath}/index.js`
-        makeCommon(srcFile, `${vendorPath}/gulp-imagemin`, {
+        await streamFinished(makeCommon(srcFile, `${vendorPath}/gulp-imagemin`, {
           copyResources: {
             [`${modulesPath}/mozjpeg/index.js`]: [
               {
@@ -260,20 +248,15 @@ describe('makeCommon', () => {
               },
             ]
           }
-        })
-          .on('finish', () => {
-            expect(existsSync(vendorPath)).toBeTruthy()
-            // Every package.json in the converted output must have lost "type": "module", including the ones of
-            // dependencies written outside the destination folder (e.g. imagemin-mozjpeg's own node_modules)
-            expect(packageJsonFilesWithEsmType(vendorPath)).toEqual([])
-            imageminTest(files, done)
-          })
-          .on('error', error => {
-            console.error('Encountered error', error)
-            done()
-          })
+        }))
+        expect(existsSync(vendorPath)).toBeTruthy()
+        // Every package.json in the converted output must have lost "type": "module", including the ones of
+        // dependencies written outside the destination folder (e.g. imagemin-mozjpeg's own node_modules)
+        expect(packageJsonFilesWithEsmType(vendorPath)).toEqual([])
+        await imageminTest(files)
       },
-      25000
+      // 4-8 s each when the machine is idle (gif ~7 s, png ~8 s); 25 s timed out with several builds running
+      60000
     )
   })
 })
