@@ -1,4 +1,7 @@
 # common-exports
+
+[![tests](https://github.com/jheagle/common-exports/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jheagle/common-exports/actions/workflows/tests.yml)
+
 Convert ES Modules (even in dependencies) to CommonJS. Resolves dependency issues and creates both ES and CommonJS module compatibility for packages.
 
 ### Goals
